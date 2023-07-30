@@ -53,6 +53,7 @@ const Register = () => {
   const [repeatPassword, setRepeatPassword] = useState("");
   const [membershipRate, setMembershipRate] = useState("");
   const [city, setCity] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [error, setError] = useState("");
 
@@ -318,8 +319,15 @@ const Register = () => {
     }
     if (!validation_RepeatPassword) {
       console.log("error validation_RepeatPassword");
-
       return;
+    }
+    const currentUser = auth.currentUser;
+    if (currentUser && currentUser.isAnonymous) {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.log("Error signing out anonymous user:", error);
+      }
     }
     // Create a new Firebase user
     const userCredential = await createUserWithEmailAndPassword(
@@ -1022,9 +1030,17 @@ const Register = () => {
           </div>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary">
-        Make it so
-      </button>
+      {isLoading ? (
+        <div className="text-center">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      ) : (
+        <button type="submit" className="btn btn-primary">
+          Make it so
+        </button>
+      )}
     </form>
   );
 };

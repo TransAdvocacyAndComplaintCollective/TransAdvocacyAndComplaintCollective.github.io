@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Button, Form } from 'react-bootstrap';
 import { firestore } from './firebase';
 
+
 const VoteCasting = () => {
   const [candidates, setCandidates] = useState([]);
   const [candidateRankings, setCandidateRankings] = useState([]);

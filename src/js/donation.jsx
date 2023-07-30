@@ -1,12 +1,18 @@
 import React, { useState } from "react";
-import { getAuth } from "firebase/auth";
+import { getAuth, signInAnonymously } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { createCheckoutSession } from "@stripe/firestore-stripe-payments";
 import { getStripePayments } from "@stripe/firestore-stripe-payments";
 import { doc, collection, getFirestore, setDoc } from "firebase/firestore";
 
 // Firebase configuration
-
+let pices = {
+  
+  year: { 5: "price_1NPNQFI39QBFoSmH0ubp2YEZ", 15: "price_1NPNQFI39QBFoSmHlDVnY0ox", 20: "price_1NPNQFI39QBFoSmH2nUy3E3S", 100: "price_1NPNQFI39QBFoSmHBGddtnPu" },
+   months: { 5: "price_1NPNQEI39QBFoSmHXk5HDVeb", 15: "price_1NPNQEI39QBFoSmHXk5HDVeb", 20: "price_1NPNQEI39QBFoSmHiGGWDsmc", 100: "price_1NPNQEI39QBFoSmHflcSjxkO" },
+  week: { 5: "price_1NPNQEI39QBFoSmHjRU80Mig", 15: "price_1NPNQEI39QBFoSmH6Z9llKyk", 20: "price_1NPNQEI39QBFoSmHLiMfH9Qf", 100: "price_1NPNQFI39QBFoSmH9oS3EZpt" },
+  one_off: "price_1NPNQFI39QBFoSmHpMdvdmKU",
+};
 const firebaseConfig = {
   apiKey: "AIzaSyDL2CHHhPUg9K6_tV_5Z2bUl4wWcB3-sic",
   authDomain: "ptate-df901.firebaseapp.com",
@@ -38,43 +44,77 @@ const DonationForm = () => {
   const [postcode, setPostcode] = useState("");
   const [country, setCountry] = useState("GB");
   const [isRecurring, setIsRecurring] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    try {
+      console.log("handleSubmit");
+      e.preventDefault();
+      const currentUser = auth.currentUser;
+      setIsLoading(true);
+      
+      if (!currentUser) {
+        // User is not logged in, create an anonymous account and log them in
+        try {
+          console.log("Creating anonymous user");
+          const anonymousUser = await signInAnonymously(auth);
+          console.log("Anonymous user created:", anonymousUser);
+          console.log("Anonymous user logged in");
+        } catch (error) {
+          console.log("Error creating or logging in anonymous user:", error);
+          setIsLoading(false);
+          return;
+        }
+      }
+      // Save donation data to
+      const userCredential = auth.currentUser;
 
-    // Save donation data to
-
-    const uid = userCredential.user.uid;
-    const DonationsCollectionRef = collection(db, "donations");
-    await setDoc(doc(DonationsCollectionRef, uid), data);
-    firebase
-      .firestore()
-      .collection("donations")
-      .add({
-        firstName,
-        lastName,
-        email,
+      const uid = userCredential.uid;
+      const DonationsCollectionRef = collection(db, "donations");
+      const data = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
         address: {
           addressLines: [address1, address2, address3, address4],
           locality: city,
           regionCode: country,
         },
-        isRecurring,
-      });
-    createCheckoutSession;
-    // Reset form fields
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setAmount("");
-    setAddress1("");
-    setAddress2("");
-    setAddress3("");
-    setCity("");
-    setPostcode("");
-    setCountry("");
-    setIsRecurring(false);
+        isRecurring: isRecurring,
+        uid: uid,
+      };
+      await setDoc(doc(DonationsCollectionRef, uid), data);
+      if (plans == "one_off") {
+        let rate = pices[plans];
+        const session = await createCheckoutSession(payments, {
+          price: rate,
+        });
+        window.location.href = session.url;
+      } else {
+        let rate = pices[plans][amount];
+        const session = await createCheckoutSession(payments, {
+          price: rate,
+        });
+        window.location.href = session.url;
+      }
+      console.log("createCheckoutSession done");
+
+      // Reset form fields
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setAmount("");
+      setAddress1("");
+      setAddress2("");
+      setAddress3("");
+      setCity("");
+      setPostcode("");
+      setCountry("");
+      setIsRecurring(false);
+    } catch (error) {
+      setIsLoading(false);
+    } finally {
+    }
   };
 
   return (
@@ -233,9 +273,17 @@ const DonationForm = () => {
         />
       </div>
 
-      <button type="submit" className="btn btn-primary">
-        Donate
-      </button>
+      {isLoading ? (
+        <div className="text-center">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      ) : (
+        <button type="submit" className="btn btn-primary">
+          Donate
+        </button>
+      )}
     </form>
   );
 };

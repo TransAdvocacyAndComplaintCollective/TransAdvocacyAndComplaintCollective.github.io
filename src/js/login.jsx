@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Card, Form } from 'react-bootstrap';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useState, useEffect } from "react";
+import { Button, Card, Form } from "react-bootstrap";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 // Initialize Firebase app
 const firebaseConfig = {
@@ -12,16 +12,17 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 const ElectionCreation = () => {
-  const [electionName, setElectionName] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+  const [electionName, setElectionName] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [candidates, setCandidates] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Fetch candidates from Firestore collection
     const fetchCandidates = async () => {
       const db = getFirestore();
-      const candidatesSnapshot = await getDocs(collection(db, 'candidates'));
+      const candidatesSnapshot = await getDocs(collection(db, "candidates"));
       const candidatesData = candidatesSnapshot.docs.map((doc) => doc.data());
       setCandidates(candidatesData);
     };
@@ -48,14 +49,14 @@ const ElectionCreation = () => {
   };
 
   const handleAddCandidate = () => {
-    const newCandidate = { name: '' };
+    const newCandidate = { name: "" };
     setCandidates([...candidates, newCandidate]);
   };
 
   const handleSaveElection = async () => {
     // Save election details to Firestore
     const db = getFirestore();
-    await addDoc(collection(db, 'elections'), {
+    await addDoc(collection(db, "elections"), {
       name: electionName,
       startTime,
       endTime,
@@ -63,16 +64,16 @@ const ElectionCreation = () => {
 
     // Save candidates to Firestore
     const batch = db.batch();
-    const candidatesRef = collection(db, 'candidates');
+    const candidatesRef = collection(db, "candidates");
     candidates.forEach((candidate) => {
       const newCandidateRef = doc(candidatesRef);
       batch.set(newCandidateRef, candidate);
     });
     await batch.commit();
 
-    setElectionName('');
-    setStartTime('');
-    setEndTime('');
+    setElectionName("");
+    setStartTime("");
+    setEndTime("");
     setCandidates([]);
   };
 
@@ -122,10 +123,17 @@ const ElectionCreation = () => {
           <Button variant="primary" onClick={handleAddCandidate}>
             Add Candidate
           </Button>
-
-          <Button variant="success" onClick={handleSaveElection}>
-            Save Election
-          </Button>
+          {isLoading ? (
+            <div className="text-center">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : (
+            <Button variant="success" onClick={handleSaveElection}>
+              Save Election
+            </Button>
+          )}
         </Form>
       </Card.Body>
     </Card>

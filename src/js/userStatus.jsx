@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { initializeApp } from "firebase/app";
-import { getAuth,onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 const firebaseConfig = {
   apiKey: "AIzaSyDL2CHHhPUg9K6_tV_5Z2bUl4wWcB3-sic",
   authDomain: "ptate-df901.firebaseapp.com",
@@ -13,18 +13,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-
 function UserStatus() {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth,(user) => {
-      if (user) {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && !user.isAnonymous) {
         setUserLoggedIn(true);
         // Determine if the user is an admin based on your logic
         // Example: check if the user has a specific role or privilege
-        const isAdminUser = user.roles.includes('admin');
+        const isAdminUser = user.roles && user.roles.includes('admin');
         setIsAdmin(isAdminUser);
       } else {
         setUserLoggedIn(false);
@@ -47,7 +46,7 @@ function UserStatus() {
               </a>
             </li>
             <li>
-              <button className="dropdown-item" onClick={() => firebase.auth().signOut()}>
+              <button className="dropdown-item" onClick={() => auth.signOut()}>
                 Sign out
               </button>
             </li>
@@ -70,7 +69,7 @@ function UserStatus() {
               </a>
             </li>
             <li>
-              <button className="dropdown-item" onClick={() => firebase.auth().signOut()}>
+              <button className="dropdown-item" onClick={() => auth.signOut()}>
                 Sign out
               </button>
             </li>

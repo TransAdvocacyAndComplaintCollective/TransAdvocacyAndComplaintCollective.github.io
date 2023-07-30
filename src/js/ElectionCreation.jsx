@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button, Card, Form } from 'react-bootstrap';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 // Initialize Firebase app
 const firebaseConfig = {
@@ -14,7 +13,8 @@ const firebaseConfig = {
   appId: "1:795297920122:web:9cfd9b972dc92213dd77c3",
   measurementId: "G-9MPXZR194T",
 };
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const ElectionCreation = () => {
   const [electionName, setElectionName] = useState('');
