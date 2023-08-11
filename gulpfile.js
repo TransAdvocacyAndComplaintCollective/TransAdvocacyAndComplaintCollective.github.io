@@ -23,7 +23,7 @@ const buildArticles = gulp.parallel(
   feed.generate_rss_feed,
   feed.generate_rss_feeds
 );
-const buildPage = gulp.parallel(ejs_main.generatePaths);
+const buildPage = gulp.parallel(ejs_main.generatePaths_user);
 const buildImages = gulp.parallel(js.compile_react);
 const buildJs = gulp.parallel(images.convertImagesToWebP, images.optimizeSvg);
 exports.build = gulp.series(
@@ -35,7 +35,9 @@ exports.build = gulp.series(
     buildArticles,
     buildPage,
     buildImages,
-    buildJs
+    buildJs,
+    ejs_main.generatePaths_user,
+    ejs_main.generatePaths_page
   ),
   //output
 
@@ -48,7 +50,7 @@ exports.build = gulp.series(
     copy.style_copy,
     html.inline_code,
     html.inline_code_articles,
-    ejs_main.generatePaths
+    html.inline_code_user
   ),
   //comprees
   gulp.parallel(

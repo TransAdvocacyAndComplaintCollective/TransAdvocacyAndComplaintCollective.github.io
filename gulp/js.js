@@ -18,12 +18,15 @@ function compile_react(cb) {
             {
               test: /\.(js|jsx)$/,
               exclude: /node_modules/,
-              use: {
-                loader: "babel-loader",
-                options: {
-                  presets: ["@babel/preset-react"],
+              use: [
+                {
+                  loader: "babel-loader",
+                  options: {
+                    presets: ["@babel/preset-react"],
+                  },
                 },
-              },
+                "source-map-loader",
+              ],
             },
             {
               test: /\.css$/,
@@ -34,6 +37,11 @@ function compile_react(cb) {
         resolve: {
           extensions: [".js", ".jsx"],
         },
+        plugins: [
+          new webpack.SourceMapDevToolPlugin({
+            filename: "[file].map",
+          }),
+        ],
       }),
       webpack
     )

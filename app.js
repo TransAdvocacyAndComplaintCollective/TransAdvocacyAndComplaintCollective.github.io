@@ -2,7 +2,10 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const mime = require("mime-types");
+const stripe_sub = require("./routes/stripe_sub.js");
 const app = express();
+
+app.use("/register", stripe_sub);
 
 app.use((req, res, next) => {
   let requestedPath = decodeURI(path.normalize(req.path));
@@ -89,7 +92,7 @@ app.use((req, res, next) => {
   const options = {
     root: path.join(__dirname, "output"),
   };
-
+  res.status(404);
   const fileName = "404.html";
   res.sendFile(fileName, options, function (err) {
     if (err) {

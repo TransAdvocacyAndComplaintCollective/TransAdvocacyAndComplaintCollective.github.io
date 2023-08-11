@@ -15,6 +15,7 @@
     />
 
     <link rel="icon" href="media/PP.svg" />
+    <script src="/js/register.js" defer></script>
 
     <title>Register - UK Pirate Party</title>
   </head>
@@ -26,6 +27,7 @@
   integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
   crossorigin="anonymous"></script>
 <script src="/js/main.js" defer></script>
+<script src="/js/userStatus.js" defer></script>
 <nav
   class="p-3 mb-3 navbar navbar-expand-lg bg-body-tertiary bg-dark"
   data-bs-theme="dark"
@@ -57,6 +59,9 @@
         <li class="nav-item">
           <a class="nav-link" href="/contact.html">Contact</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/donations.html">Donations</a>
+        </li>
       </ul>
 
      
@@ -69,137 +74,9 @@
     <div class="alert alert-danger" role="alert">
       We are not ready to take membership yet this from does nothing.
     </div>
-    <div class="container-fluid pb-5 mb-5">
-      <div class="container">
-      <h1>Register</h1>
-        <form method="post" action="/register">
-          <div class="form-group">
-            <label for="firstName">First Name:</label>
-            <input
-              type="text"
-              id="firstName"
-              name="firstName"
-              class="form-control"
-            />
-          </div>
 
-          <div class="form-group">
-            <label for="lastName">Last Name:</label>
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              class="form-control"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="dob">Date of Birth:</label>
-            <input type="date" id="dob" name="dob" class="form-control" />
-          </div>
-
-          <div class="form-group">
-            <label for="address">Address line 1 </label>
-            <input
-              type="text"
-              id="address1"
-              name="address1"
-              class="form-control"
-            />
-          </div>
-          <div class="form-group">
-            <label for="address">Address line 2 </label>
-            <input
-              type="text"
-              id="address2"
-              name="address2"
-              class="form-control"
-            />
-          </div>
-          <div class="form-group">
-            <label for="city">City</label>
-            <input type="text" id="city" name="city" class="form-control" />
-          </div>
-          <div class="form-group">
-            <label for="county">County</label>
-            <input type="text" id="county" name="county" class="form-control" />
-          </div>
-          <div class="form-group">
-            <label for="postcode">Postcode</label>
-            <input
-              type="text"
-              id="postcode"
-              name="postcode"
-              class="form-control"
-            />
-          </div>
-          <div class="form-group">
-            <label for="country">Country</label>
-            <input
-              type="text"
-              id="country"
-              name="country"
-              class="form-control"
-            />
-          </div>
-          <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" class="form-control" />
-          </div>
-          <div class="form-group">
-            <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" class="form-control" />
-          </div>
-          <div class="form-group">
-            <label for="password">Password:</label>
-            <input  type="password"  id="password"  name="password"  class="form-control"/>
-          </div>
-          <div class="form-group">
-            <label for="password">repeat Password:</label>
-            <input  type="password"  id="password"  name="password"  class="form-control"/>
-          </div>
-          <div class="row">
-            <div class="col-sm-3 mb-3 mb-sm-0">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Volunteer and Special Case Membership</h5>
-                  <p class="card-text">Pirate Party UK recognizes the importance of inclusivity and understands that individuals may have unique circumstances that require special consideration. With the Volunteer and Special Case Membership, we offer a membership option that embraces diversity and ensures active participation for all. This Membership will not be able to run party elections or vote in party elections without an appvored special case.</div>
-                  <a href="#" class="btn btn-primary">Free</a>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-3 mb-3 mb-sm-0">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Discounted Membership</h5>
-                  <p class="card-text">
-                    Choose the discounted membership option and become a valued member of the Pirate Party UK at a reduced price. With discounted membership, you enjoy all the benefits and privileges available to full members, including the ability to vote in party elections and contribute to decision-making processes. By selecting this membership, you show your support for the party while benefiting from a reduced membership fee.                  </p>
-                  <a href="#" class="btn btn-primary">Mouth £5 /year £60</a>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-3">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Full Membership</h5>
-                  <p class="card-text">
-                  </p>
-                  <a href="#" class="btn btn-primary">Mouth £10/year £120</a>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-3">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Premium Membership</h5>
-                  <p class="card-text">
-                  <a href="#" class="btn btn-primary">Mouth £20/year £240</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
+    <div class="container pb-5 mb-5">
+      <div id="RegisterContainer"></div>
     </div>
     <div
   class="mt-5 navbar fixed-bottom bg-body-tertiary bg-dark"
