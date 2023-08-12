@@ -51,7 +51,7 @@ function sitemap(cb) {
         genres: "PressRelease, Blog",
         publication_date: data.publishData,
         title: data.title,
-        keywords: data.Keywords.join(","),
+        keywords: data.keywords,
       },
     });
   });

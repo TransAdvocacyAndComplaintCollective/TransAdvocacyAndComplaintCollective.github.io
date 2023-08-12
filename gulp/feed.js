@@ -113,7 +113,7 @@ function generate_rss_feeds(cb) {
     const filePath = `${sourceDir}/${file}`;
     const content = fs.readFileSync(filePath, "utf8");
     const fileMatter = matter(content);
-    for (const key of fileMatter.data.Keywords) {
+    for (const key of fileMatter.data.keywords) {
       if (!(key in keywords)) {
         keywords.push(key);
       }

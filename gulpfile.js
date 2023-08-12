@@ -32,6 +32,8 @@ exports.build = gulp.series(
   gulp.parallel(
     style.compileCss,
     sitemap.sitemap,
+    // ejs_main.generateConstitutionHtmlPages,
+    ejs_main.generatePolicyHtmlPages,
     buildArticles,
     buildPage,
     buildImages,

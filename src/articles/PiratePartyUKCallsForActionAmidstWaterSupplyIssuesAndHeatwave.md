@@ -7,12 +7,12 @@ imageUrl: /media/PP.webp
 imageAlt: "Pirate Party Logo"
 title: Pirate Party UK Calls for Action Amidst Water Supply Issues and Heatwave
 summary: The Pirate Party UK highlights the need for urgent action amidst the UK's water supply issues and heatwave, emphasizing the importance of sustainable water management and distribution.
-Keywords:
+keywords:
   - Pirate Party UK
   - water supply
   - heatwave
   - water scarcity
-publishDate: June 15, 2023
+publishDate: 2023/6/15
 ---
 
 The United Kingdom is currently grappling with a scorching heatwave and water supply challenges, prompting the Pirate Party UK to highlight the need for urgent action. As temperatures soar and water resources dwindle, the party is raising concerns about the country's preparedness to tackle such crises.
