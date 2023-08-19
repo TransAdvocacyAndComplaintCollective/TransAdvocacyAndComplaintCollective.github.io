@@ -6,6 +6,7 @@
  */
 
 const MarkdownIt = require("markdown-it");
+
 const matter = require("gray-matter");
 const ejs = require("gulp-ejs");
 const ejsCompiler = require("ejs");
@@ -37,7 +38,7 @@ function generateArticleHtmlList(cb) {
     "../src/views/articles/index.ejs"
   );
   const indexArticleContent = fs.readFileSync(indexArticlePath, "utf-8");
-  const articleDataList = [];
+  let articleDataList = [];
 
   // Read each article file, extract metadata, and render Markdown to HTML
   articleFilenames.forEach((filename) => {
@@ -63,6 +64,7 @@ function generateArticleHtmlList(cb) {
 
   // Sort articles by datePublished in descending order
   articleDataList.sort((a, b) => b.datePublished - a.datePublished);
+  articleDataList = articleDataList.reverse();
   const totalPages = Math.ceil(articleDataList.length / ARTICLES_PER_PAGE);
   const htmlPagesPromises = [];
 
@@ -184,6 +186,7 @@ function generatePaths_page(cb) {
     .pipe(gulp.dest("temp/"));
 }
 
+const replace = require("gulp-replace");
 // Generate HTML pages for each document using Markdown content and an EJS template
 function generateConstitutionHtmlPages(cb) {
   const md = new MarkdownIt();
@@ -218,6 +221,7 @@ function generateConstitutionHtmlPages(cb) {
         callback(null, renderedPage);
       })
     )
+    .pipe(replace(".md", ".html"))
     .pipe(rename({ extname: ".html" }))
     .pipe(gulp.dest("./temp/constitution/"));
 }
@@ -257,6 +261,7 @@ function generatePolicyHtmlPages(cb) {
         callback(null, renderedPage);
       })
     )
+    .pipe(replace(".md", ".html"))
     .pipe(rename({ extname: ".html" }))
     .pipe(gulp.dest("./temp/policy/"));
   cb();

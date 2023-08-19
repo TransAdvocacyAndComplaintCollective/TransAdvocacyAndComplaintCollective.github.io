@@ -9,6 +9,7 @@ const sitemap = require("./gulp/sitemap.js");
 const style = require("./gulp/style.js");
 const clean = require("./gulp/clean.js");
 const gulp = require("gulp");
+const git = require("gulp-git");
 
 const clean_ = gulp.parallel(
   clean.cleanTempDirectory,
@@ -30,6 +31,7 @@ exports.build = gulp.series(
   clean_,
   //temp
   gulp.parallel(
+    style.compileSass,
     style.compileCss,
     sitemap.sitemap,
     // ejs_main.generateConstitutionHtmlPages,
@@ -44,6 +46,7 @@ exports.build = gulp.series(
   //output
 
   gulp.parallel(
+    style.copyStyle,
     copy.copyMediaFiles,
     copy.copyCssFiles,
     copy.sitemap_copy,
@@ -61,4 +64,21 @@ exports.build = gulp.series(
     compresss.sitemap_gzip_copy
   )
 );
+
+exports.git_pull = gulp.series(function (done) {
+  const subdirs = ["src/policy/", "src/constitution/"]; // Array of subdirectories to perform git pull on
+
+  subdirs.forEach((subdir) => {
+    git.pull("origin", "master", { cwd: subdir }, (err) => {
+      if (err) {
+        console.error(`Error pulling ${subdir}:`, err);
+      } else {
+        console.log(`Pulled ${subdir} successfully.`);
+      }
+    });
+  });
+
+  done();
+});
+
 exports.clean = clean_;

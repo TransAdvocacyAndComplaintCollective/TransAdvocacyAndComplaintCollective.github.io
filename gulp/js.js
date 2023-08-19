@@ -6,13 +6,14 @@ const babelLoader = require("babel-loader");
 const styleLoader = require("style-loader");
 const cssLoader = require("css-loader");
 function compile_react(cb) {
+  // webpack perdction
   return gulp
     .src(["src/js/*.js"]) // Replace 'src/index.js' with the entry point of your JavaScript files
 
     .pipe(named())
     .pipe(
       webpackStream({
-        mode: "development", // Adjust the mode as needed
+        mode: "production", // Adjust the mode as needed
         module: {
           rules: [
             {
