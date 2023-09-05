@@ -51,9 +51,9 @@
           </div>
         </a>
         <% }); %> <% if (page > 1) { %>
-        <a href="/articles?<%= page - 1 %>.html" class="prev-page">Prev</a>
+        <a href="/articles<%= page - 1 %>.html" class="prev-page">Prev</a>
         <% } %> <% if (hasNextPage) { %>
-        <a href="/articles?<%= page + 1 %>.html" class="next-page">Next</a>
+        <a href="/articles<%= page + 1 %>.html" class="next-page">Next</a>
         <% } %>
       </div>
     </div>

@@ -22,9 +22,11 @@ publishData: "2023/08/28"
 
 In a rapidly evolving economic landscape, the Pirate Party UK is championing the cause of younger generations by advocating for reforms that address the growing disparity between baby boomers and millennials/gen Z in terms of pension systems and job seekers' allowances. Central to their vision is the transition towards a Universal Basic Income (UBI) that promises fairness, opportunity, and economic security for all.
 
-## Pension Disparity: Bridging the Generational Gap
+## Pension Reforms: A Promise Unfulfilled
 
-The Pirate Party UK recognizes the glaring imbalance in pension systems that has left younger generations grappling with uncertainty. Baby boomers have benefited from more generous pension plans, resulting in a stark divide in financial security upon retirement. Meanwhile, millennials and gen Z are facing an uncertain future, with traditional pension models falling short in addressing the challenges of modern employment.
+Baby boomers, who enjoyed more stable economic conditions, have generally experienced more favorable pension conditions. In contrast, younger generations are encountering greater economic uncertainty, hampering their ability to secure a stable future. The Pirate Party UK acknowledges that the current pension system is failing to adequately address the needs of millennials and Gen Z, leading to concerns about their financial security in later years.
+
+Moreover, the unfortunate reality is that millennials face a 40% higher mortality rate than previous generations, potentially leading to a significant portion of them not reaching retirement age to enjoy their pensions fully. This somber statistic underscores the urgency for comprehensive reforms that provide alternative avenues for financial security.
 
 ## Job Seekers' Allowances: A Path to Empowerment
 

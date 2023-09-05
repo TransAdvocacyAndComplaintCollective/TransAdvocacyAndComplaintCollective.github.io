@@ -63,7 +63,7 @@ function generateArticleHtmlList(cb) {
   });
 
   // Sort articles by datePublished in descending order
-  articleDataList.sort((a, b) => b.datePublished - a.datePublished);
+  articleDataList.sort((a, b) => b.datePublished > a.datePublished);
   articleDataList = articleDataList.reverse();
   const totalPages = Math.ceil(articleDataList.length / ARTICLES_PER_PAGE);
   const htmlPagesPromises = [];
