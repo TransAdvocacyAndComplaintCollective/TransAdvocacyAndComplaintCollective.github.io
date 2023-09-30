@@ -17,7 +17,7 @@ keywords:
     - surveillance powers
     - WhatsApp
     - end-to-end encryption
-publishData: "2023/05/13"
+publishDate: "13 jun 2023"
 ---
 The recent arrests of Republic's members and volunteers from Night Stars demonstrate the danger of rushing through ill-defined legislation. Under the new Public Order Act 2023, possessing everyday objects could be considered an offense, making it easier for the police to close down protests and suppress dissent. This builds on the draconian powers given to the police under the Police, Crime, Sentencing and Courts Act 2022.
 

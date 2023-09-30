@@ -16,7 +16,7 @@ keywords:
     - fairness
     - discrimination
     - gender identity
-publishDate: "2023/08/18"
+publishDate: "18 aug 2023"
 ---
 
 # UK Pirate Party Condemns FIDE's Decision to Ban Transgender Women from Female Chess Competitions

@@ -12,7 +12,7 @@ keywords:
   - water supply
   - heatwave
   - water scarcity
-publishDate: 2023/6/15
+publishDate: "15 jun 2023"
 ---
 
 The United Kingdom is currently grappling with a scorching heatwave and water supply challenges, prompting the Pirate Party UK to highlight the need for urgent action. As temperatures soar and water resources dwindle, the party is raising concerns about the country's preparedness to tackle such crises.

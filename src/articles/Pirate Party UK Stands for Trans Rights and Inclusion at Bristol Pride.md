@@ -23,7 +23,7 @@ keywords:
     - inclusivity
     - future events
     - trans rights are human rights
-publishData: "2023/07/08"
+publishDate: "08 jul 2023"
 ---
 
 Introduction:

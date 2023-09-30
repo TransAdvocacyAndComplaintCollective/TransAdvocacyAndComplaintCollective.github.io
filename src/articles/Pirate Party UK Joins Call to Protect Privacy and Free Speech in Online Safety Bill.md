@@ -19,7 +19,7 @@ keywords:
     - Open Rights Group
     - Wikimedia UK
     - Index on Censorship
-publishData: "2023/05/13"
+publishDate: "13 may 2023"
 ---
 As a political party that champions digital rights and free expression, the Pirate Party UK is deeply concerned about the Online Safety Bill currently under consideration by the House of Lords. We stand with organizations such as [EFF](https://www.eff.org/), [Open Rights Group](https://www.openrightsgroup.org/), [Wikimedia UK](https://wikimedia.org.uk/), and [Index on Censorship](https://www.indexoncensorship.org/), who have raised serious concerns about the impact of this legislation on fundamental rights such as the right to privacy and free speech.
 

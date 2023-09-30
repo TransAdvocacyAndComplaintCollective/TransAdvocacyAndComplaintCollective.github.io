@@ -19,7 +19,7 @@ keywords:
   - Open Rights Group
   - Wikimedia UK
   - Index on Censorship
-publishData: "2023/05/13"
+publishDate: "04 jun 2023"
 ---
 
 # School Building Crisis in the UK: A Long-Standing Issue Unaddressed by Conservative Governments

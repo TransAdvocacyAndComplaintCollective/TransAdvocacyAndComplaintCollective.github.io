@@ -13,7 +13,7 @@ keywords:
     - global network
     - digital rights
     - civil liberties
-publishDate: August 18, 2023
+publishDate: "18 aug 2023"
 ---
 
 The Pirate Party UK (PPUK) is embarking on an exciting journey that could potentially bring it into the fold of the global pirate movement. PPUK is currently in discussions to join Pirate Parties International (PPI), an international network of political parties that share common principles of digital rights, transparency, and civil liberties.
