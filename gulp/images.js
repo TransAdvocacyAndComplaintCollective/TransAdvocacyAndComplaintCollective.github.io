@@ -1,11 +1,12 @@
 const svgo = require("gulp-svgo");
-const webp = require("gulp-webp");
+// const webp = require("gulp-webp");
 const gulp = require("gulp");
+const cwebp = require('gulp-cwebp');
 
 function convertImagesToWebP(cb) {
   return gulp
     .src("src/public/media/*.{png,jpeg,gif,apng}")
-    .pipe(webp())
+    .pipe(cwebp())
     .pipe(gulp.dest("temp/media/"));
 }
 function optimizeSvg(cb) {
@@ -14,6 +15,12 @@ function optimizeSvg(cb) {
     .pipe(svgo())
     .pipe(gulp.dest("temp/media/"));
 }
+function copy_image(cb) {
+  return gulp
+    .src("src/public/media/*.{png,jpeg,gif,apng}")
+    .pipe(gulp.dest("temp/media/"));
+}
 
 exports.convertImagesToWebP = convertImagesToWebP;
 exports.optimizeSvg = optimizeSvg;
+exports.copy_image = copy_image;

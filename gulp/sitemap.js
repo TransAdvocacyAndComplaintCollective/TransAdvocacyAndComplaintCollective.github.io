@@ -36,10 +36,8 @@ function sitemap(cb) {
   let arrayOfSitemapItems = [];
   const articleFilenames = fs.readdirSync("./src/articles");
   articleFilenames.forEach((filename) => {
-    console.log(filename);
     const fileContent = fs.readFileSync(`./src/articles/${filename}`, "utf-8");
     const { data, content } = matter(fileContent);
-    console.log(data);
     const articleSlug = filename.slice(0, filename.length - 3);
     arrayOfSitemapItems.push({
       url: `/articles/${articleSlug}.html`,
@@ -51,7 +49,7 @@ function sitemap(cb) {
         genres: "PressRelease, Blog",
         publication_date: data.publishData,
         title: data.title,
-        keywords: data.Keywords.join(","),
+        keywords: data.keywords,
       },
     });
   });

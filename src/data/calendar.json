@@ -1,0 +1,40 @@
+[
+    {
+        "title": "Agender Pride Day",
+        "date": {
+            "type": "week",
+            "month": "01",
+            "day": "10"
+        },
+        "type": ["type1", "type2"],
+        "hashtags": ["tag1", "tag2"],
+        "level": "protest-splash",
+        "country": "Global"
+    },
+    {
+        "title":"Non-Binary Awareness Week",
+        "date": {
+            "type": "week",
+            "month": "07",
+            "day": "14"
+        }
+    },
+    {
+        "title":"Pronouns Day",
+        "date":{ 
+            "type": "week",
+            "start_on_day":"wednesday",
+            "count": "3",
+            "month": "10"
+        }
+    },
+    {
+        "title":"Ace Week",
+        "date":{ 
+            "type": "week",
+            "start_on_day":"sunday",
+            "last_full_week": true,
+            "month": "10"
+        }
+    }
+]

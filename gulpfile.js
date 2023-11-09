@@ -8,7 +8,9 @@ const js = require("./gulp/js.js");
 const sitemap = require("./gulp/sitemap.js");
 const style = require("./gulp/style.js");
 const clean = require("./gulp/clean.js");
+const gemtext = require("./gulp/markdownToGemtext.js");
 const gulp = require("gulp");
+const git = require("gulp-git");
 
 const clean_ = gulp.parallel(
   clean.cleanTempDirectory,
@@ -20,18 +22,22 @@ const clean_ = gulp.parallel(
 const buildArticles = gulp.parallel(
   ejs_main.generateArticleHtmlList,
   ejs_main.generateArticleHtmlPages,
+  gemtext.generateArticleGemPages,
   feed.generate_rss_feed,
   feed.generate_rss_feeds
 );
 const buildPage = gulp.parallel(ejs_main.generatePaths_user);
 const buildImages = gulp.parallel(js.compile_react);
-const buildJs = gulp.parallel(images.convertImagesToWebP, images.optimizeSvg);
+const buildJs = gulp.parallel(images.optimizeSvg, images.convertImagesToWebP, images.copy_image);
 exports.build = gulp.series(
   clean_,
   //temp
   gulp.parallel(
+    style.compileSass,
     style.compileCss,
     sitemap.sitemap,
+    // ejs_main.generateConstitutionHtmlPages,
+    ejs_main.generatePolicyHtmlPages,
     buildArticles,
     buildPage,
     buildImages,
@@ -42,6 +48,7 @@ exports.build = gulp.series(
   //output
 
   gulp.parallel(
+    style.copyStyle,
     copy.copyMediaFiles,
     copy.copyCssFiles,
     copy.sitemap_copy,
@@ -59,4 +66,21 @@ exports.build = gulp.series(
     compresss.sitemap_gzip_copy
   )
 );
+
+exports.git_pull = gulp.series(function (done) {
+  const subdirs = ["src/policy/", "src/constitution/"]; // Array of subdirectories to perform git pull on
+
+  subdirs.forEach((subdir) => {
+    git.pull("origin", "master", { cwd: subdir }, (err) => {
+      if (err) {
+        console.error(`Error pulling ${subdir}:`, err);
+      } else {
+        console.log(`Pulled ${subdir} successfully.`);
+      }
+    });
+  });
+
+  done();
+});
+
 exports.clean = clean_;

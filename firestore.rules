@@ -1,0 +1,106 @@
+rules_version = '2';
+service cloud.firestore {
+     function isUidInUsersCollection(uid) {
+      return exists(/databases/$(database)/documents/users/$(uid));
+    }
+    
+    function isUidInDonationsCollection(uid) {
+      return exists(/databases/$(database)/documents/donations/$(uid));
+    }
+    // New function to check if user has the role "admin"
+  	function isUserAdmin() {
+    	return isSignedIn() && 'admin' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+  	}
+  match /databases/{database}/documents {
+    match /customers/{uid} {
+      allow read: if request.auth.uid == uid;
+
+      match /checkout_sessions/{id} {
+        allow read, write: if request.auth.uid == uid ;
+      }
+      match /subscriptions/{id} {
+        allow read: if request.auth.uid == uid;
+      }
+      match /payments/{id} {
+        allow read: if request.auth.uid == uid;
+      }
+    }
+
+    match /products/{id} {
+      allow read: if true;
+
+      match /prices/{id} {
+        allow read: if true;
+      }
+
+      match /tax_rates/{id} {
+        allow read: if true;
+      }
+    }
+    // Allow authenticated users to read and write their own data in the 'users' collection
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid && isValidData();
+    }
+    match /election/{electionId} {
+      allow read: if request.auth != null;
+      allow write: if isUserAdmin();
+    }
+
+    match /candidates/{uid} {
+      allow read: if request.auth != null;
+      allow write: if isUserAdmin();
+    }
+
+    match /donations/{uid} {
+      allow read, write: if request.auth.uid == uid && request.auth != null;
+    }
+
+    // Allow authenticated users to read and write votes linked to specific elections
+    match /votes/{electionId}/{uId} {
+      allow read: if request.auth != null;
+      allow create: if isValidVote(electionId) && isValidCandidateList() && request.auth.uid == uId;
+      allow update: if false; // Prevent updates for security reasons
+      allow delete: if false; // Prevent deletions for security reasons
+    }
+  }
+
+
+  // New function to check if the vote is valid for the given election
+  function isValidVote(electionId) {
+    // Check if the electionId exists and it is within the allowed time frame
+    return exists(/databases/$(database)/documents/election/$(electionId)) &&
+           get(/databases/$(database)/documents/election/$(electionId)).data.startTime <= request.time &&
+           get(/databases/$(database)/documents/election/$(electionId)).data.endTime >= request.time;
+  }
+
+  // New function to check if the candidate list is valid
+  function isValidCandidateList() {
+    return request.resource.data.candidates is list && request.resource.data.candidates.size() >= 1;
+  }
+      
+    function isSignedIn() {
+      return request.auth.uid != null;
+    }
+    
+      function isValidAddress(address) {
+      return address is map &&
+             address.keys().hasAll(['addressLines', 'locality', 'regionCode']) &&
+             address.addressLines is list &&
+             address.addressLines.size() >= 1 &&
+             address.addressLines.size() <= 5 &&
+             address.locality is string &&
+             address.regionCode is string;
+    }
+    
+    function isValidData() {
+      return request.resource.data.keys().hasAll(['firstName', 'lastName', 'dob', 'address', 'email', 'phone', 'uid', 'role']) &&
+             request.resource.data.firstName is string &&
+             request.resource.data.lastName is string &&
+             request.resource.data.dob is string &&
+             isValidAddress(request.resource.data.address) &&
+             request.resource.data.email is string &&
+             request.resource.data.phone is string &&
+             request.resource.data.uid is string &&
+             request.resource.data.role is list;
+    }
+}

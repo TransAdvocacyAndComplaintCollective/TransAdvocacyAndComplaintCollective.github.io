@@ -7,7 +7,7 @@ imageUrl: /media/PP.webp
 imageAlt: "Pirate Party Logo"
 title: "The Impact of Social Media on Mental Health: Understanding the Risks and Benefits"
 summary: This article explores the effects of social media on mental health, including both the potential risks and benefits. It discusses various studies and research on the topic, highlighting the ways that social media can both positively and negatively impact mental well-being. The article also offers tips and strategies for maintaining a healthy relationship with social media.
-Keywords: 
+keywords: 
     - social media
     - mental health
     - risks
@@ -18,7 +18,7 @@ Keywords:
     - strategies
     - healthy relationship
     - lgbt
-publishData: "2023/05/14"
+publishDate: "14 may 2023"
 ---
 The UK Pirate Party supports the rights of all individuals, regardless of their sexual orientation or gender identity. Recently, a UN independent expert on violence and discrimination based on sexual orientation and gender identity, Victor Madrigal-Borloz, expressed his concerns about the UK government's failure to ban conversion therapy, something the government had promised to do in 2018 under Theresa May.
 

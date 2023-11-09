@@ -8,7 +8,7 @@ imageUrl: /media/PP.webp
 imageAlt: "Pirate Party Logo"
 title: Pirate Party UK Returns to Fight for Digital Rights and Social Justice
 summary: After a brief hiatus, Pirate Party UK is back and stronger than ever. With a renewed commitment to digital freedom, government transparency, and social justice, we're ready to fight for a fairer, more transparent society. We support LGBTQIA+ rights, including trans rights, and believe in promoting civil liberties for all.
-Keywords: 
+keywords: 
     - Pirate Party UK
     - digital rights
     - government transparency
@@ -16,7 +16,7 @@ Keywords:
     - LGBTQIA+ rights
     - trans rights
     - civil liberties
-publishData: "2023/05/13"
+publishDate: "13 may 2023"
 ---
 Ahoy, me hearties!
 

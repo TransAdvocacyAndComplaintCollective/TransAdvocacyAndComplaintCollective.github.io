@@ -4,7 +4,7 @@ const gulp = require("gulp");
 
 function inline_code(cb) {
   return gulp
-    .src("temp/*.html")
+    .src("temp/**/*.html")
     .pipe(inline({ base: "temp/", disabledTypes: ["svg", "img", "js"] }))
     .pipe(htmlmin({ collapseWhitespace: true }))
     .pipe(gulp.dest("output/"));

@@ -5,10 +5,11 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  connectAuthEmulator
 } from "firebase/auth";
 import { createCheckoutSession } from "@stripe/firestore-stripe-payments";
 import { getStripePayments } from "@stripe/firestore-stripe-payments";
-import { doc, collection, getFirestore, setDoc } from "firebase/firestore";
+import { doc, collection, getFirestore,connectFirestoreEmulator, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDL2CHHhPUg9K6_tV_5Z2bUl4wWcB3-sic",
@@ -21,8 +22,19 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+  // app.useEmulator("127.0.0.1", 8081);
+}
 const auth = getAuth(app);
+if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+  // auth.useEmulator("http://localhost:9099")
+  connectAuthEmulator(auth, "http://127.0.0.1:9099")
+}
 const db = getFirestore(app);
+if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+  connectFirestoreEmulator(db, "127.0.0.1", 8081)
+  // db.useEmulator("localhost:8081")
+}
 const payments = getStripePayments(app, {
   productsCollection: "products",
   customersCollection: "customers",
@@ -33,9 +45,10 @@ const prices_mapping = {
   other_year: "price_1NJEZZI39QBFoSmHy6MlUOEk",
   reduced_month: "price_1NJEXDI39QBFoSmH9S9feiu3",
   reduced_year: "price_1NJEXDI39QBFoSmHv4mpM9vw",
-  standard_month: "price_1NJEcGI39QBFoSmHkEZxD7hQ",
+  standard_month: "price_1NJEcGI39QBFoSmHt8saPetA",
   standard_year: "price_1NJEcGI39QBFoSmHt8saPetA",
 };
+
 const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -267,6 +280,8 @@ const Register = () => {
     console.log(value);
     setMembershipRate(value);
   }
+  async function signOut() {
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validation_FirstName) {
@@ -357,22 +372,19 @@ const Register = () => {
       uid: userCredential.user.uid,
       role: [],
     };
-    console.log("createCheckoutSession ", prices_mapping[membershipRate]);
+    console.log("createCheckoutSession ", prices_mapping[membershipRate],membershipRate);
 
     const uid = userCredential.user.uid;
     console.log("users", data);
     const userCollectionRef = collection(db, "users"); // Updated collection reference
     await setDoc(doc(userCollectionRef, uid), data);
     console.log("users done");
-    if (membershipRate != "volunteer") {
+    console.log("createCheckoutSession price:",prices_mapping[membershipRate]);
       const session = await createCheckoutSession(payments, {
-        price: prices_mapping[membershipRate],
+        price: prices_mapping[membershipRate]
       });
       console.log("createCheckoutSession done");
       window.location.href = session.url;
-    } else {
-      window.location.href = "/";
-    }
   };
 
   return (
@@ -873,39 +885,7 @@ const Register = () => {
       </div>
       <div className="form-group border">
         <div className="row" data-toggle="buttons">
-          <div className="col-sm-3 mb-3 mb-sm-0">
-            <div className="card">
-              <div className="card-body">
-                <h5 className="card-title">
-                  Volunteer and Special Case Membership
-                </h5>
-                <p className="card-text">
-                  Pirate Party UK recognizes the importance of inclusivity and
-                  understands that individuals may have unique circumstances
-                  that require special consideration. With the Volunteer and
-                  Special Case Membership, we offer a membership option that
-                  embraces diversity and ensures active participation for all.
-                  This Membership will not be able to run in party elections or
-                  vote in party elections without being an approved special
-                  case.
-                </p>
-              </div>
-              <input
-                type="radio"
-                className="btn-check btn"
-                name="rate"
-                id="rate_volunteer"
-                value="volunteer"
-                onChange={(e) => set_MembershipRate(e.target.value)}
-              />
-              <label
-                className="btn btn-outline-primary"
-                htmlFor="rate_volunteer"
-              >
-                Free for volunteer
-              </label>
-            </div>
-          </div>
+
 
           <div className="col-sm-3 mb-3 mb-sm-0">
             <div className="card">
