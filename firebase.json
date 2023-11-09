@@ -1,0 +1,52 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8081
+    },
+    "eventarc": {
+      "port": 9299
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true,
+    "storage": {
+      "port": 9199
+    },
+    "hosting": {
+      "port": 5000
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    }
+  ],
+  "remoteconfig": {
+    "template": "remoteconfig.template.json"
+  },
+  "extensions": {
+    "firestore-stripe-payments": "stripe/firestore-stripe-payments@0.3.4",
+    "firestore-validate-address": "googlemapsplatform/firestore-validate-address@0.1.2"
+  }
+}

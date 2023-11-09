@@ -5,7 +5,7 @@ contributor:
 -    name: Lucy Maber
 imageUrl: /media/PP.webp
 imageAlt: "Pirate Party Logo"
-title: Pirate Party UK Condemns FIDE's Ban on Transgender Women in Chess
+title: UK Pirate Party Condemns FIDE's Decision to Ban Transgender Women from Female Chess Competitions
 summary: The UK Pirate Party strongly condemns the recent decision by FIDE to ban transgender women from participating in official female chess competitions. The party asserts that this decision goes against principles of inclusivity and fairness, and calls for a reconsideration of the policy.
 keywords: 
     - UK Pirate Party
@@ -18,10 +18,6 @@ keywords:
     - gender identity
 publishDate: "18 aug 2023"
 ---
-
-# UK Pirate Party Condemns FIDE's Decision to Ban Transgender Women from Female Chess Competitions
-
-**Date:** August 18, 2023
 
 The UK Pirate Party has issued a statement strongly criticizing the recent decision by the International Chess Federation (FIDE) to ban transgender women from participating in official female chess competitions. The Swiss-based federation announced this controversial policy change, which it claims will remain in place until further assessments of transition are made by its officials. The decision has sparked outrage within the chess community and drawn criticism from various advocacy groups, including transgender rights organizations.
 

@@ -1,5 +1,5 @@
 const gulp = require("gulp");
-const named = require("vinyl-named");
+// const named = require("vinyl-named");
 const webpackStream = require("webpack-stream");
 const webpack = require("webpack");
 const babelLoader = require("babel-loader");
@@ -10,7 +10,7 @@ function compile_react(cb) {
   return gulp
     .src(["src/js/*.js"]) // Replace 'src/index.js' with the entry point of your JavaScript files
 
-    .pipe(named())
+    // .pipe(named())
     .pipe(
       webpackStream({
         mode: "production", // Adjust the mode as needed

@@ -17,7 +17,7 @@ const each = require("gulp-each");
 const rename = require("gulp-rename");
 const fsPromises = fs.promises;
 
-const ARTICLES_PER_PAGE = 5;
+const ARTICLES_PER_PAGE = 10;
 
 // a fix that that will allow ejs to load files from the file system
 let myFileLoader = function (filePath) {
@@ -28,8 +28,8 @@ ejsCompiler.fileLoader = myFileLoader;
 
 // Generate a list of all articles and create an HTML page for each set of articles
 function generateArticleHtmlList(cb) {
-  fsPromises.mkdir("./temp/").catch(() => {});
-  fsPromises.mkdir("./temp/articles").catch(() => {});
+  fsPromises.mkdir("./temp/").catch(() => { });
+  fsPromises.mkdir("./temp/articles").catch(() => { });
   const md = new MarkdownIt();
   const articlesPath = path.join(__dirname, "../src/articles");
   const articleFilenames = fs.readdirSync(articlesPath);
@@ -47,7 +47,10 @@ function generateArticleHtmlList(cb) {
     const { data, content } = matter(fileContent);
     const htmlContent = md.render(content);
     const articleSlug = filename.slice(0, -3);
+    // change the file extension from png,jpeg,gif,apng to webp
+    let convertImagesToWebP_imageUrl = data.imageUrl.replace(/\.(png|jpeg|gif|apng)/, ".webp");
     const pageData = {
+      convertImagesToWebPImageUrl: data.convertImagesToWebPImageUrl,
       imageUrl: data.imageUrl,
       imageAlt: data.imageAlt,
       title: data.title,
@@ -56,15 +59,15 @@ function generateArticleHtmlList(cb) {
       summary: data.summary,
       tags: data.keywords,
       name: data.author[0].name,
-      datePublished: new Date(data.publishData),
+      datePublished: Date.parse(data.publishDate),
       htmlContent,
     };
     articleDataList.push(pageData);
   });
-
+  console.log(articleDataList);
   // Sort articles by datePublished in descending order
-  articleDataList.sort((a, b) => b.datePublished > a.datePublished);
-  articleDataList = articleDataList.reverse();
+  articleDataList.sort((a, b) => b.datePublished - a.datePublished);
+  // articleDataList = articleDataList.reverse();
   const totalPages = Math.ceil(articleDataList.length / ARTICLES_PER_PAGE);
   const htmlPagesPromises = [];
 
@@ -121,7 +124,12 @@ function generateArticleHtmlPages(cb) {
         const htmlContent = md.render(markdownContent);
         const fileHistory = file.history[0];
         const articleSlug = fileHistory.slice(0, -3);
-
+        const date = new Date(Date.parse(data.publishDate))
+        date.getDate
+        console.log(articleSlug);
+        console.log("data", data);
+        console.log("data", data.publishDate);
+        // console.log("data",Date.parse(data.publishData));
         // Render the EJS template with the article data
         const renderedPage = ejsCompiler.render(
           indexArticleTemplate,
@@ -135,7 +143,7 @@ function generateArticleHtmlPages(cb) {
               summary: data.summary,
               tags: data.keywords,
               name: data.author[0].name,
-              datePublished: new Date(data.publishData),
+              datePublished: new Date(Date.parse(data.publishDate)),
               htmlContent,
             },
           },
@@ -235,7 +243,7 @@ function generatePolicyHtmlPages(cb) {
   );
 
   return gulp
-    .src("./src/policy/**.md")
+    .src("./src/policy/**/*.md")
     .pipe(
       each(function (content, file, callback) {
         const { data, content: markdownContent } = matter(content);

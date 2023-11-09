@@ -8,6 +8,7 @@ const js = require("./gulp/js.js");
 const sitemap = require("./gulp/sitemap.js");
 const style = require("./gulp/style.js");
 const clean = require("./gulp/clean.js");
+const gemtext = require("./gulp/markdownToGemtext.js");
 const gulp = require("gulp");
 const git = require("gulp-git");
 
@@ -21,12 +22,13 @@ const clean_ = gulp.parallel(
 const buildArticles = gulp.parallel(
   ejs_main.generateArticleHtmlList,
   ejs_main.generateArticleHtmlPages,
+  gemtext.generateArticleGemPages,
   feed.generate_rss_feed,
   feed.generate_rss_feeds
 );
 const buildPage = gulp.parallel(ejs_main.generatePaths_user);
 const buildImages = gulp.parallel(js.compile_react);
-const buildJs = gulp.parallel(images.convertImagesToWebP, images.optimizeSvg);
+const buildJs = gulp.parallel(images.optimizeSvg, images.convertImagesToWebP, images.copy_image);
 exports.build = gulp.series(
   clean_,
   //temp

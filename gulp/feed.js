@@ -119,7 +119,6 @@ function generate_rss_feeds(cb) {
       }
     }
   });
-  console.log(keywords);
   keywords.forEach((keyword) => {
     // Read all Markdown files in the source directory for the keyword
 
@@ -145,18 +144,18 @@ function generate_rss_feeds(cb) {
         content: parsedContent.content,
         date: parsedContent.data.date,
         // image: parsedContent.data.imageUrl,
-        author: [
-          {
-            name: "John Doe",
-            email: "johndoe@example.com",
-            link: "https://ukpirate.party/johndoe",
-          },
-          {
-            name: "Jane Smith",
-            email: "janesmith@example.com",
-            link: "https://ukpirate.party/janesmith",
-          },
-        ],
+        // author: [
+        //   {
+        //     name: "John Doe",
+        //     email: "johndoe@example.com",
+        //     link: "https://ukpirate.party/johndoe",
+        //   },
+        //   {
+        //     name: "Jane Smith",
+        //     email: "janesmith@example.com",
+        //     link: "https://ukpirate.party/janesmith",
+        //   },
+        // ],
       };
 
       // Push the article to the allArticles array

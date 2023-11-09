@@ -28,11 +28,11 @@ if (window.location.hostname === "localhost" || window.location.hostname === "12
 const auth = getAuth(app);
 if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
   // auth.useEmulator("http://localhost:9099")
-  connectAuthEmulator(auth, "http://localhost:9099")
+  connectAuthEmulator(auth, "http://127.0.0.1:9099")
 }
 const db = getFirestore(app);
 if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-  connectFirestoreEmulator(db, "localhost", 8081)
+  connectFirestoreEmulator(db, "127.0.0.1", 8081)
   // db.useEmulator("localhost:8081")
 }
 const payments = getStripePayments(app, {

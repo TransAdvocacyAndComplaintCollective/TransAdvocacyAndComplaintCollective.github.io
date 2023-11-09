@@ -18,7 +18,7 @@ keywords:
     - strategies
     - healthy relationship
     - lgbt
-publishData: "2023/05/14"
+publishDate: "14 may 2023"
 ---
 The UK Pirate Party supports the rights of all individuals, regardless of their sexual orientation or gender identity. Recently, a UN independent expert on violence and discrimination based on sexual orientation and gender identity, Victor Madrigal-Borloz, expressed his concerns about the UK government's failure to ban conversion therapy, something the government had promised to do in 2018 under Theresa May.
 
