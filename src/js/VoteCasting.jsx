@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from "react-dom";
 import { Card, Button, Form } from 'react-bootstrap';
-import { firestore } from './firebase';
-
-
+// import { firestore } from './firebase';
 const VoteCasting = () => {
   const [candidates, setCandidates] = useState([]);
   const [candidateRankings, setCandidateRankings] = useState([]);
@@ -88,5 +87,11 @@ const VoteCasting = () => {
     </Card>
   );
 };
+
+// ReactDOM.render(
+//   React.createElement(VoteCasting),
+//   document.getElementById("RegisterContainer")
+// );
+
 
 export default VoteCasting;

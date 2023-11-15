@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from "react-dom";
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 
@@ -70,4 +71,8 @@ const ElectionForm = () => {
   );
 };
 
+ReactDOM.render(
+  React.createElement(ElectionForm),
+  document.getElementById("ElectionFormCreation")
+);
 export default ElectionForm;

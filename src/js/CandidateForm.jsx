@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import ReactDOM from "react-dom";
 import firebase from 'firebase/app';
-import 'firebase/firestore';
 
 const CandidateForm = ({ electionId }) => {
   const [candidateName, setCandidateName] = useState('');

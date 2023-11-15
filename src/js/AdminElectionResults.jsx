@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from "react-dom";
 import { Card, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
@@ -14,7 +15,6 @@ let firebaseConfig = {
   appId: "1:795297920122:web:9cfd9b972dc92213dd77c3",
   measurementId: "G-9MPXZR194T",
 };
-console.log(window.location.hostname);
 //  we should check if the doamin  localhost or 127.0.0.1 then we should use the local emulator
 if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
   // Auth emulator takes the port 9099
@@ -87,5 +87,9 @@ const AdminElectionResults = () => {
     </Card>
   );
 };
+ReactDOM.render(
+  React.createElement(AdminElectionResults),
+  document.getElementById("AdminElectionResultsCreation")
+);
 
 export default AdminElectionResults;

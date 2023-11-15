@@ -16,6 +16,7 @@ const gulp = require("gulp");
 const each = require("gulp-each");
 const rename = require("gulp-rename");
 const fsPromises = fs.promises;
+const livereload = require('gulp-livereload');
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -28,8 +29,8 @@ ejsCompiler.fileLoader = myFileLoader;
 
 // Generate a list of all articles and create an HTML page for each set of articles
 function generateArticleHtmlList(cb) {
-  fsPromises.mkdir("./temp/").catch(() => { });
-  fsPromises.mkdir("./temp/articles").catch(() => { });
+  fsPromises.mkdir("./output/").catch(() => { });
+  fsPromises.mkdir("./output/articles").catch(() => { });
   const md = new MarkdownIt();
   const articlesPath = path.join(__dirname, "../src/articles");
   const articleFilenames = fs.readdirSync(articlesPath);
@@ -64,7 +65,6 @@ function generateArticleHtmlList(cb) {
     };
     articleDataList.push(pageData);
   });
-  console.log(articleDataList);
   // Sort articles by datePublished in descending order
   articleDataList.sort((a, b) => b.datePublished - a.datePublished);
   // articleDataList = articleDataList.reverse();
@@ -95,7 +95,7 @@ function generateArticleHtmlList(cb) {
     // Write the rendered page to an HTML file
     const htmlFilePath = path.join(
       __dirname,
-      "../temp/articles",
+      "../output/articles",
       `${page}.html`
     );
     const writeHtmlPromise = fs.promises.writeFile(htmlFilePath, renderedPage);
@@ -125,10 +125,9 @@ function generateArticleHtmlPages(cb) {
         const fileHistory = file.history[0];
         const articleSlug = fileHistory.slice(0, -3);
         const date = new Date(Date.parse(data.publishDate))
-        date.getDate
-        console.log(articleSlug);
-        console.log("data", data);
-        console.log("data", data.publishDate);
+        // console.log(articleSlug);
+        // console.log("data", data);
+        // console.log("data", data.publishDate);
         // console.log("data",Date.parse(data.publishData));
         // Render the EJS template with the article data
         const renderedPage = ejsCompiler.render(
@@ -157,7 +156,7 @@ function generateArticleHtmlPages(cb) {
       })
     )
     .pipe(rename({ extname: ".html" }))
-    .pipe(gulp.dest("./temp/articles/"));
+    .pipe(gulp.dest("./output/articles/")).pipe(livereload());
 }
 
 // Generate HTML pages for user-specific paths
@@ -174,7 +173,7 @@ function generatePaths_user(cb) {
       )
     )
     .pipe(rename({ extname: ".html" }))
-    .pipe(gulp.dest("temp/user/"));
+    .pipe(gulp.dest("output/user/")).pipe(livereload());
 }
 
 // Generate HTML pages for non-user paths
@@ -191,7 +190,7 @@ function generatePaths_page(cb) {
       )
     )
     .pipe(rename({ extname: ".html" }))
-    .pipe(gulp.dest("temp/"));
+    .pipe(gulp.dest("output/")).pipe(livereload());
 }
 
 const replace = require("gulp-replace");
@@ -231,7 +230,7 @@ function generateConstitutionHtmlPages(cb) {
     )
     .pipe(replace(".md", ".html"))
     .pipe(rename({ extname: ".html" }))
-    .pipe(gulp.dest("./temp/constitution/"));
+    .pipe(gulp.dest("./output/constitution/")).pipe(livereload());
 }
 
 // Generate HTML pages for each document using Markdown content and an EJS template
@@ -271,8 +270,7 @@ function generatePolicyHtmlPages(cb) {
     )
     .pipe(replace(".md", ".html"))
     .pipe(rename({ extname: ".html" }))
-    .pipe(gulp.dest("./temp/policy/"));
-  cb();
+    .pipe(gulp.dest("./output/policy/")).pipe(livereload());
 }
 
 // Export the functions as Gulp tasks

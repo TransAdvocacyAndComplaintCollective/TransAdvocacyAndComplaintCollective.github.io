@@ -4,6 +4,7 @@ const matter = require("gray-matter");
 const Feed = require("feed");
 const path = require("path");
 const { dir } = require("console");
+const livereload = require('gulp-livereload');
 
 function createDirectoryIfNotExists(directory) {
   if (!fs.existsSync(directory)) {
@@ -195,6 +196,7 @@ function generate_rss_feeds(cb) {
         date: new Date(article.date),
         image: article.image,
         author: article.author,
+        contributor: article.contributor,
       });
     });
     createDirectoryIfNotExists(`${outputDir}/feed/${keyword}/`);

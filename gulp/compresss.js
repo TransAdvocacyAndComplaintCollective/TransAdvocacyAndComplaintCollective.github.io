@@ -1,6 +1,7 @@
 const gulp = require("gulp");
 const zlib = require("zlib");
 const gzip = require("gulp-gzip");
+const livereload = require('gulp-livereload');
 const gulpBrotli = require("gulp-brotli");
 
 function compressHtmlWithBrotli(cb) {

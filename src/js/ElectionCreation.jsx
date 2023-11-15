@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from "react-dom";
 import { Button, Card, Form } from 'react-bootstrap';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
@@ -136,5 +137,9 @@ const ElectionCreation = () => {
     </Card>
   );
 };
+ReactDOM.render(
+  React.createElement(ElectionCreation),
+  document.getElementById("ElectionCreation")
+);
 
-export default ElectionCreation;
+// export default ElectionCreation;

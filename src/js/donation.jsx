@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ReactDOM from "react-dom";
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { createCheckoutSession } from "@stripe/firestore-stripe-payments";
@@ -287,5 +288,10 @@ const DonationForm = () => {
     </form>
   );
 };
+
+ReactDOM.render(
+  React.createElement(DonationForm),
+  document.getElementById("donationCreation")
+);
 
 export default DonationForm;

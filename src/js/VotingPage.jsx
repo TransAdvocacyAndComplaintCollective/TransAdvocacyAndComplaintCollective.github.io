@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from "react-dom";
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 

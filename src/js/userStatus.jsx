@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { createRoot } from 'react-dom/client';
 const firebaseConfig = {
   apiKey: "AIzaSyDL2CHHhPUg9K6_tV_5Z2bUl4wWcB3-sic",
   authDomain: "ptate-df901.firebaseapp.com",
@@ -91,4 +92,7 @@ function UserStatus() {
   }
 }
 
+const domNode = document.getElementById("userStatusContainer")
+const root = createRoot(domNode);
+root.render(<UserStatus />);
 export default UserStatus;

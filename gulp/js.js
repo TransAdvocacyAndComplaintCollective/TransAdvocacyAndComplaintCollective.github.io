@@ -1,19 +1,31 @@
 const gulp = require("gulp");
-// const named = require("vinyl-named");
 const webpackStream = require("webpack-stream");
 const webpack = require("webpack");
-const babelLoader = require("babel-loader");
-const styleLoader = require("style-loader");
-const cssLoader = require("css-loader");
-function compile_react(cb) {
-  // webpack perdction
-  return gulp
-    .src(["src/js/*.js"]) // Replace 'src/index.js' with the entry point of your JavaScript files
+const fs = require('fs');
+const livereload = require('gulp-livereload');
 
-    // .pipe(named())
+// const fs = require('fs');
+
+function javascript(cb) {
+  // list all the JS files in the 'src/js' directory and its subdirectories
+  let files = fs.readdirSync('src/js/');
+  let entry = {};
+  files.forEach(file => {
+    let ext = file.split('.')[1];
+
+    if (ext !== 'jsx' & ext !== 'js') return;
+    let name = file.split('.')[0];
+    entry[name] = './src/js/' + file;
+  });
+  return gulp
+    .src(["src/**/*.js", "src/**/*.jsx"]) // Change the file pattern to match all JS files in the 'src/js' directory and its subdirectories
     .pipe(
       webpackStream({
-        mode: "production", // Adjust the mode as needed
+        mode: "development",
+        entry: entry,
+        output: {
+          filename: "[name].js",
+        },
         module: {
           rules: [
             {
@@ -23,29 +35,25 @@ function compile_react(cb) {
                 {
                   loader: "babel-loader",
                   options: {
-                    presets: ["@babel/preset-react"],
+                    presets: ["@babel/preset-env", "@babel/preset-react"],
                   },
                 },
-                "source-map-loader",
               ],
             },
-            {
-              test: /\.css$/,
-              use: ["style-loader", "css-loader"],
-            },
+
           ],
         },
         resolve: {
-          extensions: [".js", ".jsx"],
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
         },
         plugins: [
           new webpack.SourceMapDevToolPlugin({
             filename: "[file].map",
           }),
         ],
-      }),
-      webpack
+      })
     )
-    .pipe(gulp.dest("output/js")); // Replace 'dist' with your desired output directory // Output directory for compiled files
+    .pipe(gulp.dest("output/js/")).pipe(livereload());
 }
-exports.compile_react = compile_react;
+
+exports.javascript = javascript;

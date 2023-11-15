@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Button, Card, Form } from "react-bootstrap";
+import React, { useState, useCallback } from "react";
+import { createRoot } from 'react-dom';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { Button, Card, Form, Container, Row, Col } from "react-bootstrap";
 
 // Initialize Firebase app
 const firebaseConfig = {
@@ -11,133 +12,55 @@ const firebaseConfig = {
 
 initializeApp(firebaseConfig);
 
-const ElectionCreation = () => {
-  const [electionName, setElectionName] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [candidates, setCandidates] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false); // Add state for loggedIn
 
-  useEffect(() => {
-    // Fetch candidates from Firestore collection
-    const fetchCandidates = async () => {
-      const db = getFirestore();
-      const candidatesSnapshot = await getDocs(collection(db, "candidates"));
-      const candidatesData = candidatesSnapshot.docs.map((doc) => doc.data());
-      setCandidates(candidatesData);
-    };
-
-    fetchCandidates();
-  }, []);
-
-  const handleElectionNameChange = (event) => {
-    setElectionName(event.target.value);
-  };
-
-  const handleStartTimeChange = (event) => {
-    setStartTime(event.target.value);
-  };
-
-  const handleEndTimeChange = (event) => {
-    setEndTime(event.target.value);
-  };
-
-  const handleCandidateNameChange = (index, event) => {
-    const updatedCandidates = [...candidates];
-    updatedCandidates[index].name = event.target.value;
-    setCandidates(updatedCandidates);
-  };
-
-  const handleAddCandidate = () => {
-    const newCandidate = { name: "" };
-    setCandidates([...candidates, newCandidate]);
-  };
-
-  const handleSaveElection = async () => {
-    // Save election details to Firestore
-    const db = getFirestore();
-    await addDoc(collection(db, "elections"), {
-      name: electionName,
-      startTime,
-      endTime,
-    });
-
-    // Save candidates to Firestore
-    const batch = db.batch();
-    const candidatesRef = collection(db, "candidates");
-    candidates.forEach((candidate) => {
-      const newCandidateRef = doc(candidatesRef);
-      batch.set(newCandidateRef, candidate);
-    });
-    await batch.commit();
-
-    setElectionName("");
-    setStartTime("");
-    setEndTime("");
-    setCandidates([]);
+  const handleLogin = async () => { // Make handleLogin async
+    try {
+      const auth = getAuth(); // Get Auth instance
+      await signInWithEmailAndPassword(auth, email, password); // Await the sign-in
+      setLoggedIn(true); // Set loggedIn to true upon successful login
+    } catch (error) {
+      console.error("Login failed:", error);
+      // Handle login failure here
+    }
   };
 
   return (
-    <Card>
-      <Card.Body>
-        <Form>
-          <Form.Group controlId="electionName">
-            <Form.Label>Election Name</Form.Label>
-            <Form.Control
-              type="text"
-              value={electionName}
-              onChange={handleElectionNameChange}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="startTime">
-            <Form.Label>Start Time</Form.Label>
-            <Form.Control
-              type="datetime-local"
-              value={startTime}
-              onChange={handleStartTimeChange}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="endTime">
-            <Form.Label>End Time</Form.Label>
-            <Form.Control
-              type="datetime-local"
-              value={endTime}
-              onChange={handleEndTimeChange}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="candidates">
-            <Form.Label>Candidates</Form.Label>
-            {candidates.map((candidate, index) => (
-              <Form.Control
-                key={index}
-                type="text"
-                value={candidate.name}
-                onChange={(event) => handleCandidateNameChange(index, event)}
-              />
-            ))}
-          </Form.Group>
-
-          <Button variant="primary" onClick={handleAddCandidate}>
-            Add Candidate
-          </Button>
-          {isLoading ? (
-            <div className="text-center">
-              <div className="spinner-border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </div>
-          ) : (
-            <Button variant="success" onClick={handleSaveElection}>
-              Save Election
-            </Button>
-          )}
-        </Form>
-      </Card.Body>
-    </Card>
+    <Container>
+      <Row className="justify-content-md-center">
+        <Col md="6">
+          <Card>
+            <Card.Body>
+              {loggedIn ? (
+                <div>
+                  <Card.Title>Welcome, {email}!</Card.Title>
+                  <Button variant="primary" onClick={() => setLoggedIn(false)}>Log Out</Button>
+                </div>
+              ) : (
+                <div>
+                  <Card.Title>Login Page</Card.Title>
+                  <Form>
+                    <Form.Group controlId="formBasicEmail">
+                      <Form.Control type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    </Form.Group>
+                    <Form.Group controlId="formBasicPassword">
+                      <Form.Control type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    </Form.Group>
+                    <Button variant="primary" onClick={handleLogin}>Login</Button>
+                  </Form>
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
-};
+}
 
-export default ElectionCreation;
+const domNode = document.getElementById("loginContainer");
+const root = createRoot(domNode);
+root.render(<LoginPage />);

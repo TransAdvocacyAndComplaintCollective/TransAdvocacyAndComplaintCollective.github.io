@@ -2,6 +2,7 @@ const markdownIt = require('markdown-it')();
 const hljs = require('highlight.js');
 const gulp = require("gulp");
 const matter = require("gray-matter");
+const livereload = require('gulp-livereload');
 
 const each = require("gulp-each");
 const rename = require("gulp-rename");
@@ -138,7 +139,7 @@ function markdownToGemtextTokens(tokens) {
         } else if (token.type === 'fence') {
             const codeLanguage = token.info;
             // console.log(token);
-            console.log("codeLanguage", codeLanguage);
+            // console.log("codeLanguage", codeLanguage);
             let codeContent = token.content;
             const highlightedCode = hljs.highlight(codeContent, { language: codeLanguage, ignoreIllegals: true }).value;
             codeContent = htmlToAnsi(highlightedCode);
@@ -148,10 +149,10 @@ function markdownToGemtextTokens(tokens) {
             gemtext += `\x1b[7m${codeLanguage}\n${codeContent}\x1b[0m\n`;
         }
         else {
-            console.log(token);
+            // console.log(token);
         }
     }
-    console.log(gemtext);
+    // console.log(gemtext);
     return gemtext;
 }
 
@@ -175,7 +176,7 @@ function generateArticleGemPages(cb) {
             })
         )
         .pipe(rename({ extname: ".gemtext" }))
-        .pipe(gulp.dest("./output/articles/"));
+        .pipe(gulp.dest("./output/articles/")).pipe(livereload());
 }
 
 exports.generateArticleGemPages = generateArticleGemPages;

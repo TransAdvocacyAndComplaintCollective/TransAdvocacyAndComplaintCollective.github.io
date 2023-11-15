@@ -40,13 +40,23 @@
         "firebase-debug.log",
         "firebase-debug.*.log"
       ]
+    },
+    {
+      "source": "ppuk",
+      "codebase": "ppuk",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
     }
   ],
   "remoteconfig": {
     "template": "remoteconfig.template.json"
   },
-  "extensions": {
-    "firestore-stripe-payments": "stripe/firestore-stripe-payments@0.3.4",
-    "firestore-validate-address": "googlemapsplatform/firestore-validate-address@0.1.2"
-  }
+  "extensions": {}
 }
