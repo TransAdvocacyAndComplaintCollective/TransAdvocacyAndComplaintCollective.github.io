@@ -43,6 +43,7 @@ function generateArticleHtmlList(cb) {
 
   // Read each article file, extract metadata, and render Markdown to HTML
   articleFilenames.forEach((filename) => {
+    console.log(filename);
     const filePath = path.join(__dirname, `../src/articles/${filename}`);
     const fileContent = fs.readFileSync(filePath, "utf-8");
     const { data, content } = matter(fileContent);
@@ -230,7 +231,7 @@ function generateConstitutionHtmlPages(cb) {
     )
     .pipe(replace(".md", ".html"))
     .pipe(rename({ extname: ".html" }))
-    .pipe(gulp.dest("./output/constitution/")).pipe(livereload());
+    .pipe(gulp.dest("output/constitution/")).pipe(livereload());
 }
 
 // Generate HTML pages for each document using Markdown content and an EJS template
@@ -270,7 +271,7 @@ function generatePolicyHtmlPages(cb) {
     )
     .pipe(replace(".md", ".html"))
     .pipe(rename({ extname: ".html" }))
-    .pipe(gulp.dest("./output/policy/")).pipe(livereload());
+    .pipe(gulp.dest("output/policy/")).pipe(livereload());
 }
 
 // Export the functions as Gulp tasks

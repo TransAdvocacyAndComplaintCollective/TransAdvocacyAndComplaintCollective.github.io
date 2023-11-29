@@ -3,9 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { Alert } from "react-bootstrap";
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, connectAuthEmulator } from "firebase/auth";
-import { createCheckoutSession } from "@stripe/firestore-stripe-payments";
-import { getStripePayments } from "@stripe/firestore-stripe-payments";
-import { doc, collection, getFirestore, connectFirestoreEmulator, setDoc } from "firebase/firestore";
+import { createCheckoutSession,getStripePayments } from "@stripe/firestore-stripe-payments";
+import { getFirestore, collection, getDocs ,connectFirestoreEmulator,setDoc,doc} from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDL2CHHhPUg9K6_tV_5Z2bUl4wWcB3-sic",
@@ -16,14 +15,15 @@ const firebaseConfig = {
   appId: "1:795297920122:web:9cfd9b972dc92213dd77c3",
   measurementId: "G-9MPXZR194T"
 };
+// const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-  // connectFirestoreEmulator(db, "http://localhost", 8081);
-  connectAuthEmulator(auth, "http://localhost:9099");
-}
+// if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+//   connectFirestoreEmulator(db, "http://localhost",8081);
+//   connectAuthEmulator(auth, "http://localhost:9099");
+// }
 const payments = getStripePayments(app, {
   productsCollection: "products",
   customersCollection: "customers",
@@ -57,7 +57,7 @@ const Register = () => {
   const [city, setCity] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   let [validation_city, setValidation_city] = useState(false);
   let [validation_FirstName, setValidation_FirstName] = useState(false);
@@ -74,8 +74,6 @@ const Register = () => {
   let [validation_Password, setValidation_Password] = useState(false);
   let [validation_RepeatPassword, setValidation_RepeatPassword] =
     useState(false);
-  let [validation_MembershipRate, setValidation_MembershipRate] =
-    useState(false);
   let [can_other, set_can_not_other] = useState(true);
   let [can_reduced, set_can_not_reduced] = useState(true);
 
@@ -86,15 +84,6 @@ const Register = () => {
       setValidation_FirstName(true);
     } else {
       setValidation_FirstName(false);
-    }
-  }
-  function set_LastName(value) {
-    // console.log(value);
-    setLastName(value);
-    if (value.length > 1) {
-      setValidation_LastName(true);
-    } else {
-      setValidation_LastName(false);
     }
   }
   function set_LastName(value) {
@@ -273,53 +262,78 @@ const Register = () => {
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     if (!validation_FirstName) {
       console.log("error validation_FirstName");
+      setError("error validation_FirstName");
+      setIsLoading(false);
       return;
     }
     if (!validation_LastName) {
       console.log("error validation_LastName");
+      setError("error validation_LastName");
+      setIsLoading(false);
       return;
     }
     if (!validation_Dob) {
       console.log("error validation_Dob");
+      setError("error validation_Dob");
+      setIsLoading(false);
       return;
     }
     if (!validation_Address1) {
       console.log("error validation_Address1");
+      setError("error validation_Address1");
+      setIsLoading(false);
       return;
     }
     if (!validation_Address2) {
       console.log("error validation_Address2");
+      setError("error validation_Address2");
+      setIsLoading(false);
       return;
     }
     if (!validation_Address3) {
       console.log("error validation_Address3");
+      setError("error validation_Address3");
+      setIsLoading(false);
       return;
     }
     if (!validation_Postcode) {
       console.log("error validation_Postcode");
+      setError("error validation_Postcode");
+      setIsLoading(false);
       return;
     }
     if (!validation_Email) {
       console.log("error validation_Email");
+      setError("error validation_Email");
+      setIsLoading(false);
       return;
     }
  
     if (!validation_Phone) {
       console.log("error validation_Phone");
+      setError("error validation_Phone");
+      setIsLoading(false);
       return;
     }
     if (!validation_Password) {
       console.log("error validation_Password");
+      setError("error validation_Password");
+      setIsLoading(false);
       return;
     }
     if (!validation_city) {
       console.log("error validation_city");
+      setError("error validation_city");
+      setIsLoading(false);
       return;
     }
     if (!validation_RepeatPassword) {
       console.log("error validation_RepeatPassword");
+      setError("error validation_RepeatPassword");
+      setIsLoading(false);
       return;
     }
     const currentUser = auth.currentUser;
@@ -341,6 +355,7 @@ const Register = () => {
     } catch (error) {
       console.log(error.code);
       setError(error.message);
+      setIsLoading(false);
       return;
     }
     let data = {
@@ -349,7 +364,6 @@ const Register = () => {
       dob,
       address: {
         addressLines: [address1, address2, address3, address4, postcode],
-        // postalCode:postcode,
         locality: city,
         regionCode: country,
       },
@@ -358,19 +372,24 @@ const Register = () => {
       uid: userCredential.user.uid,
       role: [],
     };
-    console.log("createCheckoutSession ", prices_mapping[membershipRate],membershipRate);
-
     const uid = userCredential.user.uid;
-    console.log("users", data);
     const userCollectionRef = collection(db, "users"); // Updated collection reference
     await setDoc(doc(userCollectionRef, uid), data);
-    console.log("users done");
-    console.log("createCheckoutSession price:",prices_mapping[membershipRate]);
+    console.log("createCheckoutSession");
+    try{
       const session = await createCheckoutSession(payments, {
         price: prices_mapping[membershipRate]
       });
-      console.log("createCheckoutSession done");
       window.location.href = session.url;
+      console.log("createCheckoutSession done");
+      setIsLoading(false);
+    }
+    catch(error){
+      console.log(error);
+      setError(error.message);
+      setIsLoading(false);
+      return;
+    }
   };
 
   return (
@@ -479,7 +498,7 @@ const Register = () => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="address4">Address line 3:</label>
+        <label htmlFor="address4">Address line 4:</label>
         <input
           type="text"
           id="address4"
@@ -525,6 +544,22 @@ const Register = () => {
           onChange={(e) => set_Postcode(e.target.value)}
         />
       </div>
+
+      <div className="form-group">
+        <label htmlFor="country">country:</label>
+        <input
+          type="text"
+          id="country"
+          name="country"
+          className={
+            validation_Address3
+              ? "form-control is-valid"
+              : "form-control is-invalid is-valid"
+          }
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+        />
+      </div>
       <div className={validation_Email ? "form-group" : "form-group"}>
         <label htmlFor="email">Email:</label>
         <input
@@ -542,7 +577,7 @@ const Register = () => {
       </div>
       <div className={validation_Work_Email ? "form-group" : "form-group"}>
         <label htmlFor="work_email">
-          Optional NHS or Forces Email (with ac/nhs/):
+          Optional NHS or Forces Email or academic (with ac/nhs/):
         </label>
         <input
           type="text"
@@ -746,10 +781,6 @@ const Register = () => {
 const domNode = document.getElementById("RegisterContainer")
 const root = createRoot(domNode);
 root.render(<Register />);
-// ReactDOM.render(
-//   React.createElement(Register),
-//   document.getElementById("RegisterContainer")
-// );
 
 
 export default Register;

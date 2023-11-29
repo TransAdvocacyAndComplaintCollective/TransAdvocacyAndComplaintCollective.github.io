@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Specify the top_directory where your files are located
-top_directory="/home/william/Code/newPPUK/src"
+top_directory="./"
 
 # Rename files by replacing spaces with underscores in the specified directory and its subdirectories
 # Find all files in the directory and its subdirectories

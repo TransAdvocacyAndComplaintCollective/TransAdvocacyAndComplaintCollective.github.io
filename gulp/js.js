@@ -30,12 +30,16 @@ function javascript(cb) {
           rules: [
             {
               test: /\.(js|jsx)$/,
-              exclude: /node_modules/,
+              exclude: ["/node_modules/", "/app/", "/output/"],
               use: [
                 {
                   loader: "babel-loader",
                   options: {
-                    presets: ["@babel/preset-env", "@babel/preset-react"],
+                    presets: [
+                      // "@babel/env",
+                      // "@babel/preset-env",
+                      "@babel/preset-react"
+                    ],
                   },
                 },
               ],
@@ -45,10 +49,33 @@ function javascript(cb) {
         },
         resolve: {
           extensions: [".js", ".jsx", ".ts", ".tsx"],
+          // fallback: {
+          //   "path": require.resolve("path-browserify"),
+          //   "fs": require.resolve("browserify-fs"),
+          //   "zlib": require.resolve("browserify-zlib"),
+          //   "querystring": require.resolve("querystring-es3"),
+          //   "assert": require.resolve("assert"),
+          //   "stream": require.resolve("stream-browserify"),
+          //   "util": require.resolve("util"),
+          //   "url": require.resolve("url"),
+          //   "http": require.resolve("stream-http"),
+          //   "url": require.resolve("url"),
+          //   "crypto": require.resolve("crypto-browserify"),
+          //   "net": false,
+          //   "process": require.resolve("process/browser"),
+          //   "buffer": require.resolve("buffer")
+          // }
         },
         plugins: [
           new webpack.SourceMapDevToolPlugin({
             filename: "[file].map",
+          }),
+          new webpack.ProvidePlugin({
+            process: 'process/browser',
+          }),
+          new webpack.ProvidePlugin({
+            process: 'process/browser',
+            Buffer: ['buffer', 'Buffer']
           }),
         ],
       })

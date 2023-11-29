@@ -42,5 +42,7 @@ const CandidateForm = ({ electionId }) => {
     </div>
   );
 };
-
+const domNode = document.getElementById("CandidateForm")
+const root = createRoot(domNode);
+root.render(<CandidateForm />);
 export default CandidateForm;

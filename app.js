@@ -2,14 +2,14 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const mime = require("mime-types");
-const livereload = require('easy-livereload');
-const stripe_sub = require("./routes/stripe_sub.js");
+// const livereload = require('easy-livereload');
+// const stripe_sub = require("./routes/stripe_sub.js");
 const app = express();
 
 
 // app.use(require('easy-livereload')());
 
-app.use("/register", stripe_sub);
+// app.use("/register", stripe_sub);
 
 // app.use((req, res, next) => {
 //   let requestedPath = decodeURI(path.normalize(req.path));
@@ -95,17 +95,6 @@ app.use("/register", stripe_sub);
 
 app.use(express.static("output"));
 console.log("__dirname", __dirname);
-// app.use(livereload({
-//   watchDirs: [
-//     path.join(__dirname, 'output'),
-//   ],
-
-//   checkFunc: function (file) {
-//     console.log(file);
-//     return true;
-//   },
-//   port: process.env.LIVERELOAD_PORT || 35729
-// }));
 
 app.use((req, res, next) => {
   const options = {

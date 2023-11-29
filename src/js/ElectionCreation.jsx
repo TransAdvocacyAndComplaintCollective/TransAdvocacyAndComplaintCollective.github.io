@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from "react-dom";
-import { Button, Card, Form } from 'react-bootstrap';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
+import React, { useState } from "react";
+import { createRoot } from 'react-dom/client';
+import { initializeApp } from "firebase/app";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, connectAuthEmulator } from "firebase/auth";
+
 
 // Initialize Firebase app
 const firebaseConfig = {
@@ -137,9 +137,8 @@ const ElectionCreation = () => {
     </Card>
   );
 };
-ReactDOM.render(
-  React.createElement(ElectionCreation),
-  document.getElementById("ElectionCreation")
-);
 
+const domNode = document.getElementById("ElectionCreation")
+const root = createRoot(domNode);
+root.render(<ElectionCreation />);
 // export default ElectionCreation;

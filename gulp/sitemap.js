@@ -1,4 +1,4 @@
-const { SitemapAndIndexStream, SitemapStream } = require("sitemap");
+const { SitemapAndIndexStream, SitemapStream, simpleSitemapAndIndex } = require("sitemap");
 const path = require("path");
 const fs = require("fs");
 const livereload = require('gulp-livereload');
@@ -10,11 +10,12 @@ function createDirectoryIfNotExists(directory) {
   }
 }
 
+
 function GenSitemap(cb) {
   createDirectoryIfNotExists(path.join(__dirname, `../output/`));
+
   const sms = new SitemapAndIndexStream({
     limit: 50000,
-    lastmodDateOnly: false,
     getSitemapStream: (i) => {
       const sitemapStream = new SitemapStream({
         hostname: "http://ukpirate.party/",
@@ -27,9 +28,10 @@ function GenSitemap(cb) {
         },
       });
       const path_ = path.join(__dirname, `../output/sitemap-${i}.xml`);
-      const ws = sitemapStream.pipe(createWriteStream(path.resolve(path_)));
+      console.log(path_);
+      const ws = sitemapStream.pipe(createWriteStream(path_));
       return [
-        new URL(path_, "http://ukpirate.party/").toString(),
+        new URL(`http://ukpirate.party/sitemap-${i}.xml`).toString(),
         sitemapStream,
         ws,
       ];
@@ -45,13 +47,13 @@ function GenSitemap(cb) {
       url: `/articles/${articleSlug}.html`,
       news: {
         publication: {
-          name: "uk pirate party",
+          name: "Pirate Party UK",
           language: "en",
         },
         genres: "PressRelease, Blog",
-        publication_date: data.publishData,
+        publication_date: new Date(data.publishDate),
         title: data.title,
-        keywords: data.keywords,
+        keywords: data.keywords.join(', '),
       },
     });
   });

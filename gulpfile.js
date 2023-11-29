@@ -12,12 +12,12 @@ const gemtext = require("./gulp/markdownToGemtext.js");
 const feed = require("./gulp/feed.js");
 const compresss = require("./gulp/compresss.js");
 const livereload = require('gulp-livereload');
-// const clean_ = gulp.parallel(
-//   clean.cleanTempDirectory,
-//   clean.cleanOutputDirectory,
-//   clean.cleanPublicBrDirectory,
-//   clean.cleanPublicGzipDirectory
-// );
+const clean_ = gulp.parallel(
+  clean.cleanTempDirectory,
+  clean.cleanOutputDirectory,
+  clean.cleanPublicBrDirectory,
+  clean.cleanPublicGzipDirectory
+);
 
 
 const ArticleGen = gulp.parallel(
@@ -50,6 +50,7 @@ const buildViews = gulp.parallel(
 );
 
 exports.build = gulp.series(
+  clean_,
   gulp.parallel(
     PolicyGen,
     ArticleGen,
@@ -58,7 +59,10 @@ exports.build = gulp.series(
     js.javascript,
     buildImage,
     ejs_main.generatePaths_user,
-    ejs_main.generatePaths_page
+    ejs_main.generatePaths_page,
+    images.optimizeSvg,
+    images.convertImagesToWebP,
+    images.copy_image
   ),
   gulp.parallel(
     style.compileSass,
@@ -68,9 +72,9 @@ exports.build = gulp.series(
     copy.text_copy,
     copy.robots_copy,
     copy.style_copy,
-    html.inline_code,
-    html.inline_code_articles,
-    html.inline_code_user
+    // html.inline_code,
+    // html.inline_code_articles,
+    // html.inline_code_user
   )
 );
 
