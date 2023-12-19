@@ -1,51 +1,49 @@
 const gulp = require("gulp");
-// const named = require("vinyl-named");
-const webpackStream = require("webpack-stream");
-const webpack = require("webpack");
-const babelLoader = require("babel-loader");
-const styleLoader = require("style-loader");
-const cssLoader = require("css-loader");
-function compile_react(cb) {
-  // webpack perdction
-  return gulp
-    .src(["src/js/*.js"]) // Replace 'src/index.js' with the entry point of your JavaScript files
+const tap = require('gulp-tap');
+const browserify = require('browserify');
+const buffer = require('vinyl-buffer');
+const sourcemaps = require('gulp-sourcemaps');
+const babelify = require('babelify');
+const esm = require('esm')(module);
+const babel = require('gulp-babel');
+// function compileReact() {
+//   return gulp.src('src/**/*.jsx', { read: false })
+//     .pipe(tap(function (file) {
+//       // Load esm if necessary (you might not need this depending on your setup)
 
-    // .pipe(named())
-    .pipe(
-      webpackStream({
-        mode: "production", // Adjust the mode as needed
-        module: {
-          rules: [
-            {
-              test: /\.(js|jsx)$/,
-              exclude: /node_modules/,
-              use: [
-                {
-                  loader: "babel-loader",
-                  options: {
-                    presets: ["@babel/preset-react"],
-                  },
-                },
-                "source-map-loader",
-              ],
-            },
-            {
-              test: /\.css$/,
-              use: ["style-loader", "css-loader"],
-            },
-          ],
-        },
-        resolve: {
-          extensions: [".js", ".jsx"],
-        },
-        plugins: [
-          new webpack.SourceMapDevToolPlugin({
-            filename: "[file].map",
-          }),
-        ],
-      }),
-      webpack
-    )
-    .pipe(gulp.dest("output/js")); // Replace 'dist' with your desired output directory // Output directory for compiled files
+//       const b = browserify({
+//         entries: file.path,
+//         debug: true,
+//         paths: ['/home/lucy/Code/website/src/js', './src/js/components', './src/js/', "./node_modules"]
+//       })
+//         .transform(babelify.configure({
+//           only: ['src/js/components', 'src/js'],
+//           targets: {
+//             "esmodules": true
+//           },
+//           sourceType: 'module',
+//           presets: ["@babel/preset-env", "@babel/preset-react"],
+//           plugins: ["@babel/plugin-transform-react-display-name", "@babel/plugin-syntax-jsx"],
+//         }));
+
+//       // Bundle after applying the transform
+//       file.contents = b.bundle();
+//     }))
+//     .pipe(buffer())
+//     .pipe(sourcemaps.init({ loadMaps: true }))
+//     .pipe(sourcemaps.write('.'))
+//     .pipe(gulp.dest('output/js'));
+// }
+function compileReact() {
+  return gulp.src('src/**/*.jsx')
+  .pipe(babel({
+
+    "presets": ["@babel/preset-env", "@babel/preset-react"],
+    "plugins": ["@babel/plugin-transform-react-display-name", "@babel/plugin-syntax-jsx","babel-plugin-react-css-modules"],
+  }
+  ))
+  .pipe(gulp.dest('outpuit'));
 }
-exports.compile_react = compile_react;
+
+
+exports.compile_react = compileReact;
