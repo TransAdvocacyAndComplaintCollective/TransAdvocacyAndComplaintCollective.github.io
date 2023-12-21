@@ -3,7 +3,7 @@ author:
 -    name: Lucy Maber
 contributor:
 -    name: Lucy Maber
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: "Pirate Party UK Stands in Solidarity with Trans Activists Against Discrimination"
 summary: In recent news, a group of passionate transgender activists in London took to the streets to make a powerful stand against the Tory government's continued attacks on trans people. The protest, which occurred on October 10th, saw protesters waving flares in the vibrant colors of the transgender flag and unfurling a banner over the iconic River Thames while marching over Vauxhall Bridge in central London.

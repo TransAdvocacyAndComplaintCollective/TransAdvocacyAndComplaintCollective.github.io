@@ -4,7 +4,7 @@ author:
 contributor:
   - name: Lucy Maber
 slug: pirate-party-uk-stands-with-palestine
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: Pirate Party UK Stands with Palestine
 keywords:

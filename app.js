@@ -100,7 +100,7 @@ app.use((req, res, next) => {
     }
   });
 });
-// app.use(express.static("output"));
+app.use(express.static("output"));
 
 const PORT = process.env.PORT || 8080;
 

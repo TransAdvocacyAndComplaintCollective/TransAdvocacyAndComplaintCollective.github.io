@@ -3,7 +3,7 @@ author:
   - name: Lucy Maber
 contributor:
   - name: Lucy Maber
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: The UK Pirate Party's Vision for a Fairer Future
 summary: Explore the UK Pirate Party's innovative approach to addressing social mobility challenges, regional disparities, and the complex welfare system in the United Kingdom. Learn about their proposals, including Universal Basic Income and housing reform, aimed at creating a more equitable society.

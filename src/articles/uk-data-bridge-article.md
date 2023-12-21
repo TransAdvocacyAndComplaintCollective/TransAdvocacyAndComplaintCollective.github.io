@@ -3,7 +3,7 @@ author:
 -    name: Lucy Maber
 contributor:
 -    name: Lucy Maber
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: "The UK Data Bridge: Navigating the Murky Waters of Data Privacy"
 summary: In the ever-expanding digital realm, data protection has emerged as a global concern, and the Pirate Party UK (PPUK) is at the forefront of the battle to preserve online privacy. This article discusses the UK Data Bridge, its implications on international data transfers, and the Pirate Party's commitment to safeguarding digital rights.

@@ -3,7 +3,7 @@ author:
 -    name: Lucy Maber
 contributor:
 -    name: Lucy Maber
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: UK's Anti-Democratic Legislation Undermines Right to Protest and Free Speech
 summary: The UK government's new anti-democratic legislation, including the Public Order Act 2023 and the Online Safety Bill, are being criticized for their broad and ill-defined powers that could suppress protests and restrict free speech online. The Public Order Act has already been used to arrest protesters and confiscate innocent items, while the Online Safety Bill's provisions could lead to censorship of legal content and surveillance of private messages. Critics are calling on parliamentarians to act to protect citizens' rights.

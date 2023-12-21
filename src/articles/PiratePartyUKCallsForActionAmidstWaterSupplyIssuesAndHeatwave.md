@@ -3,7 +3,7 @@ author:
   - name: Lucy Maber
 contributor:
   - name: Lucy Maber
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: Pirate Party UK Calls for Action Amidst Water Supply Issues and Heatwave
 summary: The Pirate Party UK highlights the need for urgent action amidst the UK's water supply issues and heatwave, emphasizing the importance of sustainable water management and distribution.

@@ -3,7 +3,7 @@ author:
 -    name: Lucy Maber
 contributor:
 -    name: Lucy Maber
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: "Championing Transgender Rights and Autonomy: The UK Pirate Party's Educational Stance"
 summary: The UK Pirate Party advocates for transgender rights and autonomy, especially within the educational system. This article discusses the party's stance on parental consent regarding gender identity, emphasizing the importance of individual autonomy and inclusivity in schools. It highlights the need for an environment where transgender and gender-diverse children can freely express their identities and choices without fear of discrimination.

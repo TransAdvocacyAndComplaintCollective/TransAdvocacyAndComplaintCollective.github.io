@@ -4,7 +4,7 @@ author:
 contributor:
   - name: Lucy Maber
 slug: uk-pirate-party-drug-decriminalization
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: "UK Pirate Party Calls for Drug Decriminalization: A Fresh Approach to Drug Policy"
 keywords:
