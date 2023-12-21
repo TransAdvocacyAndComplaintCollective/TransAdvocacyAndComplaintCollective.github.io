@@ -1,28 +1,11 @@
 const gulp = require("gulp");
 const fs = require("fs");
 
-function cleanTempDirectory(cb) {
-  try {
-    fs.rmSync("./temp", { recursive: true, force: true });
-    console.log("Temporary directory cleaned successfully.");
-    cb(null);
-  } catch (error) {
-    console.error("Error cleaning temporary directory:", error);
-    cb(error);
-  }
-}
+
+
 
 function cleanOutputDirectory(cb) {
-  try {
-    fs.rmSync("./output", { recursive: true, force: true });
-    cb(null);
-  } catch (error) {
-    console.error("Error cleaning temporary directory:", error);
-    cb(error);
-  }
-}
-
-function cleanOutputDirectory(cb) {
+  console.log("cleanOutputDirectory");
   try {
     fs.rmSync("./output", { recursive: true, force: true });
     cb(null);
@@ -31,6 +14,7 @@ function cleanOutputDirectory(cb) {
   }
 }
 function cleanPublicBrDirectory(cb) {
+  console.log("cleanPublicBrDirectory");
   try {
     fs.rmSync("public_br", { recursive: true, force: true });
     cb(null);
@@ -39,6 +23,7 @@ function cleanPublicBrDirectory(cb) {
   }
 }
 function cleanPublicGzipDirectory(cb) {
+  console.log("cleanPublicGzipDirectory");
   try {
     fs.rmSync("./public_gzip", { recursive: true, force: true });
     cb(null);
@@ -47,7 +32,7 @@ function cleanPublicGzipDirectory(cb) {
   }
 }
 
-exports.cleanTempDirectory = cleanTempDirectory;
+// exports.cleanTempDirectory = cleanTempDirectory;
 exports.cleanOutputDirectory = cleanOutputDirectory;
 exports.cleanOutputDirectory = cleanOutputDirectory;
 exports.cleanPublicBrDirectory = cleanPublicBrDirectory;

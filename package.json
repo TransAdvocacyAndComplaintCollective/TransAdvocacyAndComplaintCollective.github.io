@@ -85,6 +85,7 @@
     "react-bootstrap": "^2.9.0",
     "react-dom": "^18.2.0",
     "stripe": "^12.7.0",
+    "through2": "^4.0.2",
     "vinyl-buffer": "^1.0.1"
   }
 }

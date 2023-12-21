@@ -4,6 +4,7 @@ const gzip = require("gulp-gzip");
 const gulpBrotli = require("gulp-brotli");
 
 function compressHtmlWithBrotli(cb) {
+  console.log("compressHtmlWithBrotli")
   return gulp
     .src("output/**")
     .pipe(
@@ -17,6 +18,7 @@ function compressHtmlWithBrotli(cb) {
     .pipe(gulp.dest(`public_br/`));
 }
 function compressHtmlWithGzip(cb) {
+  console.log("compressHtmlWithGzip")
   return gulp
     .src("output/**")
     .pipe(gzip({ postExtension: "gz", gzipOptions: { level: 9 } }))
@@ -24,6 +26,7 @@ function compressHtmlWithGzip(cb) {
 }
 
 function sitemap_gzip_copy(cb) {
+  console.log("sitemap_gzip_copy")
   return gulp
     .src("output/*.xml")
     .pipe(gzip({ postExtension: "gz", gzipOptions: { level: 9 } }))
