@@ -1,61 +1,169 @@
-// import React, { useState } from "react";
-// // import { createRoot } from 'react-dom/client';
-// // import { Alert } from "react-bootstrap";
-// // import { initializeApp } from "firebase/app";
-// import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, connectAuthEmulator } from "firebase/auth";
-// import { createCheckoutSession,getStripePayments } from "@stripe/firestore-stripe-payments";
-// import { getFirestore, collection, getDocs ,connectFirestoreEmulator,setDoc,doc} from 'firebase/firestore';
-
-
-// const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-// const app = initializeApp(firebaseConfig);
-// const auth = getAuth(app);
-// const db = getFirestore(app);
-
-// if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-//   connectFirestoreEmulator(db, "http://localhost",8081);
-//   connectAuthEmulator(auth, "http://localhost:9099");
-// }
-// const payments = getStripePayments(app, {
-//   productsCollection: "products",
-//   customersCollection: "customers",
-// });
-// const prices_mapping = {
-//   volunteer: "price_1NDws6I39QBFoSmHiXtlmiV2",
-//   other_month: "price_1NJEZZI39QBFoSmHShwOQASS",
-//   other_year: "price_1NJEZZI39QBFoSmHy6MlUOEk",
-//   reduced_month: "price_1NJEXDI39QBFoSmH9S9feiu3",
-//   reduced_year: "price_1NJEXDI39QBFoSmHv4mpM9vw",
-//   standard_month: "price_1NJEcGI39QBFoSmHt8saPetA",
-//   standard_year: "price_1NJEcGI39QBFoSmHt8saPetA",
-// };
-
+import React, { useState } from 'react';
+import { createRoot } from "react-dom/client";
+import Input from "./component/Input.jsx";
+import CountriesInput from "./component/CountriesInput.jsx";
+import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
+import { Container, Form, Button, Row, Col } from "react-bootstrap"; // Import Bootstrap components
+import { validateAddress1, validateAddress2, validatePostcode, validateCity, validatePhone } from "./libs/validate.js";
 const Register = () => {
-  function handleSubmit(e){
+  const [billingFrequency, setBillingFrequency] = useState('yearly');
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
+  function handleSubmit(e) {
+    // Handle form submission logic here
   }
+
+  function validation(e) {
+    return { isValid: true, messages: "" };
+  }
+  const monthlyCost = '$5 per month'; // Replace with your actual monthly cost
+  const yearlyCost = '$50 per year'; // Replace with your actual yearly cost
   return (
-    <form onSubmit={handleSubmit}>
-      {error && <Alert variant="danger">{error}</Alert>}
-      <Input validation={validation_FirstName} name="firstName" title="First Name:" type="text" />
-      <Input validation={validation_LastName} name="lastName" title="Last Name:" type="text" />
-      <Input validation={validation_Dob} name="dob" title="Date of Birth:" type="date" />
-      <Input validation={validation_Address1} name="address1" title="Address line 1:" type="text" />
-      <Input validation={validation_Address2} name="address2" title="Address line 2:" type="text" />
-      <Input validation={validation_Postcode} name="postcode" title="Postcode:" type="text" />
-      <Input validation={validation_city} name="city" title="city:" type="text" />
-      <CountriesInput></CountriesInput>
-      <Input validation={validation_Email} name="email" title="Email:" type="email" />
-      <Input validation={validation_Email} name="email" title="Email:" type="email" />
-      <Input validation={validation_Phone} name="phone" title="Phone:" type="text" />
-      <Input validation={validation_Password} name="password" title="Password:" type="password" />
-      <Input validation={validation_RepeatPassword} name="repeatPassword" title="Repeat Password:" type="password" />
-    </form>
+    <Container className="py-5">
+      <h1>Register</h1>
+      <Form onSubmit={handleSubmit}>
+        <Row>
+          <Col md={6}>
+            <Input
+              validation={validation}
+              name="firstName"
+              title="First Name:"
+              type="text"
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              validation={validation}
+              name="lastName"
+              title="Last Name:"
+              type="text"
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <Input
+              validation={validation}
+              name="dob"
+              title="Date of Birth:"
+              type="date"
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              validation={validation}
+              name="email"
+              title="Email:"
+              type="email"
+              onValidate={(text) => (validateEmail(text,undefined))}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <Input
+              validation={validation}
+              name="address1"
+              title="Address line 1:"
+              type="text"
+              onValidate={(text) => (validateAddress1(text,undefined))}
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              validation={validation}
+              name="address2"
+              title="Address line 2:"
+              type="text"
+              onValidate={(text) => (validateAddress2(text,undefined))}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <Input
+              validation={validation}
+              name="postcode"
+              title="Postcode:"
+              type="text"
+              onValidate={(text) => (validatePostcode(text,undefined))}
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              validation={validation}
+              name="city"
+              title="City:"
+              type="text"
+              onValidate={(text) => (validateCity(text,undefined))}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <CountriesInput />
+          </Col>
+          <Col md={6}>
+            <Input
+              validation={validation}
+              name="phone"
+              title="Phone:"
+              type="text"
+              onValidate={(text) => (validatePhone(text,undefined))}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <Input
+              validation={validation}
+              name="password"
+              title="Password:"
+              type="password"
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              validation={validation}
+              name="repeatPassword"
+              title="Repeat Password:"
+              type="password"
+            />
+          </Col>
+        </Row>
+
+        <Row>
+          <Col md={12}>
+            <h2>Membership Cost</h2>
+            <Form.Check
+              type="radio"
+              label={`Monthly Cost: ${monthlyCost}`}
+              name="billingFrequency"
+              id="monthly"
+              checked={billingFrequency === "monthly"}
+              onChange={() => setBillingFrequency("monthly")}
+            />
+            <Form.Check
+              type="radio"
+              label={`Yearly Cost: ${yearlyCost}`}
+              name="billingFrequency"
+              id="yearly"
+              checked={billingFrequency === "yearly"}
+              onChange={() => setBillingFrequency("yearly")}
+            />
+          </Col>
+        </Row>
+        <Button type="submit" variant="primary" className="mt-3">
+          Register and Pay
+        </Button>
+      </Form>
+    </Container>
   );
 };
-const domNode = document.getElementById("RegisterContainer")
+
+const domNode = document.getElementById("RegisterContainer");
 const root = createRoot(domNode);
 root.render(<Register />);
-
-
-// export default Register;

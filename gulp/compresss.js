@@ -6,9 +6,9 @@ const gulpBrotli = require("gulp-brotli");
 function compressHtmlWithBrotli(cb) {
   console.log("compressHtmlWithBrotli")
   return gulp
-    .src("output/**")
+    .src("output/**", {buffer: false})
     .pipe(
-      gulpBrotli({
+      gulpBrotli.compress({
         params: {
           [zlib.constants.BROTLI_PARAM_QUALITY]:
             zlib.constants.BROTLI_MAX_QUALITY,
