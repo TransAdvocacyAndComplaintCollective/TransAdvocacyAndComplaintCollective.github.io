@@ -8,7 +8,7 @@ function compileCss(cb) {
   return gulp
     .src("src/styles/*.css")
     .pipe(postcss(plugins))
-    .pipe(gulp.dest("output/styles/")).pipe(livereload());;
+    .pipe(gulp.dest("output/styles/"));
 }
 function compileSass(cb) {
   var plugins = [autoprefixer()];
@@ -16,7 +16,7 @@ function compileSass(cb) {
     .src("src/styles/*.scss")
     .pipe(sass())
     .pipe(postcss(plugins))
-    .pipe(gulp.dest("output/styles/")).pipe(livereload());;
+    .pipe(gulp.dest("output/styles/"));
 }
 
 exports.compileCss = compileCss;

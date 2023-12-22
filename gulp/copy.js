@@ -1,5 +1,4 @@
 const gulp = require("gulp");
-const livereload = require('gulp-livereload');
 function copyMediaFiles(cb) {
   return gulp
     .src("src/media/*.{png,jpeg,gif,webp,apng,svg}")

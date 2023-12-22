@@ -3,7 +3,7 @@ author:
   - name: Lucy Maber
 contributor:
   - name: Lucy Maber
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: "Pirate Party UK's Stance on the Online Safety Bill and the Legacy of the Clipper Chip: Safeguarding Digital Freedoms"
 keywords: 

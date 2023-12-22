@@ -4,7 +4,7 @@ author:
 contributor:
   - name: Lucy Maber
 slug: "police-body-worn-cameras-accountability"
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: "Ensuring Accountability and Transparency: The Pirate Party UK's Approach to Police Officers and Body-Worn Cameras"
 keywords:

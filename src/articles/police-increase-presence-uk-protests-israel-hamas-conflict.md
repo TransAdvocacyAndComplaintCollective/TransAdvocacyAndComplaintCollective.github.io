@@ -4,7 +4,7 @@ author:
 contributor:
   - name: Lucy Maber
 slug: police-increase-presence-uk-protests-israel-hamas-conflict
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: "Police Increase Presence at UK Protests Amid Israel-Hamas Conflict: A Closer Look at Pirate Party UK's Stance"
 keywords:

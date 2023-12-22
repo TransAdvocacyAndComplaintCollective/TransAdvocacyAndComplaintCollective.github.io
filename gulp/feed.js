@@ -4,7 +4,6 @@ const matter = require("gray-matter");
 const Feed = require("feed");
 const path = require("path");
 const { dir } = require("console");
-const livereload = require('gulp-livereload');
 
 function createDirectoryIfNotExists(directory) {
   if (!fs.existsSync(directory)) {

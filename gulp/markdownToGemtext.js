@@ -176,7 +176,7 @@ function generateArticleGemPages(cb) {
             })
         )
         .pipe(rename({ extname: ".gemtext" }))
-        .pipe(gulp.dest("./output/articles/")).pipe(livereload());
+        .pipe(gulp.dest("./output/articles/"));
 }
 
 exports.generateArticleGemPages = generateArticleGemPages;

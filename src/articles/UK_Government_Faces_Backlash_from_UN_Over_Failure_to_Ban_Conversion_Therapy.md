@@ -3,7 +3,7 @@ author:
 -    name: Lucy Maber
 contributor:
 -    name: Lucy Maber
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: "The Impact of Social Media on Mental Health: Understanding the Risks and Benefits"
 summary: This article explores the effects of social media on mental health, including both the potential risks and benefits. It discusses various studies and research on the topic, highlighting the ways that social media can both positively and negatively impact mental well-being. The article also offers tips and strategies for maintaining a healthy relationship with social media.
