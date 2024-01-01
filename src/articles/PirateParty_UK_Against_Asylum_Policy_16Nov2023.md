@@ -3,7 +3,7 @@ author:
 -    name: Lucy Maber
 contributor:
 -    name: Lucy Maber
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: "Pirate Party UK Stands Against Government's Controversial Asylum Policy"
 summary: "The Pirate Party UK opposes the UK government's plan to deport asylum seekers to Rwanda and calls for accountability in the wake of the Supreme Court's rejection of the policy."

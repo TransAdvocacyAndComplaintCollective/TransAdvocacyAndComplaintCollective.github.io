@@ -228,7 +228,7 @@ export default function CountriesInput({  }) {
         <select
           name="country"
           id="country"
-          defaultValue={"UK"}
+          defaultValue={"GB"}
           className="form-select"
         >
           {countries.map((country) => (

@@ -1,31 +1,82 @@
 rules_version = '2';
+
 service cloud.firestore {
-     function isUidInUsersCollection(uid) {
-      return exists(/databases/$(database)/documents/users/$(uid));
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return get(/databases/$(database)/documents/user/$(request.auth.uid)).data.role == 'admin';
+    }
+    function isUserSubscribed() {
+      return exists(
+        /databases/$(database)/documents/customers/$(request.auth.uid)/subscriptions/$(document)
+        ) && (
+          get(/databases/$(database)/documents/customers/$(request.auth.uid)/subscriptions/$(document)).data.status == 'trialing'
+          ||
+          get(/databases/$(database)/documents/customers/$(request.auth.uid)/subscriptions/$(document)).data.status == 'active'
+        );
+    }
+
+    function isValidUserData(data, requireAdmin) {
+      return data.keys().hasAll(['email', 'firstName', 'lastName', 'dob', 'address', 'phone',"role"]) &&
+             data.email is string && data.email.size() > 0 && data.email.size() < 100 && data.email.matches('^[^@]+@[^@]+$') &&
+             data.firstName is string && data.firstName.size() > 0 && data.firstName.size() < 100 &&
+             data.lastName is string && data.lastName.size() > 0 && data.lastName.size() < 100 &&
+             data.address is map && isValidAddress(data.address) &&
+             data.phone is string && data.phone.size() > 0 && data.phone.size() < 100 &&
+             (!requireAdmin || (data.role is list && data.role.size() == 0 && isAdmin()));
     }
     
-    function isUidInDonationsCollection(uid) {
-      return exists(/databases/$(database)/documents/donations/$(uid));
+    function isValidAddress(address) {
+      return typeof address == 'object' &&
+        // 'addressLines' in address &&
+        address.addressLines is array && address.addressLines.size() == 2 &&
+        address.addressLines[0] is string && address.addressLines[0].size() > 0 && address.addressLines[0].size() < 100 &&
+        address.addressLines[1] is string && address.addressLines[1].size() > 0 && address.addressLines[1].size() < 100 &&
+        'postalCode' in address && address.postalCode is string && address.postalCode.size() > 0 && address.postalCode.size() < 100 &&
+        'locality' in address && address.locality is string && address.locality.size() > 0 && address.locality.size() < 100 && 
+        'regionCode' in address && address.regionCode is string && address.regionCode.size() > 0 && address.regionCode.size() < 100;
     }
-    // New function to check if user has the role "admin"
-  	function isUserAdmin() {
-    	return isSignedIn() && 'admin' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
-  	}
-  match /databases/{database}/documents {
+
+    function isValidElectionData(data){
+      return data.keys().hasAll(['name', 'description', 'startDate', 'endDate', 'candidates']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.description is string && data.description.size() > 0 && data.description.size() < 100 &&
+             data.startDate is timestamp &&
+             data.endDate is timestamp &&
+             data.candidates is list && data.candidates.size() > 0 && data.candidates.size() < 100;
+    }
+
+    function isValidCandidateData(data) {
+      return data.keys().hasAll(['name', 'description', 'image']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.description is string && data.description.size() > 0 && data.description.size() < 100 &&
+             data.image is string && data.image.size() > 0 && data.image.size() < 100;
+    }
+
+    function isValidVoteData(data) {
+      return data.keys().hasAll(['candidateId']) &&
+             data.candidateId is string && data.candidateId.size() > 0 && data.candidateId.size() < 100 &&
+             get(/databases/$(database)/documents/election/$(request.resource.data.electionId)/candidate/$(data.candidateId)).data != null;
+    }
+
+    // Need for stripe
     match /customers/{uid} {
-      allow read: if request.auth.uid == uid;
+      allow read, write: if request.auth.uid == uid;
 
       match /checkout_sessions/{id} {
-        allow read, write: if request.auth.uid == uid ;
+        allow read, write: if request.auth.uid == uid;
       }
+
       match /subscriptions/{id} {
         allow read: if request.auth.uid == uid;
       }
+
       match /payments/{id} {
         allow read: if request.auth.uid == uid;
       }
     }
 
+    // Define rules for the 'products' collection
     match /products/{id} {
       allow read: if true;
 
@@ -37,70 +88,29 @@ service cloud.firestore {
         allow read: if true;
       }
     }
-    // Allow authenticated users to read and write their own data in the 'users' collection
-    match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid && isValidData();
+
+    // User document rules
+    match /user/{uid} {
+      allow read, write: if request.auth.uid == uid && isValidUserData(request.resource.data, false);
+      allow read, write: if isAdmin();
     }
+
+    // Election document rules
     match /election/{electionId} {
-      allow read: if request.auth != null;
-      allow write: if isUserAdmin();
+      allow read: if request.auth.uid != null;
+      allow write: if isAdmin();
     }
 
-    match /candidates/{uid} {
-      allow read: if request.auth != null;
-      allow write: if isUserAdmin();
+    // Candidate document rules
+    match /election/{electionId}/candidate/{candidateId} {
+      allow read: if request.auth.uid != null;
+      allow write: if isAdmin();
     }
 
-    match /donations/{uid} {
-      allow read, write: if request.auth.uid == uid && request.auth != null;
-    }
-
-    // Allow authenticated users to read and write votes linked to specific elections
-    match /votes/{electionId}/{uId} {
-      allow read: if request.auth != null;
-      allow create: if isValidVote(electionId) && isValidCandidateList() && request.auth.uid == uId;
-      allow update: if false; // Prevent updates for security reasons
-      allow delete: if false; // Prevent deletions for security reasons
+    // Vote document rules
+    match /election/{electionId}/vote/{uid} {
+      allow read, write: if request.auth.uid != null && isValidVoteData(request.resource.data);
+      allow read, write: if isAdmin();
     }
   }
-
-
-  // New function to check if the vote is valid for the given election
-  function isValidVote(electionId) {
-    // Check if the electionId exists and it is within the allowed time frame
-    return exists(/databases/$(database)/documents/election/$(electionId)) &&
-           get(/databases/$(database)/documents/election/$(electionId)).data.startTime <= request.time &&
-           get(/databases/$(database)/documents/election/$(electionId)).data.endTime >= request.time;
-  }
-
-  // New function to check if the candidate list is valid
-  function isValidCandidateList() {
-    return request.resource.data.candidates is list && request.resource.data.candidates.size() >= 1;
-  }
-      
-    function isSignedIn() {
-      return request.auth.uid != null;
-    }
-    
-      function isValidAddress(address) {
-      return address is map &&
-             address.keys().hasAll(['addressLines', 'locality', 'regionCode']) &&
-             address.addressLines is list &&
-             address.addressLines.size() >= 1 &&
-             address.addressLines.size() <= 5 &&
-             address.locality is string &&
-             address.regionCode is string;
-    }
-    
-    function isValidData() {
-      return request.resource.data.keys().hasAll(['firstName', 'lastName', 'dob', 'address', 'email', 'phone', 'uid', 'role']) &&
-             request.resource.data.firstName is string &&
-             request.resource.data.lastName is string &&
-             request.resource.data.dob is string &&
-             isValidAddress(request.resource.data.address) &&
-             request.resource.data.email is string &&
-             request.resource.data.phone is string &&
-             request.resource.data.uid is string &&
-             request.resource.data.role is list;
-    }
 }

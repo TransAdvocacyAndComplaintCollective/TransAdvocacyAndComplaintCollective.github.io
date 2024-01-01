@@ -4,7 +4,7 @@ author:
 contributor:
   - name: Lucy Maber
 slug: bbc-transgender-report-assessment
-imageUrl: /media/PP.webp
+imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: "Pirate Party UK Challenges Government's Controversial Healthcare Policy"
 keywords:

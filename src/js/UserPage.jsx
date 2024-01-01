@@ -1,420 +1,251 @@
-import React, { useState, useEffect } from "react";
-import { Tab, Nav, Row, Col, Form, Button } from "react-bootstrap";
+// UserPage.js
+import React, { useState } from "react";
+import { Tab, Tabs, Form, Button, Row, Col } from "react-bootstrap";
 import { createRoot } from "react-dom/client";
-import { initializeApp } from "firebase/app";
+import Input from "./component/Input.jsx";
+import CountriesInput from "./component/CountriesInput.jsx";
 import {
-  getFirestore,
-  getDoc,
-  connectFirestoreEmulator,
-  doc,
-} from "firebase/firestore";
-import {
-  getAuth,
-  updatePassword,
-  signOut,
-  connectAuthEmulator,
-  onAuthStateChanged,
-} from "firebase/auth";
-import Alert from "react-bootstrap/Alert";
+  validateFirstName,
+  validateLastName,
+  validateDOB,
+  validateAddress1,
+  validateAddress2,
+  validatePostcode,
+  validateCity,
+  validateEmail,
+  validatePhone,
+  validatePassword,
+} from "./libs/validate.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDL2CHHhPUg9K6_tV_5Z2bUl4wWcB3-sic",
-  authDomain: "ptate-df901.firebaseapp.com",
-  projectId: "ptate-df901",
-  storageBucket: "ptate-df901.appspot.com",
-  messagingSenderId: "795297920122",
-  appId: "1:795297920122:web:9cfd9b972dc92213dd77c3",
-  measurementId: "G-9MPXZR194T",
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-console.log("initialize App done");
-
-function UserSettings() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [dob, setDob] = useState("");
-  const [address1, set_Address1] = useState("");
-  const [address2, set_Address2] = useState("");
-  const [address3, set_Address3] = useState("");
-  const [address4, set_Address4] = useState("");
-  const [postcode, set_Postcode] = useState("");
-  const [country, setCountry] = useState("");
-  const [email, set_Email] = useState("");
-  const [work_email, setWork_Email] = useState("");
-  const [phone, set_Phone] = useState("");
-  const [city, set_City] = useState("");
-  const [address_error, set_address_error] = useState("");
-
-  const [activeTab, setActiveTab] = useState("election");
-  const [elections, setElections] = useState([
-    { name: "test" },
-    { name: "test" },
-    { name: "test" },
-    { name: "test" },
-  ]);
-  console.log("UserSettings 2");
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [password, setPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const auth = getAuth();
-
-  const handleDeleteAccount = async () => {
-    try {
-      await deleteUser(auth.currentUser);
-      console.log('User deleted');
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
-  };
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      async (user) => {
-        if (user && !user.isAnonymous) {
-          console.log("User is signed in");
-          // setUserLoggedIn(true);
-          // // Determine if the user is an admin based on your logic
-          // // Example: check if the user has a specific role or privilege
-          // const isAdminUser = user.roles && user.roles.includes('admin');
-          // setIsAdmin(isAdminUser);
-          // firesotre get user data by uid
-          const docRef = doc(db, "users", user.uid);
-          const docSnap = await getDoc(docRef);
-          docSnap.get("firstName")
-            ? setFirstName(docSnap.get("firstName"))
-            : setFirstName("");
-          docSnap.get("lastName")
-            ? setLastName(docSnap.get("lastName"))
-            : setLastName("");
-          docSnap.get("dob") ? setDob(docSnap.get("dob")) : setDob("");
-          console.log(docSnap.get("address"));
-          const address = docSnap.get("address");
-          address["addressLines"][0]
-            ? set_Address1(address["addressLines"][0])
-            : set_Address1("");
-          address["addressLines"][1]
-            ? set_Address2(address["addressLines"][1])
-            : set_Address2("");
-          address["addressLines"][2]
-            ? set_Address3(address["addressLines"][2])
-            : set_Address3("");
-          address["addressLines"][3]
-            ? set_Address4(address["addressLines"][3])
-            : set_Address4("");
-          address["locality"] ? set_City(address["locality"]) : set_City("");
-          try {
-            error = docSnap.get("error");
-            set_address_error(error["message"]);
-          } catch (e) { }
-
-          // address["regionCode"] ? set_
-          // docSnap.get("address1") ? set_Address1(docSnap.get("address1")) : set_Address1("");
-          // docSnap.get("address2") ? set_Address2(docSnap.get("address2")) : set_Address2("");
-          console.log(docSnap.get("firstName"));
-        } else {
-          console.log("User is signed out");
-          // setUserLoggedIn(false);
-          // setIsAdmin(false);
-        }
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-
-    return () => unsubscribe();
+const UserPage = () => {
+  const [activeTab, setActiveTab] = useState("updatePassword");
+  const [billingFrequency, setBillingFrequency] = useState('yearly');
+  const [validation, setValidate] = useState({
+    firstName: { isValid: null, messages: "", value: "" },
+    lastName: { isValid: null, messages: "", value: "" },
+    dob: { isValid: null, messages: "", value: "" },
+    email: { isValid: null, messages: "", value: "" },
+    address1: { isValid: null, messages: "", value: "" },
+    address2: { isValid: null, messages: "", value: "" },
+    postcode: { isValid: null, messages: "", value: "" },
+    city: { isValid: null, messages: "", value: "" },
+    phone: { isValid: null, messages: "", value: "" },
+    password: { isValid: null, messages: "", value: "" },
+    repeatPassword: { isValid: null, messages: "", value: "" },
   });
-
-  const handlePasswordChange = async () => {
-    try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      updatePassword(user, getASecureRandomPassword)
-        .then(() => {
-          // Update successful.
-        })
-        .catch((error) => {
-          // An error ocurred
-          // ...
-        });
-
-      // Clear the input fields
-      setPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-
-      console.log("Password changed successfully!");
-    } catch (error) {
-      console.error("Error changing password:", error.message);
-    }
-  };
+  const monthlyCost = '£5 per month'; // Replace with your actual monthly cost
+  const yearlyCost = '£50 per year'; // Replace with your actual yearly cost
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
-  // This useEffect will run whenever activeTab changes
-  useEffect(() => {
-    // Perform actions based on the activeTab
-    switch (activeTab) {
-      case "election":
-        // Handle election tab actions
-        break;
-      case "profile":
-        // Handle profile tab actions
-        break;
-      case "security":
-        // Handle security tab actions
-        break;
-      case "notifications":
-        // Handle notifications tab actions
-        break;
-      default:
-        break;
-    }
-  }, [activeTab]);
+  const handleUpdatePassword = (e) => {
+    e.preventDefault();
+    // get the form data
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+  };
+
+  const handleUpdateDetails = (e) => {
+    e.preventDefault();
+    // get the form data
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+
+  };
+
+  const handleDeleteAccount = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+  };
+  const handleUpdateMembership = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+    data["billingFrequency"] = billingFrequency;
+  };
 
   return (
+    <FirebaseContext.Provider value={contextValue}>
     <div className="container mt-5">
-      <Tab.Container
-        id="user-settings-tabs"
-        activeKey={activeTab}
-        onSelect={handleTabChange}
-      >
-        <Row>
-          <Col sm={3}>
-            <Nav variant="pills" className="flex-column">
-              <Nav.Item>
-                <Nav.Link eventKey="election">Election</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="profile">Profile Settings</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="security">Security Settings</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="notifications">
-                  Notifications Settings
-                </Nav.Link>
-              </Nav.Item>
-            </Nav>
-          </Col>
-          <Col sm={9}>
-            <Tab.Content>
-              <Tab.Pane eventKey="election">
-                <h2>Election Settings</h2>
-                {elections.map((election, index) => {
-                  return (
-                    <div key={`election-${index}`}>{election.name}Hello</div>
-                  );
-                })}
-              </Tab.Pane>
-              <Tab.Pane eventKey="profile">
-                <h2>Profile Settings</h2>
-                {/* <Form onSubmit={handleProfilePictureSubmit}>
-                    <Form.Group>
-                      <Form.Label>Change Profile Picture</Form.Label>
-                      <Form.File
-                        id="profilePictureInput"
-                        label="Choose file"
-                        onChange={handleProfilePictureChange}
-                      />
-                    </Form.Group>
-                    <Button variant="primary" type="submit">
-                      Submit
-                    </Button>
-                  </Form> */}
-                {/* Your other profile settings form elements can go here */}
-                <hr />
-                {/* show address error here */}
-                {address_error && (
-                  <Alert variant="danger">{address_error}</Alert>
-                )}
-                <div className="form-group">
-                  <label htmlFor="firstName">First Name:</label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    className="form-control"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                  />
-                  <div className="invalid-feedback">
-                    {firstName.length > 1 && (
-                      <div className="invalid-feedback">
-                        The first name needs to be longer than 1 character.
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="lastName">Last Name:</label>
-                  <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    className="form-control"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="dob">Date of Birth:</label>
-                  <input
-                    type="date"
-                    id="dob"
-                    name="dob"
-                    className="form-control"
-                    value={dob}
-                    onChange={(e) => setDob(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="address">Address line 1:</label>
-                  <input
-                    type="text"
-                    id="address1"
-                    name="address1"
-                    className="form-control"
-                    value={address1}
-                    onChange={(e) => set_Address1(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="address2">Address line 2:</label>
-                  <input
-                    type="text"
-                    id="address2"
-                    name="address2"
-                    className="form-control"
-                    value={address2}
-                    onChange={(e) => set_Address2(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="address3">Address line 3:</label>
-                  <input
-                    type="text"
-                    id="address3"
-                    name="address3"
-                    className="form-control"
-                    value={address3}
-                    onChange={(e) => set_Address3(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="address4">Address line 4:</label>
-                  <input
-                    type="text"
-                    id="address4"
-                    name="address4"
-                    className="form-control"
-                    value={address4}
-                    onChange={(e) => set_Address4(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="city">city:</label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    className="form-control"
-                    value={city}
-                    onChange={(e) => set_city(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="postcode">Postcode:</label>
-                  <input
-                    type="text"
-                    id="postcode"
-                    name="postcode"
-                    className="form-control"
-                    value={postcode}
-                    onChange={(e) => set_Postcode(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="country">country:</label>
-                  <input
-                    type="text"
-                    id="country"
-                    name="country"
-                    className="form-control"
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="email">Email:</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    className="form-control"
-                    value={email}
-                    onChange={(e) => set_Email(e.target.value)}
-                  />
-                </div>
-                <button onClick={handleDeleteAccount}>
-                  Delete Account
-                </button>
-                <button >
-                  Update Account
-                </button>
-              </Tab.Pane>
-              <Tab.Pane eventKey="security">
-                <h2>Security Settings</h2>
-                <Form>
-                  <Form.Group controlId="newPassword">
-                    <Form.Label>New Password</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="Enter new password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="confirmPassword">
-                    <Form.Label>Confirm Password</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="Confirm new password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
-                  </Form.Group>
-                  <Button variant="primary" onClick={handlePasswordChange}>
-                    Change Password
-                  </Button>
-                </Form>
-              </Tab.Pane>
-              <Tab.Pane eventKey="notifications">
-                <h2>Notification Settings</h2>
-                {/* Your notification settings form can go here */}
-              </Tab.Pane>
-            </Tab.Content>
-          </Col>
-        </Row>
-      </Tab.Container>
+      <Tabs activeKey={activeTab} onSelect={handleTabChange} className="mb-3">
+        <Tab eventKey="updatePassword" title="Update Password">
+          <Form onSubmit={handleUpdatePassword} className="mt-3">
+            <Row>
+              <Col md={6}>
+                <Input
+                  validation={validation.password}
+                  onValidate={(password) =>
+                    validatePassword(password, false, setValidate)
+                  }
+                  name="password"
+                  title="Password:"
+                  type="password"
+                />
+              </Col>
+              <Col md={6}>
+                <Input
+                  validation={validation.repeatPassword}
+                  onValidate={(password) =>
+                    validatePassword(password, true, setValidate)
+                  }
+                  name="repeatPassword"
+                  title="Repeat Password:"
+                  type="password"
+                />
+              </Col>
+            </Row>
+            <Button variant="primary" type="submit">
+              Update Password
+            </Button>
+          </Form>
+        </Tab>
+        <Tab eventKey="updateDetails" title="Update Details">
+          <Form onSubmit={handleUpdateDetails} className="mt-3">
+            {" "}
+            <Row>
+              <Col md={6}>
+                <Input
+                  name="firstName"
+                  title="First Name:"
+                  type="text"
+                  onValidate={(e) => validateFirstName(e, setValidate)}
+                  validation={validation.firstName}
+                />
+              </Col>
+              <Col md={6}>
+                <Input
+                  name="lastName"
+                  title="Last Name:"
+                  type="text"
+                  onValidate={(e) => validateLastName(e, setValidate)}
+                  validation={validation.lastName}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <Input
+                  onValidate={(dob) => validateDOB(dob, setValidate)}
+                  name="dob"
+                  title="Date of Birth:"
+                  type="date"
+                  validation={validation.dob}
+                />
+              </Col>
+              <Col md={6}>
+                <Input
+                  validation={validation.email}
+                  name="email"
+                  title="Email:"
+                  type="email"
+                  onValidate={(text) => validateEmail(text, setValidate)}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <Input
+                  validation={validation.address1}
+                  name="address1"
+                  title="Address line 1:"
+                  type="text"
+                  onValidate={(text) => validateAddress1(text, setValidate)}
+                />
+              </Col>
+              <Col md={6}>
+                <Input
+                  validation={validation.address2}
+                  name="address2"
+                  title="Address line 2:"
+                  type="text"
+                  onValidate={(text) => validateAddress2(text, setValidate)}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <Input
+                  validation={validation.postcode}
+                  name="postcode"
+                  title="Postcode:"
+                  type="text"
+                  onValidate={(text) => validatePostcode(text, setValidate)}
+                />
+              </Col>
+              <Col md={6}>
+                <Input
+                  validation={validation.city}
+                  name="city"
+                  title="City:"
+                  type="text"
+                  onValidate={(text) => validateCity(text, setValidate)}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <CountriesInput />
+              </Col>
+              <Col md={6}>
+                <Input
+                  validation={validation.phone}
+                  name="phone"
+                  title="Phone:"
+                  type="text"
+                  onValidate={(text) => validatePhone(text, setValidate)}
+                />
+              </Col>
+            </Row>
+            <Button variant="primary" type="submit">
+              Update Details
+            </Button>
+          </Form>
+        </Tab>
+        <Tab eventKey="deleteAccount" title="Delete Account">
+          <Form onSubmit={handleDeleteAccount} className="mt-3">
+            {/* Add delete account confirmation */}
+            <Button variant="danger" type="submit">
+              Delete Account
+            </Button>
+          </Form>
+        </Tab>
+        <Tab eventKey="updateMembership" title="Update Membership">
+          <Form onSubmit={handleUpdateMembership} className="mt-3">
+            <Row>
+              <Col md={12}>
+                <h2>Membership Cost</h2>
+                <Form.Check
+                  type="radio"
+                  label={`Monthly Cost: ${monthlyCost}`}
+                  name="billingFrequency"
+                  id="monthly"
+                  checked={billingFrequency === "monthly"}
+                  onChange={() => setBillingFrequency("monthly")}
+                />
+                <Form.Check
+                  type="radio"
+                  label={`Yearly Cost: ${yearlyCost}`}
+                  name="billingFrequency"
+                  id="yearly"
+                  checked={billingFrequency === "yearly"}
+                  onChange={() => setBillingFrequency("yearly")}
+                />
+              </Col>
+            </Row>
+            <Button variant="primary" type="submit">
+              Update Membership
+            </Button>
+          </Form>
+        </Tab>
+      </Tabs>
     </div>
+    </FirebaseContext.Provider>
   );
-}
-console.log("UserSettings");
-const domNode = document.getElementById("UserSettings");
+};
+
+const domNode = document.getElementById("UserPage");
 const root = createRoot(domNode);
-root.render(<UserSettings />);
+root.render(<UserPage />);

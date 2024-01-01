@@ -43,6 +43,10 @@ function javascript(cb) {
               },
             },
             {
+              test:/\.(ical|vcf|vcard|ics|ifb|icalendar)$/,
+              use: 'raw-loader'
+            },
+            {
               test: /\.css$/i,
               use: ["style-loader", "css-loader"],
             },
