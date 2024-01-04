@@ -16,7 +16,7 @@ import {
   validatePhone,
   validatePassword,
 } from "./libs/validate.js";
-import { useFirebase, FirebaseProvider } from "./hook/usefirebase.jsx";
+import { signUp } from "./libs/googleAPI.js";
 
 const Register = () => {
   const [billingFrequency, setBillingFrequency] = useState("yearly");
@@ -33,15 +33,16 @@ const Register = () => {
     password: { isValid: null, messages: "", value: "" },
     passwordRepeat: { isValid: null, messages: "", value: "" },
   });
-  const firebase = useContext(useFirebase);
-  console.log(firebase);
 
   async function handleSubmit(e) {
     e.preventDefault();
   
     // Access form values directly from the event object
     const formData = new FormData(e.target);
-  
+    formData.forEach((value, key) => {
+      console.log("key:",key);
+      console.log("value:",value);
+    });
     const userData = {
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
@@ -54,6 +55,7 @@ const Register = () => {
       phone: formData.get("phone"),
       password: formData.get("password"),
       passwordRepeat: formData.get("passwordRepeat"),
+      regionCode: formData.get("country")
     };
   
     // Add your form submission logic here
@@ -72,19 +74,22 @@ const Register = () => {
       if (userData.password !== userData.passwordRepeat) {
         throw new Error("Passwords do not match.");
       }
-  
+      
+
+      console.log("regionCode:",userData.regionCode);
       // Call the Firebase signUp function with the form data
-      await firebase.signUp(
-        userData.firstName,
-        userData.lastName,
-        userData.dob,
-        userData.email,
-        userData.address1,
-        userData.address2,
-        userData.postcode,
-        userData.city,
-        userData.phone,
-        userData.password,
+      await signUp(
+        userData.firstName.toString(),
+        userData.lastName.toString(), 
+        userData.dob.toString(),
+        userData.email.toString(),
+        userData.address1.toString(),
+        userData.address2.toString(), 
+        userData.postcode.toString(), 
+        userData.city.toString(), 
+        userData.phone.toString(),
+        userData.password.toString(),
+        userData.regionCode.toString()
       );
   
       // If successful, you can perform additional actions here
@@ -96,11 +101,7 @@ const Register = () => {
     }
   }
 
-  const monthlyCost = "£5 per month";
-  const yearlyCost = "£50 per year";
-
   return (
-    <FirebaseProvider>
       <Container className="py-5">
         <h1>Register</h1>
         <Form onSubmit={handleSubmit}>
@@ -253,7 +254,6 @@ const Register = () => {
           </Button>
         </Form>
       </Container>
-    </FirebaseProvider>
   );
 };
 
