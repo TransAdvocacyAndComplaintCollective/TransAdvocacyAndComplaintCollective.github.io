@@ -1,9 +1,13 @@
-export const validateFirstName = (name = "", setState) => {
+export const validateFirstName = (name, setState) => {
     const validationResult = {
         value: name,
         isValid: true,
         messages: ''
     };
+    if (!name){
+        validationResult.isValid = false;
+        validationResult.messages = 'name is required';
+    }
     // check if the name is empty
     if (name.length === 0) {
         validationResult.isValid = false;
@@ -15,7 +19,7 @@ export const validateFirstName = (name = "", setState) => {
         validationResult.messages = 'First name must be at least 2 characters.';
     }
     // check if the name is more than 20 characters
-    if (name.length > 20) {
+    if (name.length > 255) {
         validationResult.isValid = false;
         validationResult.messages = 'First name must be less than 20 characters.';
     }
@@ -30,6 +34,11 @@ export const validateLastName = (name = "", setState) => {
         isValid: true,
         messages: ''
     };
+    if (!name){
+        validationResult.isValid = false;
+        validationResult.messages = 'name is required';
+    }
+    
     // check if the name is empty
     if (name.length === 0) {
         validationResult.isValid = false;
@@ -41,7 +50,7 @@ export const validateLastName = (name = "", setState) => {
         validationResult.messages = 'Last name must be at least 2 characters.';
     }
     // check if the name is more than 20 characters
-    if (name.length > 20) {
+    if (name.length > 255) {
         validationResult.isValid = false;
         validationResult.messages = 'Last name must be less than 20 characters.';
     }
@@ -53,12 +62,16 @@ export const validateLastName = (name = "", setState) => {
 
 export const validateDOB = (dob, setState) => {
     const validationResult = {
-        value: address1,
+        value: dob,
         isValid: true,
         messages: ''
     };
+    if (!dob){
+        validationResult.isValid = false;
+        validationResult.messages = 'dob is required';
+    }
     if (setState) {
-        setState((e) => ({ ...e, firstName: validationResult }))
+        setState((e) => ({ ...e, dob: validationResult }))
     }
     return validationResult;
 }
@@ -73,6 +86,10 @@ export const validateAddress1 = (address1, setState) => {
         isValid: true,
         messages: ''
     };
+    if (!address1){
+        validationResult.isValid = false;
+        validationResult.messages = 'address1 is required';
+    }
     console.log("address1:", address1);
 
     if (address1.trim() === '') {
@@ -95,6 +112,10 @@ export const validateAddress2 = (address2, setState) => {
         isValid: true,
         messages: ''
     };
+    if (!address2){
+        validationResult.isValid = false;
+        validationResult.messages = 'address2 is required';
+    }
 
     if (address2.trim() === '') {
         validationResult.isValid = false;
@@ -116,6 +137,10 @@ export const validatePostcode = (postcode, setState) => {
         isValid: true,
         messages: ''
     };
+    if (!postcode){
+        validationResult.isValid = false;
+        validationResult.messages = 'postcode is required';
+    }
 
     if (postcode.trim() === '') {
         validationResult.isValid = false;
@@ -137,6 +162,10 @@ export const validateCity = (city, setState) => {
         isValid: true,
         messages: ''
     };
+    if (!city){
+        validationResult.isValid = false;
+        validationResult.messages = 'city is required';
+    }
 
     if (city.trim() === '') {
         validationResult.isValid = false;
@@ -156,25 +185,32 @@ export const validateEmail = (email, setState) => {
         isValid: true,
         messages: ''
     };
-
-    // Check if the email is empty
-    if (email === '') {
+    if (!email){
         validationResult.isValid = false;
         validationResult.messages = 'Email is required.';
-        return validationResult;
+    }
+    if(email.length == 0){
+        validationResult.isValid = false;
+        validationResult.messages = 'Email is required.';
+    }
+
+    // Check if the email is empty
+    if (email == '') {
+        validationResult.isValid = false;
+        validationResult.messages = 'Email is required.';
     }
 
     // Check if the email matches the pattern
     if (!/\S+@\S+\.\S+/.test(email)) {
         validationResult.isValid = false;
         validationResult.messages = 'Please enter a valid email.';
-        return validationResult;
     }
+
 
     if (setState) {
-        setState((prev) => ({ ...prev, email: validationResult }));
-    }
 
+        setState((e) => ({ ...e, email: validationResult }))
+    }
     return validationResult;
 };
 
@@ -186,23 +222,27 @@ export const validatePhone = (phone, setState) => {
         isValid: true,
         messages: ''
     };
-
-    // Remove non-digit characters from the phone number
-    const cleanedPhone = phone.replace(/\D/g, '');
-
-    // Check if the cleaned phone number is empty
-    if (cleanedPhone === '') {
+    if (!phone){
         validationResult.isValid = false;
         validationResult.messages = 'Phone number is required.';
-        return validationResult;
+    }
+    if (phone.length == 0){
+        validationResult.isValid = false;
+        validationResult.messages = 'Phone number is required.';
     }
 
-    // Check if the cleaned phone number contains only digits
-    if (!/^\d+$/.test(cleanedPhone)) {
+    // Check if the cleaned phone number is empty
+    if (phone === '') {
         validationResult.isValid = false;
-        validationResult.messages = 'Please enter a valid phone number.';
-        return validationResult;
+        validationResult.messages = 'Phone number is required.';
     }
+
+    // // Check if the cleaned phone number contains only digits
+    // if (!/^\d+$/.test(phone)) {
+    //     validationResult.isValid = false;
+    //     validationResult.messages = 'Please enter a valid phone number.';
+    //     return validationResult;
+    // }
     if (setState) {
         setState((e) => ({ ...e, phone: validationResult }))
 
@@ -217,47 +257,45 @@ export const validatePassword = (password, setState, state, repeat = false) => {
         messages: '',
         value: password
     };
+    if (!password){
+        validationResult.isValid = false;
+        validationResult.messages = 'Password is required';
+    }
 
     // Check if the password is empty
     if (password === '') {
         validationResult.isValid = false;
         validationResult.messages = 'Password is required.';
-        return validationResult;
     }
 
     // Check if the password is less than 8 characters
     if (password.length < 8) {
         validationResult.isValid = false;
         validationResult.messages = 'Password must be at least 8 characters.';
-        return validationResult;
     }
 
     // Check if the password contains at least one uppercase letter
     if (!/[A-Z]/.test(password)) {
         validationResult.isValid = false;
         validationResult.messages = 'Password must contain at least one uppercase letter.';
-        return validationResult;
     }
 
     // Check if the password contains at least one lowercase letter
     if (!/[a-z]/.test(password)) {
         validationResult.isValid = false;
         validationResult.messages = 'Password must contain at least one lowercase letter.';
-        return validationResult;
     }
 
     // Check if the password contains at least one number
     if (!/[0-9]/.test(password)) {
         validationResult.isValid = false;
         validationResult.messages = 'Password must contain at least one number.';
-        return validationResult;
     }
 
     // Check if the password contains at least one special character
     if (!/[!@#$%^&*]/.test(password)) {
         validationResult.isValid = false;
         validationResult.messages = 'Password must contain at least one special character.';
-        return validationResult;
     }
 
     // check if the password matches the repeat password
@@ -292,12 +330,13 @@ export const validate_call = {
     "address2": validateAddress2,
     "postcode": validatePostcode,
     "city": validateCity,
+    "country":(password, setState, state)=>{},
     "email": validateEmail,
     "phone": validatePhone,
     "password": validatePassword,
-    "repeatPassword": validatePassword,
-    "passwordRepeat": validatePassword,
+    "repeatPassword": (password, setState, state)=>(validatePassword(password, setState, state, false)),
+    "passwordRepeat": (password, setState, state)=>(validatePassword(password, setState, state, true)),
     "billingFrequency":()=>{},
     "billingDay":()=>{},
-    "validateDob":()=>{},
+    // "validateDob":()=>{},
 }

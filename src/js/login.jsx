@@ -1,6 +1,8 @@
 // Login.jsx
 import React, { useContext, useState } from "react";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
+import { signIn } from "./libs/googleAPI.js";
+import { createRoot } from "react-dom/client";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +13,7 @@ const Login = () => {
     e.preventDefault();
     try {
       setError(null); // Reset any previous errors
-      await firebase.login(email, password);
+      await signIn(email, password)
       // Handle successful login (redirect, etc.)
     } catch (error) {
       console.error("Login failed", error.message);
@@ -58,3 +60,7 @@ const Login = () => {
 };
 
 export default Login;
+
+const domNode = document.getElementById("loginContainer");
+const root = createRoot(domNode);
+root.render(<Login />);

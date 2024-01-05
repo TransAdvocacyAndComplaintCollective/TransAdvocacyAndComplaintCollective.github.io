@@ -15,6 +15,7 @@ import {
   validateEmail,
   validatePhone,
   validatePassword,
+  validate_call
 } from "./libs/validate.js";
 import { signUp ,isUserLoggedIn} from "./libs/googleAPI.js";
 
@@ -43,11 +44,23 @@ const Register = () => {
     }
   }, []);
 
+  function validate_all(formData){
+    for (const key of formData.keys()) {
+      if(!key in validate_call){
+        console.log("key not found:",key);
+        continue;
+      }
+      validate_call[key](formData.get(key), setValidate, validation);
+    }
+
+}
+
   async function handleSubmit(e) {
     e.preventDefault();
 
     // Access form values directly from the event object
     const formData = new FormData(e.target);
+    validate_all(formData);
     const userData = {
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
@@ -62,7 +75,6 @@ const Register = () => {
       passwordRepeat: formData.get("passwordRepeat"),
       regionCode: formData.get("country"),
     };
-
     // Add your form submission logic here
     try {
       // Validate form data before submitting
@@ -79,8 +91,6 @@ const Register = () => {
       if (userData.password !== userData.passwordRepeat) {
         throw new Error("Passwords do not match.");
       }
-
-      console.log("regionCode:", userData.regionCode);
       // Call the Firebase signUp function with the form data
       const d = await signUp(
         userData.firstName.toString(),
@@ -95,7 +105,6 @@ const Register = () => {
         userData.password.toString(),
         userData.regionCode.toString()
       );
-      console.log("d:", d);
       if (!d.isValid) {
         setMessage(d.messages);
       } else {
