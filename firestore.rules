@@ -59,19 +59,19 @@ service cloud.firestore {
         && request.resource.data.email is string // && isValidEmail(request.resource.data.email)
         && request.resource.data.firstName is string //&& isValidFirstName(firstName)
         && request.resource.data.lastName is string //&& isValidLastName(lastName)
-        && request.resource.data.dob is string && isValidDOB(request.resource.data.dob)
+        && request.resource.data.dob is string //&& isValidDOB(request.resource.data.dob)
         && request.resource.data.address is map && isValidAddress(request.resource.data.address)
-        && request.resource.data.phone is string && isValidPhoneNumber(request.resource.data.phone)
+        && request.resource.data.phone is string //&& isValidPhoneNumber(request.resource.data.phone)
         && request.resource.data.role is list && request.resource.data.role.size() == 0;
-      allow read, write: if isUserAdmin(request.auth.uid);
+      // allow read, write: if isUserAdmin(request.auth.uid);
     }
 
     // Rules for /election/{electionId} path
     match /election/{electionId} {
       allow read: if request.auth != null; // Add your specific conditions for read
 
-      allow read, write: if isUserAdmin(request.auth.uid) &&
-      isValidElectionData(request.resource.data);
+      // allow read, write: if isUserAdmin(request.auth.uid) &&
+      // isValidElectionData(request.resource.data);
 
       // Function to check if the election data is valid
       function isValidElectionData(data) {
@@ -109,8 +109,8 @@ service cloud.firestore {
     match /election/{electionId}/candidate/{candidateId} {
       allow read: if request.auth != null; // Add your specific conditions for read
 
-      allow read, write: if isUserAdmin(request.auth.uid) &&
-      isValidCandidateData(request.resource.data);
+      // allow read, write: if isUserAdmin(request.auth.uid) &&
+      // isValidCandidateData(request.resource.data);
 
       // Function to check if the candidate data is valid
       function isValidCandidateData(data) {
@@ -125,8 +125,8 @@ service cloud.firestore {
     match /election/{electionId}/vote/{userId} {
       allow read: if request.auth != null && request.auth.uid == userId; // Allow the user to read their own vote
 
-      allow write: if request.auth != null && isUserAdmin(request.auth.uid) &&
-      isValidVoteData(request.resource.data);
+      // allow write: if request.auth != null && isUserAdmin(request.auth.uid) &&
+      // isValidVoteData(request.resource.data);
 
       // Function to check if the vote data is valid
       function isValidVoteData(data) {

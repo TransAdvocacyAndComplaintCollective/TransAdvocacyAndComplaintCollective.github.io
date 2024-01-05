@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import Input from "./component/Input.jsx";
 import CountriesInput from "./component/CountriesInput.jsx";
@@ -16,10 +16,11 @@ import {
   validatePhone,
   validatePassword,
 } from "./libs/validate.js";
-import { signUp } from "./libs/googleAPI.js";
+import { signUp ,isUserLoggedIn} from "./libs/googleAPI.js";
 
 const Register = () => {
   const [billingFrequency, setBillingFrequency] = useState("yearly");
+  const [message, setMessage] = useState(null);
   const [validation, setValidate] = useState({
     firstName: { isValid: null, messages: "", value: "" },
     lastName: { isValid: null, messages: "", value: "" },
@@ -33,16 +34,20 @@ const Register = () => {
     password: { isValid: null, messages: "", value: "" },
     passwordRepeat: { isValid: null, messages: "", value: "" },
   });
+  // if user is logged in, redirect to home page
+
+  useEffect(async () => {
+    let userLogged = await isUserLoggedIn()
+    if (userLogged) {
+      window.location.href = "/";
+    }
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
-  
+
     // Access form values directly from the event object
     const formData = new FormData(e.target);
-    formData.forEach((value, key) => {
-      console.log("key:",key);
-      console.log("value:",value);
-    });
     const userData = {
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
@@ -55,43 +60,50 @@ const Register = () => {
       phone: formData.get("phone"),
       password: formData.get("password"),
       passwordRepeat: formData.get("passwordRepeat"),
-      regionCode: formData.get("country")
+      regionCode: formData.get("country"),
     };
-  
+
     // Add your form submission logic here
     try {
       // Validate form data before submitting
       // Add your own validation logic or use a validation library
-  
+
       // Example: Check if all fields are non-empty
       for (const key in userData) {
         if (!userData[key]) {
           throw new Error(`${key} is required.`);
         }
       }
-  
+
       // Example: Check if password and repeat password match
       if (userData.password !== userData.passwordRepeat) {
         throw new Error("Passwords do not match.");
       }
-      
 
-      console.log("regionCode:",userData.regionCode);
+      console.log("regionCode:", userData.regionCode);
       // Call the Firebase signUp function with the form data
-      await signUp(
+      const d = await signUp(
         userData.firstName.toString(),
-        userData.lastName.toString(), 
+        userData.lastName.toString(),
         userData.dob.toString(),
         userData.email.toString(),
         userData.address1.toString(),
-        userData.address2.toString(), 
-        userData.postcode.toString(), 
-        userData.city.toString(), 
+        userData.address2.toString(),
+        userData.postcode.toString(),
+        userData.city.toString(),
         userData.phone.toString(),
         userData.password.toString(),
         userData.regionCode.toString()
       );
-  
+      console.log("d:", d);
+      if (!d.isValid) {
+        setMessage(d.messages);
+      } else {
+        setMessage(null);
+        // go to home page
+        window.location.href = "/";
+      }
+
       // If successful, you can perform additional actions here
       console.log("Registration successful!");
     } catch (error) {
@@ -102,133 +114,135 @@ const Register = () => {
   }
 
   return (
-      <Container className="py-5">
-        <h1>Register</h1>
-        <Form onSubmit={handleSubmit}>
-          <Row>
-            <Col md={6}>
-              <Input
-                name="firstName"
-                title="First Name:"
-                type="text"
-                onValidate={(e) => validateFirstName(e, setValidate)}
-                validation={validation.firstName}
-              />
-            </Col>
-            <Col md={6}>
-              <Input
-                name="lastName"
-                title="Last Name:"
-                type="text"
-                onValidate={(e) => validateLastName(e, setValidate)}
-                validation={validation.lastName}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
-              <Input
-                onValidate={(dob) => validateDOB(dob, setValidate)}
-                name="dob"
-                title="Date of Birth:"
-                type="date"
-                validation={validation.dob}
-              />
-            </Col>
-            <Col md={6}>
-              <Input
-                validation={validation.email}
-                name="email"
-                title="Email:"
-                type="email"
-                onValidate={(text) => validateEmail(text, setValidate)}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
-              <Input
-                validation={validation.address1}
-                name="address1"
-                title="Address line 1:"
-                type="text"
-                onValidate={(text) => validateAddress1(text, setValidate)}
-              />
-            </Col>
-            <Col md={6}>
-              <Input
-                validation={validation.address2}
-                name="address2"
-                title="Address line 2:"
-                type="text"
-                onValidate={(text) => validateAddress2(text, setValidate)}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
-              <Input
-                validation={validation.postcode}
-                name="postcode"
-                title="Postcode:"
-                type="text"
-                onValidate={(text) => validatePostcode(text, setValidate)}
-              />
-            </Col>
-            <Col md={6}>
-              <Input
-                validation={validation.city}
-                name="city"
-                title="City:"
-                type="text"
-                onValidate={(text) => validateCity(text, setValidate)}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
-              <CountriesInput />
-            </Col>
-            <Col md={6}>
-              <Input
-                validation={validation.phone}
-                name="phone"
-                title="Phone:"
-                type="tel"
-                onValidate={(text) => validatePhone(text, setValidate)}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
-              <Input
-                validation={validation.password}
-                onValidate={(password) =>
-                  validatePassword(password, setValidate, validation, false)
-                }
-                name="password"
-                title="Password:"
-                type="password"
-              />
-            </Col>
-            <Col md={6}>
-              <Input
-                validation={validation.passwordRepeat}
-                onValidate={(password) => {
-                  return validatePassword(
-                    password,
-                    setValidate,
-                    validation,
-                    true
-                  );
-                }}
-                name="passwordRepeat"
-                title="Repeat Password:"
-                type="password"
-              />
-            </Col>
-          </Row>
-          {/* <Row>
+    <Container className="py-5">
+      <h1>Register</h1>
+      {/* show EROOR */}
+      {message && <div className="error">{message}</div>}
+      <Form onSubmit={handleSubmit}>
+        <Row>
+          <Col md={6}>
+            <Input
+              name="firstName"
+              title="First Name:"
+              type="text"
+              onValidate={(e) => validateFirstName(e, setValidate)}
+              validation={validation.firstName}
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              name="lastName"
+              title="Last Name:"
+              type="text"
+              onValidate={(e) => validateLastName(e, setValidate)}
+              validation={validation.lastName}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <Input
+              onValidate={(dob) => validateDOB(dob, setValidate)}
+              name="dob"
+              title="Date of Birth:"
+              type="date"
+              validation={validation.dob}
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              validation={validation.email}
+              name="email"
+              title="Email:"
+              type="email"
+              onValidate={(text) => validateEmail(text, setValidate)}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <Input
+              validation={validation.address1}
+              name="address1"
+              title="Address line 1:"
+              type="text"
+              onValidate={(text) => validateAddress1(text, setValidate)}
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              validation={validation.address2}
+              name="address2"
+              title="Address line 2:"
+              type="text"
+              onValidate={(text) => validateAddress2(text, setValidate)}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <Input
+              validation={validation.postcode}
+              name="postcode"
+              title="Postcode:"
+              type="text"
+              onValidate={(text) => validatePostcode(text, setValidate)}
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              validation={validation.city}
+              name="city"
+              title="City:"
+              type="text"
+              onValidate={(text) => validateCity(text, setValidate)}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <CountriesInput />
+          </Col>
+          <Col md={6}>
+            <Input
+              validation={validation.phone}
+              name="phone"
+              title="Phone:"
+              type="tel"
+              onValidate={(text) => validatePhone(text, setValidate)}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <Input
+              validation={validation.password}
+              onValidate={(password) =>
+                validatePassword(password, setValidate, validation, false)
+              }
+              name="password"
+              title="Password:"
+              type="password"
+            />
+          </Col>
+          <Col md={6}>
+            <Input
+              validation={validation.passwordRepeat}
+              onValidate={(password) => {
+                return validatePassword(
+                  password,
+                  setValidate,
+                  validation,
+                  true
+                );
+              }}
+              name="passwordRepeat"
+              title="Repeat Password:"
+              type="password"
+            />
+          </Col>
+        </Row>
+        {/* <Row>
             <Col md={12}>
               <h2>Membership Cost</h2>
               <Form.Check
@@ -249,11 +263,11 @@ const Register = () => {
               />
             </Col>
           </Row> */}
-          <Button type="submit" variant="primary" className="mt-3">
-            Register and Pay
-          </Button>
-        </Form>
-      </Container>
+        <Button type="submit" variant="primary" className="mt-3">
+          Register and Pay
+        </Button>
+      </Form>
+    </Container>
   );
 };
 

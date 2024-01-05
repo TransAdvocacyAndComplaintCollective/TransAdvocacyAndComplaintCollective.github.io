@@ -1,6 +1,5 @@
 // VotingPage.jsx
 import React, { useState, useEffect, useContext } from "react";
-import { FirebaseProvider, useFirebase } from "./hook/usefirebase.jsx";
 import { Button, Card, Container, Form } from "react-bootstrap";
 
 const VotingPage = () => {
@@ -8,7 +7,6 @@ const VotingPage = () => {
   const searchParams = new URLSearchParams(location.search);
   const id = searchParams.get("id");
 
-  const firebase = useContext(useFirebase);
   const [votingData, setVotingData] = useState({});
   const [rankings, setRankings] = useState([]);
   const [candidates, setCandidates] = useState([]);
@@ -76,7 +74,6 @@ const VotingPage = () => {
   };
 
   return (
-    <FirebaseProvider>
       <Container className="mt-5">
         <Card>
           <Card.Body>
@@ -114,7 +111,6 @@ const VotingPage = () => {
           </Card.Body>
         </Card>
       </Container>
-    </FirebaseProvider>
   );
 };
 

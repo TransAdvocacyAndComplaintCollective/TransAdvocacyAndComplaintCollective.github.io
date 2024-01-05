@@ -1,10 +1,8 @@
 // Login.jsx
 import React, { useContext, useState } from "react";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
-import { FirebaseProvider, useFirebase } from "./hook/usefirebase.jsx";
 
 const Login = () => {
-  const firebase = useContext(useFirebase);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -22,7 +20,6 @@ const Login = () => {
   };
 
   return (
-    <FirebaseProvider>
       <Container>
         <Row className="justify-content-center mt-5">
           <Col md={6}>
@@ -57,7 +54,6 @@ const Login = () => {
           </Col>
         </Row>
       </Container>
-    </FirebaseProvider>
   );
 };
 

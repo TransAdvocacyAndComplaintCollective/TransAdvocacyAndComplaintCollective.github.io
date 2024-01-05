@@ -1,35 +1,35 @@
 import { initializeApp } from "firebase/app";
 import { setDoc, connectFirestoreEmulator, getFirestore, collection, doc, updateDoc, getDocs, getDoc } from "firebase/firestore";
 import {
-  connectAuthEmulator, 
-  getAuth,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-  signInWithEmailAndPassword,
+    connectAuthEmulator,
+    getAuth,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut,
+    signInWithEmailAndPassword,
 } from "firebase/auth";
 import { getStripePayments } from "@stripe/firestore-stripe-payments";
 
 console.log("firebase hock usefirebase.jsx");
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDL2CHHhPUg9K6_tV_5Z2bUl4wWcB3-sic",
-  authDomain: "ptate-df901.firebaseapp.com",
-  projectId: "ptate-df901",
-  storageBucket: "ptate-df901.appspot.com",
-  messagingSenderId: "795297920122",
-  appId: "1:795297920122:web:9cfd9b972dc92213dd77c3",
-  measurementId: "G-9MPXZR194T",
+    apiKey: "AIzaSyDL2CHHhPUg9K6_tV_5Z2bUl4wWcB3-sic",
+    authDomain: "ptate-df901.firebaseapp.com",
+    projectId: "ptate-df901",
+    storageBucket: "ptate-df901.appspot.com",
+    messagingSenderId: "795297920122",
+    appId: "1:795297920122:web:9cfd9b972dc92213dd77c3",
+    measurementId: "G-9MPXZR194T",
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 if (window.location.hostname === "localhost") {
-  connectAuthEmulator(auth, "http://localhost:9099");
+    connectAuthEmulator(auth, "http://localhost:9099");
 }
 const db = getFirestore(app);
 if (window.location.hostname === "localhost") {
-    connectFirestoreEmulator(db, 'localhost', 8081 );
+    connectFirestoreEmulator(db, 'localhost', 8081);
 }
 
 
@@ -123,8 +123,45 @@ export const signOutUser = async () => {
         console.error("Error signing out user: ", error);
     }
 };
+export const isUserLoggedIn = async () => {
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            return false;
+        } else {
+            return true;
+        }
+    } catch (error) {
+        console.error("Error signing out user: ", error);
+    }
+}
+export const fetchUser = async () => {
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("User not authenticated.");
+            return null;
+        }
+
+        const uid = user.uid;
+        const userRef = doc(collection(db, "users", uid));
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+            return userDoc.data();
+        } else {
+            console.log("User document does not exist.");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        return null;
+    }
+}
+
 
 export const signUp = async (firstName, lastName, dob, email, address1, address2, postcode, city, phone, password, regionCode) => {
+    let isAccountCreated = false;
     try {
         const auth = getAuth();
         const db = getFirestore();
@@ -135,10 +172,10 @@ export const signUp = async (firstName, lastName, dob, email, address1, address2
 
         // Sign in the user
         await signInWithEmailAndPassword(auth, email, password);
+        isAccountCreated = true;
 
         // Add a new document with a user id.
         const docRef = await setDoc(doc(db, "user", user.uid), {
-            // "uid": user.uid,
             "email": email,
             "firstName": firstName,
             "lastName": lastName,
@@ -153,8 +190,16 @@ export const signUp = async (firstName, lastName, dob, email, address1, address2
             "role": []
         });
 
-        console.log("User signed up and document added successfully!");
+        return {
+            message: "Account created successfully",
+            isValid: true,
+            isAccountCreated: isAccountCreated
+        }
     } catch (error) {
-        console.error("Error signing up user: ", error);
+        return {
+            message: error.message,
+            isValid: false,
+            isAccountCreated: isAccountCreated
+        }
     }
 };

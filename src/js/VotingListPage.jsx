@@ -1,10 +1,8 @@
 // VotingListPage.jsx
 import React, { useState, useEffect, useContext } from "react";
-import { FirebaseProvider, useFirebase } from "./hook/usefirebase.jsx";
 import { Card, Container } from "react-bootstrap";
 
 const VotingListPage = () => {
-  const firebase = useContext(useFirebase);
   const [votingElections, setVotingElections] = useState([]);
 
   useEffect(() => {
@@ -17,7 +15,6 @@ const VotingListPage = () => {
   }, [firebase]);
 
   return (
-    <FirebaseProvider>
       <Container className="mt-5">
         <h1>Available Voting Elections</h1>
         {votingElections.map((election) => (
@@ -30,7 +27,6 @@ const VotingListPage = () => {
           </Card>
         ))}
       </Container>
-    </FirebaseProvider>
   );
 };
 
