@@ -15,6 +15,7 @@ const Login = () => {
       setError(null); // Reset any previous errors
       await signIn(email, password)
       // Handle successful login (redirect, etc.)
+      window.location.href = "/";
     } catch (error) {
       console.error("Login failed", error.message);
       setError(error.message); // Set the error message
