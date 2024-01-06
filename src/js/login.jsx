@@ -1,5 +1,5 @@
 // Login.jsx
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
 import { signIn } from "./libs/googleAPI.js";
 import { createRoot } from "react-dom/client";
@@ -8,6 +8,14 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && !user.isAnonymous) {
+        // if the user is logged in, redirect to home page
+        window.location.href = "/";
+      }
+    });
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();

@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
-import { createRoot } from "react-dom/client";
 import Input from "./component/Input.jsx";
 import CountriesInput from "./component/CountriesInput.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { createRoot } from 'react-dom/client';
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import {
   validateFirstName,
@@ -15,9 +15,9 @@ import {
   validateEmail,
   validatePhone,
   validatePassword,
-  validate_call
+  validate_call,
 } from "./libs/validate.js";
-import { signUp ,isUserLoggedIn} from "./libs/googleAPI.js";
+import { signUp, isUserLoggedIn } from "./libs/googleAPI.js";
 
 const Register = () => {
   const [billingFrequency, setBillingFrequency] = useState("yearly");
@@ -38,22 +38,29 @@ const Register = () => {
   // if user is logged in, redirect to home page
 
   useEffect(async () => {
-    let userLogged = await isUserLoggedIn()
+    let userLogged = await isUserLoggedIn();
     if (userLogged) {
       window.location.href = "/";
     }
   }, []);
 
-  function validate_all(formData){
+  function validate_all(formData) {
     for (const key of formData.keys()) {
-      if(!key in validate_call){
-        console.log("key not found:",key);
+      if (!key in validate_call) {
+        console.log("key not found:", key);
         continue;
       }
       validate_call[key](formData.get(key), setValidate, validation);
     }
-
-}
+  }
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && !user.isAnonymous) {
+        // if the user is logged in, redirect to home page
+        window.location.href = "/";
+      }
+    });
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();

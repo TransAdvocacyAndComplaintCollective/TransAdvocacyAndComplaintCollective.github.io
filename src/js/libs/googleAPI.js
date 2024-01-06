@@ -22,12 +22,12 @@ const firebaseConfig = {
     measurementId: "G-9MPXZR194T",
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth();
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth();
 if (window.location.hostname === "localhost") {
     connectAuthEmulator(auth, "http://localhost:9099");
 }
-const db = getFirestore(app);
+export const db = getFirestore(app);
 if (window.location.hostname === "localhost") {
     connectFirestoreEmulator(db, 'localhost', 8081);
 }
@@ -118,6 +118,9 @@ export const signOutUser = async () => {
     } catch (error) {
         console.error("Error signing out user: ", error);
     }
+};
+export const getAuth_ = () => {
+    return auth;
 };
 export const isUserLoggedIn = async () => {
     try {

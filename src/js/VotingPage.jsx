@@ -1,6 +1,9 @@
 // VotingPage.jsx
 import React, { useState, useEffect, useContext } from "react";
 import { Button, Card, Container, Form } from "react-bootstrap";
+import { createRoot } from 'react-dom/client';
+import { retrieveVote, fetchCandidates } from "./libs/googleAPI.js";
+
 
 const VotingPage = () => {
   const location = window.location;
@@ -16,11 +19,11 @@ const VotingPage = () => {
     const fetchData = async () => {
       try {
         // Fetch voting data
-        const votingData = await yourFirebaseFunction(id);
+        const votingData = await retrieveVote(id);
         setVotingData(votingData);
 
         // Fetch candidates for the specified election
-        const candidates = await firebase.fetchCandidates(id);
+        const candidates = await fetchCandidates(id);
         setCandidates(candidates);
 
         // Fetch user vote
@@ -115,3 +118,8 @@ const VotingPage = () => {
 };
 
 export default VotingPage;
+
+
+const domNode = document.getElementById("VotingListPage")
+const root = createRoot(domNode);
+root.render(<VotingPage />);

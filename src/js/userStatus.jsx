@@ -1,18 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { createRoot } from 'react-dom/client';
-const firebaseConfig = {
-  apiKey: "AIzaSyDL2CHHhPUg9K6_tV_5Z2bUl4wWcB3-sic",
-  authDomain: "ptate-df901.firebaseapp.com",
-  projectId: "ptate-df901",
-  storageBucket: "ptate-df901.appspot.com",
-  messagingSenderId: "795297920122",
-  appId: "1:795297920122:web:9cfd9b972dc92213dd77c3",
-  measurementId: "G-9MPXZR194T"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+import { auth } from "./libs/googleAPI.js";
 
 function UserStatus() {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -92,7 +80,7 @@ function UserStatus() {
   }
 }
 
-// const domNode = document.getElementById("userStatusContainer")
-// const root = createRoot(domNode);
-// root.render(<UserStatus />);
-// export default UserStatus;
+const domNode = document.getElementById("userStatusContainer")
+const root = createRoot(domNode);
+root.render(<UserStatus />);
+export default UserStatus;
