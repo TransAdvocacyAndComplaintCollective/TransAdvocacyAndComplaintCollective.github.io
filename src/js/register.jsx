@@ -17,8 +17,16 @@ import {
   validatePassword,
   validate_call,
 } from "./libs/validate.js";
-import { signUp, isUserLoggedIn } from "./libs/googleAPI.js";
-
+import {
+  connectAuthEmulator,
+  getAuth,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import {auth, signUp, isUserLoggedIn } from "./libs/googleAPI.js";
+console.log(auth);
 const Register = () => {
   const [billingFrequency, setBillingFrequency] = useState("yearly");
   const [message, setMessage] = useState(null);
@@ -37,29 +45,37 @@ const Register = () => {
   });
   // if user is logged in, redirect to home page
 
-  useEffect(async () => {
-    let userLogged = await isUserLoggedIn();
-    if (userLogged) {
-      window.location.href = "/";
-    }
-  }, []);
+  // useEffect(() => {
+  //   const checkUserLoggedIn = async () => {
+  //     let userLogged = await isUserLoggedIn();
+  //     if (userLogged) {
+  //       window.location.href = "/";
+  //     }
+  //   };
+
+  //   checkUserLoggedIn();
+  // }, []);
 
   function validate_all(formData) {
     for (const key of formData.keys()) {
-      if (!key in validate_call) {
+      if (!(key in validate_call)) {
         console.log("key not found:", key);
         continue;
       }
       validate_call[key](formData.get(key), setValidate, validation);
     }
   }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user && !user.isAnonymous) {
-        // if the user is logged in, redirect to home page
         window.location.href = "/";
       }
     });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   async function handleSubmit(e) {

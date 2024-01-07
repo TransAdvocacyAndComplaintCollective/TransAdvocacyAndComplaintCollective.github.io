@@ -1,8 +1,9 @@
 // Login.jsx
 import React, { useContext, useState, useEffect } from "react";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
-import { signIn } from "./libs/googleAPI.js";
+import { signIn, auth } from "./libs/googleAPI.js";
 import { createRoot } from "react-dom/client";
+import { onAuthStateChanged } from "@firebase/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");

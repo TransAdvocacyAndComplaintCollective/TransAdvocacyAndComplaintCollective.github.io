@@ -113,7 +113,7 @@ const UserPage = () => {
                   type="text"
                   onValidate={(e) => validateFirstName(e, setValidate)}
                   validation={validation.firstName}
-                />
+                />getAuth_()
               </Col>
               <Col md={6}>
                 <Input

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { auth } from "./libs/googleAPI.js";
+import { onAuthStateChanged } from "firebase/auth";
 
 function UserStatus() {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -10,10 +11,10 @@ function UserStatus() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user && !user.isAnonymous) {
         setUserLoggedIn(true);
-        // Determine if the user is an admin based on your logic
-        // Example: check if the user has a specific role or privilege
-        const isAdminUser = user.roles && user.roles.includes('admin');
-        setIsAdmin(isAdminUser);
+        // Uncomment and modify the following logic based on your actual admin-checking logic
+        // For example, check if the user has a specific role or privilege
+        // const isAdminUser = user.roles && user.roles.includes('admin');
+        // setIsAdmin(isAdminUser);
       } else {
         setUserLoggedIn(false);
         setIsAdmin(false);
@@ -83,4 +84,3 @@ function UserStatus() {
 const domNode = document.getElementById("userStatusContainer")
 const root = createRoot(domNode);
 root.render(<UserStatus />);
-export default UserStatus;

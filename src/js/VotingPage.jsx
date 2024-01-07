@@ -117,8 +117,6 @@ const VotingPage = () => {
   );
 };
 
-export default VotingPage;
-
 
 const domNode = document.getElementById("VotingListPage")
 const root = createRoot(domNode);
