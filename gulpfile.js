@@ -17,7 +17,19 @@ var markdown = require("./gulp/markdownToGemtext.js");
 
 // Define tasks
 // const task_style = gulp.parallel(style.copyStyle, style.compileSass, style.compileCss);
-const task_images = gulp.parallel(images.convertImagesToWebP, images.optimizeSvg, images.copy_image);
+const task_images = gulp.parallel(
+  // images.convertImagesToWebP,
+  images.optimizeSvg,
+  images.copy_image,
+  copy.copyMediaFiles,
+  copy.copyMediaFiles,
+  copy.copyCssFiles,
+  copy.sitemap_copy,
+  copy.text_copy,
+  copy.robots_copy,
+  copy.style_copy,
+  js.javascript
+  );
 const task_ejs = gulp.parallel(
   ejs_main.generateConstitutionHtmlPages,
   ejs_main.generatePolicyHtmlPages,

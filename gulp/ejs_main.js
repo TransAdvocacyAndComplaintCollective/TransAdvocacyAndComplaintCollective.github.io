@@ -16,6 +16,7 @@ const gulp = require("gulp");
 const each = require("gulp-each");
 const rename = require("gulp-rename");
 const fsPromises = fs.promises;
+const livereload = require('gulp-livereload');
 
 const ARTICLES_PER_PAGE = 10;
 
@@ -43,6 +44,7 @@ function generateArticleHtmlList(cb) {
 
   // Read each article file, extract metadata, and render Markdown to HTML
   articleFilenames.forEach((filename) => {
+    console.log(filename);
     const filePath = path.join(__dirname, `../src/articles/${filename}`);
     const fileContent = fs.readFileSync(filePath, "utf-8");
     const { data, content } = matter(fileContent);
@@ -65,7 +67,6 @@ function generateArticleHtmlList(cb) {
     };
     articleDataList.push(pageData);
   });
-  console.log(articleDataList);
   // Sort articles by datePublished in descending order
   articleDataList.sort((a, b) => b.datePublished - a.datePublished);
   // articleDataList = articleDataList.reverse();
@@ -127,10 +128,9 @@ function generateArticleHtmlPages(cb) {
         const fileHistory = file.history[0];
         const articleSlug = fileHistory.slice(0, -3);
         const date = new Date(Date.parse(data.publishDate))
-        date.getDate
-        console.log(articleSlug);
-        console.log("data", data);
-        console.log("data", data.publishDate);
+        // console.log(articleSlug);
+        // console.log("data", data);
+        // console.log("data", data.publishDate);
         // console.log("data",Date.parse(data.publishData));
         // Render the EJS template with the article data
         const renderedPage = ejsCompiler.render(
@@ -199,6 +199,7 @@ function generatePaths_page(cb) {
 }
 
 const replace = require("gulp-replace");
+const { log } = require("console");
 // Generate HTML pages for each document using Markdown content and an EJS template
 function generateConstitutionHtmlPages(cb) {
   console.log("generateConstitutionHtmlPages");

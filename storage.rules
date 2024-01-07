@@ -1,12 +1,114 @@
 rules_version = '2';
 
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if false;
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return get(/databases/$(database)/documents/user/$(request.auth.uid)).data.role == 'admin';
+    }
+    function isUserSubscribed() {
+      return exists(
+        /databases/$(database)/documents/customers/$(request.auth.uid)/subscriptions/$(document)
+        ) && (
+          get(/databases/$(database)/documents/customers/$(request.auth.uid)/subscriptions/$(document)).data.status == 'trialing'
+          ||
+          get(/databases/$(database)/documents/customers/$(request.auth.uid)/subscriptions/$(document)).data.status == 'active'
+        );
+    }
+
+    function isValidUserData(data, requireAdmin) {
+      return data.keys().hasAll(['email', 'firstName', 'lastName', 'dob', 'address', 'phone',"role"]) &&
+             data.email is string && data.email.size() > 0 && data.email.size() < 100 && data.email.matches('^[^@]+@[^@]+$') &&
+             data.firstName is string && data.firstName.size() > 0 && data.firstName.size() < 100 &&
+             data.lastName is string && data.lastName.size() > 0 && data.lastName.size() < 100 &&
+             data.address is map && isValidAddress(data.address) &&
+             data.phone is string && data.phone.size() > 0 && data.phone.size() < 100 &&
+             (!requireAdmin || (data.role is list && data.role.size() == 0 && isAdmin()));
+    }
+    
+  function isValidAddress(address) {
+    return address.addressLines is list && address.addressLines.size() == 2 &&
+      address.addressLines[0] is string && address.addressLines[0].size() > 0 && address.addressLines[0].size() < 100 &&
+      address.addressLines[1] is string && address.addressLines[1].size() > 0 && address.addressLines[1].size() < 100 &&
+      address.postalCode is string && address.postalCode.size() > 0 && address.postalCode.size() < 100 &&
+      address.locality is string && address.locality.size() > 0 && address.locality.size() < 100 &&
+      address.regionCode is string && address.regionCode.size() > 0 && address.regionCode.size() < 100;
+  }
+
+    function isValidElectionData(data){
+      return data.keys().hasAll(['name', 'description', 'startDate', 'endDate', 'candidates']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.description is string && data.description.size() > 0 && data.description.size() < 100 &&
+             data.startDate is timestamp &&
+             data.endDate is timestamp &&
+             data.candidates is list && data.candidates.size() > 0 && data.candidates.size() < 100;
+    }
+
+    function isValidCandidateData(data) {
+      return data.keys().hasAll(['name', 'description', 'image']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.description is string && data.description.size() > 0 && data.description.size() < 100 &&
+             data.image is string && data.image.size() > 0 && data.image.size() < 100;
+    }
+
+
+    // Need for stripe
+    match /customers/{uid} {
+      allow read, write: if request.auth.uid == uid;
+
+      match /checkout_sessions/{id} {
+        allow read, write: if request.auth.uid == uid;
+      }
+
+      match /subscriptions/{id} {
+        allow read: if request.auth.uid == uid;
+      }
+
+      match /payments/{id} {
+        allow read: if request.auth.uid == uid;
+      }
+    }
+
+    // Define rules for the 'products' collection
+    match /products/{id} {
+      allow read: if true;
+
+      match /prices/{id} {
+        allow read: if true;
+      }
+
+      match /tax_rates/{id} {
+        allow read: if true;
+      }
+    }
+
+    // User document rules
+    match /user/{uid} {
+      allow read, write: if request.auth.uid == uid && isValidUserData(request.resource.data, false);
+      allow read, write: if isAdmin();
+    }
+
+    // Election document rules
+    match /election/{electionId} {
+      allow read: if request.auth.uid != null;
+      allow write: if isAdmin();
+    }
+
+    // Candidate document rules
+    match /election/{electionId}/candidate/{candidateId} {
+      allow read: if request.auth.uid != null;
+      allow write: if isAdmin();
+    }
+
+    function isValidVoteData(data) {
+      return data.keys().hasAll(['candidateId']) &&
+             data.candidateId is string && data.candidateId.size() > 0 && data.candidateId.size() < 100 &&
+             get(/databases/$(database)/documents/election/$(request.resource.data.electionId)/candidate/$(data.candidateId)).data != null;
+    }
+    // Vote document rules
+    match /election/{electionId}/vote/{uid} {
+      allow read, write: if request.auth.uid != null && isValidVoteData(request.resource.data);
+      allow read, write: if isAdmin();
     }
   }
 }

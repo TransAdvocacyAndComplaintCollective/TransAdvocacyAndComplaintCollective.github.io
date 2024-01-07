@@ -1,6 +1,7 @@
-const { SitemapAndIndexStream, SitemapStream } = require("sitemap");
+const { SitemapAndIndexStream, SitemapStream, simpleSitemapAndIndex } = require("sitemap");
 const path = require("path");
 const fs = require("fs");
+const livereload = require('gulp-livereload');
 const { createWriteStream } = require("fs");
 const matter = require("gray-matter");
 function createDirectoryIfNotExists(directory) {
@@ -8,11 +9,13 @@ function createDirectoryIfNotExists(directory) {
     fs.mkdirSync(directory, { recursive: true });
   }
 }
-function sitemap(cb) {
-  createDirectoryIfNotExists(path.join(__dirname, `../temp/`));
+
+
+function GenSitemap(cb) {
+  createDirectoryIfNotExists(path.join(__dirname, `../output/`));
+
   const sms = new SitemapAndIndexStream({
     limit: 50000,
-    lastmodDateOnly: false,
     getSitemapStream: (i) => {
       const sitemapStream = new SitemapStream({
         hostname: "http://ukpirate.party/",
@@ -24,10 +27,11 @@ function sitemap(cb) {
           video: false,
         },
       });
-      const path_ = path.join(__dirname, `../temp/sitemap-${i}.xml`);
-      const ws = sitemapStream.pipe(createWriteStream(path.resolve(path_)));
+      const path_ = path.join(__dirname, `../output/sitemap-${i}.xml`);
+      console.log(path_);
+      const ws = sitemapStream.pipe(createWriteStream(path_));
       return [
-        new URL(path_, "http://ukpirate.party/").toString(),
+        new URL(`http://ukpirate.party/sitemap-${i}.xml`).toString(),
         sitemapStream,
         ws,
       ];
@@ -43,13 +47,13 @@ function sitemap(cb) {
       url: `/articles/${articleSlug}.html`,
       news: {
         publication: {
-          name: "uk pirate party",
+          name: "Pirate Party UK",
           language: "en",
         },
         genres: "PressRelease, Blog",
-        publication_date: data.publishData,
+        publication_date: new Date(data.publishDate),
         title: data.title,
-        keywords: data.keywords,
+        keywords: data.keywords.join(', '),
       },
     });
   });
@@ -57,4 +61,4 @@ function sitemap(cb) {
   sms.end();
   cb();
 }
-exports.sitemap = sitemap;
+exports.genSitemap = GenSitemap;

@@ -1,62 +1,112 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Contact Us - New UK Pirate Party</title>
+    <link rel="icon" href="/media/PP.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+      crossorigin="anonymous"
+    />
 
-<head>
-  <meta charset="UTF-8">
-  <title>Contact Us - New UK Pirate Party</title>
-  <link rel="icon" href="/media/PP.svg">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+  </head>
 
+  <body>
+    <%- include ("partials/header.ejs") %>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-
-
-</head>
-
-<body>
-  <%- include ("partials/header.ejs") %>
-
-  <div class="container pb-5 mb-5" style="height: 100px;">
-    <h1 class="text-body-emphasis">contact us</h1>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title"><i class="bi bi-discord"></i> Discord </h5>
-        <p class="card-text">
-          The Pirate Party UK Discord is an online platform where members and supporters of the Pirate Party UK can connect and discuss various political and social issues. The Pirate Party UK is a political party that focuses on digital rights, civil liberties, and transparency in government. The Discord server is a space for like-minded individuals to come together and engage in discussions, share news and events, and organize political action. It is also a space for members to socialize and build a sense of community within the party.
-        </p>
-        <a href="https://discord.gg/t8EDRgXzMH" class="btn btn-primary">Join</a>
+    <div class="container pb-5 mb-5" style="height: 100px">
+      <h1 class="text-body-emphasis">contact us</h1>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-discord"></i> Discord</h5>
+          <p class="card-text">
+            The Pirate Party UK Discord is an online platform where members and
+            supporters of the Pirate Party UK can connect and discuss various
+            political and social issues. The Pirate Party UK is a political
+            party that focuses on digital rights, civil liberties, and
+            transparency in government. The Discord server is a space for
+            like-minded individuals to come together and engage in discussions,
+            share news and events, and organize political action. It is also a
+            space for members to socialize and build a sense of community within
+            the party.
+          </p>
+          <a href="https://discord.gg/t8EDRgXzMH " class="btn btn-primary"
+            >Join</a
+          >
+        </div>
+      </div>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-mastodon"></i> mastodon</h5>
+          <p class="card-text">
+            Stay connected with the latest updates on mastodon.
+          </p>
+          <a href="https://tech.lgbt/@pirate_party_uk " class="btn btn-primary"
+            >Find us</a
+          >
+        </div>
+      </div>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-twitter"></i> twitter</h5>
+          <p class="card-text">
+            Stay connected with the latest updates on twitter.
+          </p>
+          <a href="https://twitter.com/_PiratePartyUK" class="btn btn-primary"
+            >Find us</a
+          >
+        </div>
+      </div>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-envelope"></i> Email</h5>
+          <p class="card-text">
+            The Pirate Party UK can be reached via email. Feel free to get in
+            touch with them for any inquiries or communications related to their
+            activities and initiatives.
+          </p>
+          <noscript>
+            <p>Enable JavaScript to see email address</p>
+          </noscript>
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              if (
+                navigator.webdriver ||
+                (window.chrome && window.chrome.webstore)
+              ) {
+                email_element.textContent =
+                  "Due to web browser automation, emails are not displayed.";
+                email_element.classList.add("disabled");
+                return;
+              }
+              let user = "0ku.ytrap.etarip".split("").reverse().join("");
+              let domain = "moc.liamg".split("").reverse().join("");
+              let email_address = user + "@" + domain;
+              let email_element = document.createElement("a");
+              email_element.href = "mailto:" + email_address;
+              email_element.textContent = email_address;
+              document
+                .getElementById("email-container")
+                .appendChild(email_element);
+            });
+          </script>
+          <div id="email-container"></div>
+        </div>
       </div>
     </div>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title"><i class="bi bi-envelope"></i> Email </h5>
-        <p class="card-text">
-          The Pirate Party UK can be reached via email. Feel free to get in touch with them for any inquiries or communications related to their activities and initiatives.
-        </p>
-        <p><a href="" id="email"></a></p>
-        <script>
-          // test for pubbiers
-          let email_address = "pirate.party.uk0";
-          email_address += "@";
-          email_address += "gmail.com";
-          let c = document.getElementById("email")
-          c.innerHTML = email_address;
-          c.href = "mailto:" + email_address;
-        </script>
-      </div>
-    </div>
-    <!-- <article>
-      <section>
-        <p>If you have any questions or comments, please feel free to reach out to us on one of our Discord servers:</p>
-        <ul>
-          <li><a href="https://discord.gg/t8EDRgXzMH">General Discussion Server</a></li>
-        </ul>
-      </section> -->
-    </article>
-  </div>
-  <%- include ("partials/footer.ejs") %>
-</body>
-
+    <%- include ("partials/footer.ejs") %>
+  </body>
 </html>

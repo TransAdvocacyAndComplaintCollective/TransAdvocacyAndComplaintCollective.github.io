@@ -1,17 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-const firebaseConfig = {
-  apiKey: "AIzaSyDL2CHHhPUg9K6_tV_5Z2bUl4wWcB3-sic",
-  authDomain: "ptate-df901.firebaseapp.com",
-  projectId: "ptate-df901",
-  storageBucket: "ptate-df901.appspot.com",
-  messagingSenderId: "795297920122",
-  appId: "1:795297920122:web:9cfd9b972dc92213dd77c3",
-  measurementId: "G-9MPXZR194T"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+import { createRoot } from 'react-dom/client';
+import { auth } from "./libs/googleAPI.js";
+import { onAuthStateChanged } from "firebase/auth";
 
 function UserStatus() {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -21,10 +11,10 @@ function UserStatus() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user && !user.isAnonymous) {
         setUserLoggedIn(true);
-        // Determine if the user is an admin based on your logic
-        // Example: check if the user has a specific role or privilege
-        const isAdminUser = user.roles && user.roles.includes('admin');
-        setIsAdmin(isAdminUser);
+        // Uncomment and modify the following logic based on your actual admin-checking logic
+        // For example, check if the user has a specific role or privilege
+        // const isAdminUser = user.roles && user.roles.includes('admin');
+        // setIsAdmin(isAdminUser);
       } else {
         setUserLoggedIn(false);
         setIsAdmin(false);
@@ -91,4 +81,6 @@ function UserStatus() {
   }
 }
 
-export default UserStatus;
+const domNode = document.getElementById("userStatusContainer")
+const root = createRoot(domNode);
+root.render(<UserStatus />);

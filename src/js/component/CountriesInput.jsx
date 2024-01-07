@@ -1,4 +1,7 @@
-countries =[
+import React, { useState } from 'react';
+
+
+const countries =[
     {"code":"BI","name":"Afghanistan"},
     {"code":"CV","name":"Åland Islands"},
     {"code":"KH","name":"Albania"},
@@ -213,15 +216,30 @@ countries =[
     {"code":"ZM","name":"Zambia"},
     {"code":"ZW","name":"Zimbabwe"},
     
-]
+];
 
-function CountriesInput(props) {
-  const { onChange } = props;
+
+
+export default function CountriesInput({  }) {
   return (
-    <select onChange={onChange} value="UK" className="countries-input">
-      {countries.map((country) => (
-        <option key={country}>{country}</option>
-      ))}
-    </select>
+    <div className="mb-3 row">
+      <label htmlFor="country" className="col-sm-3 col-form-label">Country</label>
+      <div className="col-sm-9">
+        <select
+          name="country"
+          id="country"
+          defaultValue={"GB"}
+          className="form-select"
+        >
+          {countries.map((country) => (
+            <option key={country.code} value={country.code}>
+              {country.name}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
   );
 }
+
+

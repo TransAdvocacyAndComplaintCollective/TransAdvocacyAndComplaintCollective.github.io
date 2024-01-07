@@ -36,36 +36,15 @@ function generate_rss_feed(cb) {
     const articleSlug = file.slice(0, file.length - 3);
     let url_post = "https://ukpirate.party/";
     // Create an article object
+    
     const article = {
       title: fileMatter.title,
       id: url_post,
       link: url_post,
       description: fileMatter.data.summary,
       content: fileMatter.content,
-      //   author: [
-      //     {
-      //       name: "Jane Doe",
-      //       email: "janedoe@example.com",
-      //       link: "https://ukpirate.party/janedoe",
-      //     },
-      //     {
-      //       name: "Joe Smith",
-      //       email: "joesmith@example.com",
-      //       link: "https://ukpirate.party/joesmith",
-      //     },
-      //   ],
-      //   contributor: [
-      //     {
-      //       name: "Shawn Kemp",
-      //       email: "shawnkemp@example.com",
-      //       link: "https://ukpirate.party/shawnkemp",
-      //     },
-      //     {
-      //       name: "Reggie Miller",
-      //       email: "reggiemiller@example.com",
-      //       link: "https://ukpirate.party/reggiemiller",
-      //     },
-      //   ],
+      author: fileMatter.data.author,
+      contributor: fileMatter.data.contributor,
       date: fileMatter.data.date,
       // image: fileMatter.data.imageUrl,
     };
@@ -75,25 +54,22 @@ function generate_rss_feed(cb) {
   });
   // Generate the RSS feed
   const feed = new Feed.Feed({
-    title: "",
-    description: "This is my personal feed!",
+    title: "Pirate Party uk",
+    description: "",
     id: "https://ukpirate.party/",
     link: "https://ukpirate.party/",
     language: "en", // optional, used only in RSS 2.0, possible values: http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
     image: "https://ukpirate.party/image.png",
     favicon: "https://ukpirate.party/favicon.ico",
-    copyright: "All rights reserved 2013, John Doe",
-    updated: new Date(2013, 6, 14), // optional, default = today
+    copyright: "Creative Commentes CC-By pirate party uk",
+    // updated: new Date(2013, 6, 14), // optional, default = today
     generator: "awesome",
     feedLinks: {
       json: "https://ukpirate.party/json",
       atom: "https://ukpirate.party/atom",
     },
-    // author: {
-    //   name: "John Doe",
-    //   email: "johndoe@example.com",
-    //   link: "https://ukpirate.party/johndoe",
-    // },
+    // author: fileMatter.data.author,
+    // contributor: fileMatter.data.contributor,
   });
   for (const article of allArticles) {
     feed.addItem(article);
@@ -101,7 +77,7 @@ function generate_rss_feed(cb) {
   createDirectoryIfNotExists(`${outputDir}/`);
   fs.writeFileSync(`${outputDir}/feed.rss`, feed.rss2());
   // fs.writeFileSync(`${outputDir}/feed.atom`, feed.atom1());
-  fs.writeFileSync(`${outputDir}/feed.json`, feed.json1());
+  // fs.writeFileSync(`${outputDir}/feed.json`, feed.json1());
   cb();
 }
 
@@ -195,6 +171,7 @@ function generate_rss_feeds(cb) {
         date: new Date(article.date),
         image: article.image,
         author: article.author,
+        contributor: article.contributor,
       });
     });
     createDirectoryIfNotExists(`${outputDir}/feed/${keyword}/`);

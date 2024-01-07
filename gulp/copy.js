@@ -1,7 +1,7 @@
 const gulp = require("gulp");
 function copyMediaFiles(cb) {
   return gulp
-    .src("temp/media/*.{png,jpeg,gif,webp,apng,svg}")
+    .src("src/media/*.{png,jpeg,gif,webp,apng,svg}")
     .pipe(gulp.dest("output/media/"));
 }
 function copyCssFiles(cb) {
@@ -10,13 +10,13 @@ function copyCssFiles(cb) {
     .pipe(gulp.dest("output/styles/"));
 }
 function sitemap_copy(cb) {
-  return gulp.src("temp/*.xml").pipe(gulp.dest(`output/`));
+  return gulp.src("src/*.xml").pipe(gulp.dest(`output/`));
 }
 function text_copy(cb) {
   return gulp.src("src/*.txt").pipe(gulp.dest(`output/`));
 }
 function robots_copy(cb) {
-  return gulp.src("temp/*.txt").pipe(gulp.dest(`output/`));
+  return gulp.src("src/*.txt").pipe(gulp.dest(`output/`));
 }
 
 function style_copy(cb) {
