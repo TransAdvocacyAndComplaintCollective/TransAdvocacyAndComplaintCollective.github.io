@@ -66,17 +66,17 @@ const Register = () => {
     }
   }
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && !user.isAnonymous) {
-        window.location.href = "/";
-      }
-    });
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user && !user.isAnonymous) {
+  //       window.location.href = "/";
+  //     }
+  //   });
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();

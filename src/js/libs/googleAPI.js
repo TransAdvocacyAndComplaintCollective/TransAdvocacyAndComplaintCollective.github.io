@@ -43,13 +43,14 @@ export const placeVote = async (electionId, rankings) => {
         }
 
         const uid = user.uid;
-        const voteRef = doc(collection(db, "votes", electionId, "user", uid));
+        const voteRef = doc(db, `votes/${electionId}/user/${uid}`);
 
         await updateDoc(voteRef, { rankings });
     } catch (error) {
         console.error("Error placing vote:", error);
     }
-};
+}; 
+
 
 export const retrieveVote = async (electionId) => {
     try {
@@ -271,5 +272,73 @@ export const update_election = async (electionData, candidatesData, id) => {
             message: error.message,
             isValid: false,
         };
+    }
+};
+
+
+export const is_admin = async () =>{
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("User not authenticated.");
+            return null;
+        }
+
+        const uid = user.uid;
+        const userRef = doc(collection(db, "users", uid));
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+            if (userDoc.data().role.includes("admin")) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        } else {
+            console.log("User document does not exist.");
+            return false;
+        }
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        return false;
+    }
+
+}
+
+export const fetchAllVotesForElection = async (electionId) => {
+    try {
+        const votesRef = collection(db, "votes", electionId, "user");
+        const snapshot = await getDocs(votesRef);
+
+        const votes = snapshot.docs.map((doc) => ({
+            userId: doc.id,
+            ...doc.data(),
+        }));
+
+        return votes;
+    } catch (error) {
+        console.error("Error fetching votes for election:", error);
+        return [];
+    }
+};
+
+export const fetchElection = async (electionId) => {
+    try {
+        const electionRef = doc(collection(db, "election"), electionId);
+        const electionDoc = await getDoc(electionRef);
+
+        if (electionDoc.exists()) {
+            return {
+                id: electionDoc.id,
+                ...electionDoc.data(),
+            };
+        } else {
+            console.log("Election document does not exist.");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching election:", error);
+        return null;
     }
 };

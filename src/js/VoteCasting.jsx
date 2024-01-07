@@ -2,14 +2,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Button, Card, Container, Form } from "react-bootstrap";
 import { createRoot } from "react-dom/client";
-import { retrieveVote, fetchCandidates } from "./libs/googleAPI.js";
+import { retrieveVote, fetchCandidates, placeVote } from "./libs/googleAPI.js";
 
 const VotingPage = () => {
   const location = window.location;
   const searchParams = new URLSearchParams(location.search);
   const id = searchParams.get("id");
 
-  const [votingData, setVotingData] = useState({"title":"test"});
+  const [votingData, setVotingData] = useState({"title":""});
   const [rankings, setRankings] = useState([]);
   const [candidates, setCandidates] = useState([]);
   const [userHasVoted, setUserHasVoted] = useState(false);
@@ -17,21 +17,17 @@ const VotingPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch voting data
-        // const votingData = await retrieveVote(id);
-        // setVotingData(votingData);
 
         // Fetch candidates for the specified election
         const candidates = await fetchCandidates(id);
-        console.log("candidates:",candidates);
+        
         setCandidates(candidates);
-
         // Fetch user vote
-        // const userVote = await retrieveVote(id);
-        // if (userVote) {
-        //   setRankings(userVote.candidateId || []);
-        //   setUserHasVoted(true);
-        // }
+        const userVote = await retrieveVote(id);
+        if (userVote) {
+          setRankings(userVote.candidateId || []);
+          setUserHasVoted(true);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
