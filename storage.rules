@@ -87,17 +87,23 @@ service cloud.firestore {
       allow read, write: if request.auth.uid == uid && isValidUserData(request.resource.data, false);
       allow read, write: if isAdmin();
     }
+    // Election document rules
+    match /election {
+      allow list: if request.auth != null
+    }
 
     // Election document rules
     match /election/{electionId} {
       allow read: if request.auth.uid != null;
       allow write: if isAdmin();
+      allow list: if request.auth != null
     }
 
     // Candidate document rules
     match /election/{electionId}/candidate/{candidateId} {
       allow read: if request.auth.uid != null;
       allow write: if isAdmin();
+      allow list: if request.auth != null
     }
 
     function isValidVoteData(data) {
@@ -107,7 +113,8 @@ service cloud.firestore {
     }
     // Vote document rules
     match /election/{electionId}/vote/{uid} {
-      allow read, write: if request.auth.uid != null && isValidVoteData(request.resource.data);
+      allow read: if request.auth.uid != null ;
+      allow write: if request.auth.uid != null  && isValidVoteData(request.resource.data);
       allow read, write: if isAdmin();
     }
   }
