@@ -192,6 +192,9 @@ export const signUp = async (firstName, lastName, dob, email, address1, address2
         if (docRef) {
             console.log("Document written with ID: ", docRef.id);
         }
+        else {
+            console.log("Document not written with ID: ", docRef.id);
+        }
 
         return {
             message: "Account created successfully",

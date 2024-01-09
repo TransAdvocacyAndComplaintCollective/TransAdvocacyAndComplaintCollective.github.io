@@ -4,54 +4,18 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isAdmin() {
-      return get(/databases/$(database)/documents/user/$(request.auth.uid)).data.role == 'admin';
+      let userDoc = get(/databases/$(database)/documents/user/$(request.auth.uid));
+      return userDoc != null && userDoc.data.role == 'admin';
     }
-    function isUserSubscribed() {
-      return exists(
-        /databases/$(database)/documents/customers/$(request.auth.uid)/subscriptions/$(document)
-        ) && (
-          get(/databases/$(database)/documents/customers/$(request.auth.uid)/subscriptions/$(document)).data.status == 'trialing'
-          ||
-          get(/databases/$(database)/documents/customers/$(request.auth.uid)/subscriptions/$(document)).data.status == 'active'
-        );
-    }
-
-    function isValidUserData(data, requireAdmin) {
-      return data.keys().hasAll(['email', 'firstName', 'lastName', 'dob', 'address', 'phone',"role"]) &&
-             data.email is string && data.email.size() > 0 && data.email.size() < 100 && data.email.matches('^[^@]+@[^@]+$') &&
-             data.firstName is string && data.firstName.size() > 0 && data.firstName.size() < 100 &&
-             data.lastName is string && data.lastName.size() > 0 && data.lastName.size() < 100 &&
-             data.address is map && isValidAddress(data.address) &&
-             data.phone is string && data.phone.size() > 0 && data.phone.size() < 100 &&
-             (!requireAdmin || (data.role is list && data.role.size() == 0 && isAdmin()));
-    }
-    
-  function isValidAddress(address) {
-    return address.addressLines is list && address.addressLines.size() == 2 &&
-      address.addressLines[0] is string && address.addressLines[0].size() > 0 && address.addressLines[0].size() < 100 &&
-      address.addressLines[1] is string && address.addressLines[1].size() > 0 && address.addressLines[1].size() < 100 &&
-      address.postalCode is string && address.postalCode.size() > 0 && address.postalCode.size() < 100 &&
-      address.locality is string && address.locality.size() > 0 && address.locality.size() < 100 &&
-      address.regionCode is string && address.regionCode.size() > 0 && address.regionCode.size() < 100;
-  }
 
     function isValidElectionData(data){
       return data.keys().hasAll(['name', 'description', 'startDate', 'endDate', 'candidates']) &&
-             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
-             data.description is string && data.description.size() > 0 && data.description.size() < 100 &&
-             data.startDate is timestamp &&
-             data.endDate is timestamp &&
-             data.candidates is list && data.candidates.size() > 0 && data.candidates.size() < 100;
+      data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+      data.description is string && data.description.size() > 0 && data.description.size() < 100 &&
+      data.startDate is timestamp &&
+      data.endDate is timestamp &&
+      data.candidates is list && data.candidates.size() > 0 && data.candidates.size() < 100;
     }
-
-    function isValidCandidateData(data) {
-      return data.keys().hasAll(['name', 'description', 'image']) &&
-             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
-             data.description is string && data.description.size() > 0 && data.description.size() < 100 &&
-             data.image is string && data.image.size() > 0 && data.image.size() < 100;
-    }
-
-
     // Need for stripe
     match /customers/{uid} {
       allow read, write: if request.auth.uid == uid;
@@ -83,38 +47,85 @@ service cloud.firestore {
     }
 
     // User document rules
-    match /user/{uid} {
-      allow read, write: if request.auth.uid == uid && isValidUserData(request.resource.data, false);
-      allow read, write: if isAdmin();
-    }
-    // Election document rules
-    match /election {
-      allow list: if request.auth != null
+    match /user/{userId} {
+      // Function to validate address lines
+      function isValidAddressLines(addressLines) {
+        return addressLines is list &&
+        addressLines.size() == 2 &&
+        addressLines[0] is string &&
+        addressLines[0].size() <= 50 &&
+        addressLines[1] is string &&
+        addressLines[1].size() <= 50;
+      }
+
+      // Function to validate user data
+      function isValidUserData(user) {
+        return user is map && user.keys().hasAll(['firstName', 'lastName', 'dob', 'address', 'role']) &&
+        user.firstName is string && user.firstName.size() <= 50 &&
+        user.lastName is string && user.lastName.size() <= 50 &&
+        user.dob is string &&
+        user.address is map &&
+        isValidAddressLines(user.address.addressLines) &&
+        user.address.postcode is string && user.address.postcode.size() <= 50 &&
+        user.address.locality is string && user.address.locality.size() <= 50 &&
+        user.address.regionCode is string &&
+        user.role is list && user.role.size() == 0;
+      }
+      // Allowing write access if the user data is valid and the UID matches
+      allow write: if isValidUserData(request.resource.data) && request.auth.uid == userId;
+
+      // Allowing read access if the UID matches
+      allow read: if request.auth.uid == userId;
+      allow write: if isAdmin();
     }
 
     // Election document rules
+    match /elections {
+      allow list: if request.auth != null;
+    }
+    // Election document rules for a specific electionId
     match /election/{electionId} {
       allow read: if request.auth.uid != null;
       allow write: if isAdmin();
-      allow list: if request.auth != null
+      allow list: if request.auth != null;
     }
 
-    // Candidate document rules
+    // Candidate document rules within a specific election
     match /election/{electionId}/candidate/{candidateId} {
       allow read: if request.auth.uid != null;
       allow write: if isAdmin();
-      allow list: if request.auth != null
+      allow list: if request.auth != null;
     }
 
-    function isValidVoteData(data) {
-      return data.keys().hasAll(['candidateId']) &&
-             data.candidateId is string && data.candidateId.size() > 0 && data.candidateId.size() < 100 &&
-             get(/databases/$(database)/documents/election/$(request.resource.data.electionId)/candidate/$(data.candidateId)).data != null;
-    }
-    // Vote document rules
+
+
+    // Vote document rules within a specific election and user
     match /election/{electionId}/vote/{uid} {
-      allow read: if request.auth.uid != null ;
-      allow write: if request.auth.uid != null  && isValidVoteData(request.resource.data);
+      // Function to validate vote data
+      function isValidVoteData(data) {
+        return data.keys().hasAll(['candidateId']) &&
+        data.candidateId is list &&
+        isStringList(data.candidateId) &&
+        allStringsExistInCandidateCollection(data.candidateId, electionId) &&
+        request.auth.uid == uid;    // Ensure that the vote is associated with the correct user
+      }
+
+    // Helper function to check if a value is a list of strings
+      function isStringList(value) {
+        // return (value is list) && value.every((item) => item is string);
+        return true;
+      }
+
+    // Helper function to check if all strings in the list exist in the candidate collection
+      function allStringsExistInCandidateCollection(candidateIdList, electionId) {
+        // return candidateIdList.every((candidateId) => {
+        //   return exists(/databases/$(database)/documents/election/$(electionId)/candidate/$(candidateId));
+        // });
+        return true;
+      }
+
+      allow read: if request.auth.uid != null;
+      allow write: if request.auth.uid != null && isValidVoteData(request.resource.data);
       allow read, write: if isAdmin();
     }
   }

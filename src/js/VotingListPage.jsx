@@ -24,7 +24,7 @@ const VotingListPage = () => {
             <Card.Body>
               <Card.Title>{election.name}</Card.Title>
               <Card.Text>{election.description}</Card.Text>
-              <a href={`/VoteCasting?id=${election.id}`}>Take Part</a>
+              <a href={`/VoteCasting.htmk?id=${election.id}`}>Take Part</a>
             </Card.Body>
           </Card>
         ))}
