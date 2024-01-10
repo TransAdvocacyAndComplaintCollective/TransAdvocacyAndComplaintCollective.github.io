@@ -72,7 +72,7 @@ service cloud.firestore {
         user.role is list && user.role.size() == 0;
       }
       // Allowing write access if the user data is valid and the UID matches
-      allow write: if isValidUserData(request.resource.data) && request.auth.uid == userId;
+      allow write: if (isValidUserData(request.resource.data) || isAdmin()) && request.auth.uid == userId;
 
       // Allowing read access if the UID matches
       allow read: if request.auth.uid == userId;
@@ -80,7 +80,7 @@ service cloud.firestore {
     }
 
     // Election document rules
-    match /elections {
+    match /election {
       allow list: if request.auth != null;
     }
     // Election document rules for a specific electionId
@@ -103,11 +103,10 @@ service cloud.firestore {
     match /election/{electionId}/vote/{uid} {
       // Function to validate vote data
       function isValidVoteData(data) {
-        return data.keys().hasAll(['candidateId']) &&
-        data.candidateId is list &&
-        isStringList(data.candidateId) &&
-        allStringsExistInCandidateCollection(data.candidateId, electionId) &&
-        request.auth.uid == uid;    // Ensure that the vote is associated with the correct user
+        return data.keys().hasAll(['rankings']) &&
+        data.rankings is map &&
+        data.rankings.keys().hasAll(['candidateId']) &&
+        request.auth.uid == uid;
       }
 
     // Helper function to check if a value is a list of strings
@@ -125,8 +124,8 @@ service cloud.firestore {
       }
 
       allow read: if request.auth.uid != null;
-      allow write: if request.auth.uid != null && isValidVoteData(request.resource.data);
-      allow read, write: if isAdmin();
+      allow write: if request.auth.uid != null && (isValidVoteData(request.resource.data) || isAdmin());
+      // allow read, write: if isAdmin();
     }
   }
 }

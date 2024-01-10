@@ -43,10 +43,10 @@ export const placeVote = async (electionId, rankings) => {
         }
 
         const uid = user.uid;
-        const voteRef = doc(db, `election/${electionId}/user/${uid}`);
+        const voteRef = doc(db, `election/${electionId}/vote/${uid}`);
 
         // Use setDoc to create a new document or overwrite an existing one
-        await setDoc(voteRef, { rankings });
+        await setDoc(voteRef, { rankings:rankings });
     } catch (error) {
         console.error("Error placing vote:", error);
     }
@@ -61,7 +61,7 @@ export const retrieveVote = async (electionId) => {
         }
 
         const uid = user.uid;
-        const voteRef = doc(db, "election", electionId, "users", uid);
+        const voteRef = doc(db, "election", electionId, "vote", uid);
         const voteDoc = await getDoc(voteRef);
 
         if (voteDoc.exists()) {

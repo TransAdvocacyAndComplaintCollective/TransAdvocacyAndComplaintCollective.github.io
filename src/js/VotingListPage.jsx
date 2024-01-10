@@ -6,7 +6,7 @@ import { fetchVotingElections } from "./libs/googleAPI.js";
 
 const VotingListPage = () => {
   const [votingElections, setVotingElections] = useState([]);
-
+  console.log("votingElections:",votingElections);
   useEffect(() => {
     const fetchElections = async () => {
       const elections = await fetchVotingElections();

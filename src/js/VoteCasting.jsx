@@ -62,7 +62,7 @@ const VotingPage = () => {
     <Container className="mt-5">
       {votingData && (
         <div>
-          <h2>{votingData.title}</h2>
+          <h2>{votingData.name}</h2>
           {userHasVoted ? (
             <p>You have already voted. Thank you!</p>
           ) : (
