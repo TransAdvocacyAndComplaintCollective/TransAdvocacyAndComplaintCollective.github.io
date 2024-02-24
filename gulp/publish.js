@@ -3,6 +3,8 @@ const rimraf = require('gulp-rimraf');
 const fs = require('fs');
 const path = require('path');
 const git = require('gulp-git');
+const { exec } = require('child_process');
+
 
 function cleanExceptGit() {
   return gulp.src(['./pirate-party-uk.github.io/**/*', '!./pirate-party-uk.github.io/.git', '!./pirate-party-uk.github.io/.git/**/*'])
@@ -25,29 +27,17 @@ function copyFiles() {
     .pipe(gulp.dest('./pirate-party-uk.github.io'));
 }
 
-function gitPublish(done) {
-    console.log('Starting gitPublish...');
-    git.exec({args: 'add .'}, function(err) {
-        if (err) {
-            console.error('Error adding files:', err);
-            return done(err);
-        }
-        git.exec({args: 'commit -m "Update"'}, function(err) {
-            if (err) {
-                console.error('Error committing changes:', err);
-                return done(err);
-            }
-            git.exec({args: 'push origin master'}, function(err) {
-                if (err) {
-                    console.error('Error pushing changes:', err);
-                    return done(err);
-                }
-                console.log('Push successful!');
-                done();
-            });
-        });
-    });
+function gitPublish() {
+    return gulp.src('./pirate-party-uk.github.io')
+        .pipe(git.add({ args: '.' }))   
+        .pipe(git.commit('Update website'))
+        // .pipe(git.push('origin', 'master', function (err) {
+        //     console.log(err);
+        //     if (err) throw err;
+        // }));
+     
 }
+
 
 gulp.task('publish', gulp.series(cleanExceptGit, copyFiles, gitPublish));
 
