@@ -1,66 +1,48 @@
 const gulp = require('gulp');
-const rimraf = require('gulp-rimraf');
 const fs = require('fs');
 const path = require('path');
 const git = require('gulp-git');
-const { exec } = require('child_process');
+const { execSync } = require('child_process');
 
 
 function cleanExceptGit() {
-  return gulp.src(['./pirate-party-uk.github.io/**/*', '!./pirate-party-uk.github.io/.git', '!./pirate-party-uk.github.io/.git/**/*'])
-    .pipe(rimraf({
-      async: (file, cb) => {
-        const filePath = path.resolve(file.path);
-        fs.access(filePath, fs.constants.F_OK, (err) => {
-          if (err) {
-            cb(null); // Ignore if file doesn't exist
-          } else {
-            cb(file);
-          }
-        });
-      }
-    }));
-}
+    // loop through all files in the output directory
+    fs.readdirSync('./pirate-party-uk.github.io').forEach(file => {
+        // if the file is not .git, delete it
+        if (file !== '.git') {
+            fs.rmSync(path.join('./pirate-party-uk.github.io', file), { recursive: true });
+        }
+    });
+    return Promise.resolve();
+  }
+  
+  
 
 function copyFiles() {
-  return gulp.src(['./public/**/*'])
+  return gulp.src(['./output/**/*'])
     .pipe(gulp.dest('./pirate-party-uk.github.io'));
 }
 
+
 function gitPublish(done) {
-    exec("cd pirate-party-uk.github.io", (err, stdout, stderr) => {
-        if (err) {
-        console.error(err);
-        return;
+    try {
+        const statusOutput = execSync("git status --porcelain", { cwd: "pirate-party-uk.github.io" }).toString().trim();       
+        // Check if there are changes to commit
+        if (statusOutput) {
+            execSync("git add .", { cwd: "pirate-party-uk.github.io" });
+            execSync("git commit  --allow-empty -m \"Publish\"", { cwd: "pirate-party-uk.github.io" });
+            execSync("git push", { cwd: "pirate-party-uk.github.io" });
+        } else {
+            console.log("No changes to commit");
         }
-        console.log(stdout);
-    });
-    exec("git add .", (err, stdout, stderr) => {
-        if (err) {
-        console.error(err);
-        return;
-        }
-        console.log(stdout);
-    });
-    exec("git commit -m \"Publish\"", (err, stdout, stderr) => {
-        if (err) {
-        console.error(err);
-        return;
-        }
-        console.log(stdout);
-    });
-    // exec('cd pirate-party-uk.github.io && git add . && git commit -m "Publish" && git push', (err, stdout, stderr) => {
-    //     if (err) {
-    //     console.error(err);
-    //     return;
-    //     }
-    //     console.log(stdout);
-    // });
+    }
+    catch (e) {
+        console.error("Error:", e);
+    }
     done();
-     
 }
 
 
-gulp.task('publish', gulp.series(cleanExceptGit, copyFiles, gitPublish));
+gulp.task('publish', gulp.series(cleanExceptGit,copyFiles,gitPublish));
 
-exports.default = gulp.series(cleanExceptGit, copyFiles, gitPublish);
+exports.default = gulp.series(cleanExceptGit, copyFiles,gitPublish);
