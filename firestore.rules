@@ -1,150 +1,131 @@
-
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Other rules...
-    function isValidPhoneNumber(phone) {
-      // Define your custom logic to validate the phone number format
-      // For example, you can use regular expressions to check the format
-      // Replace the following regular expression with your own validation logic
-      return phone.matches("^\\+\\([0-9]+\\)#\\* [0-9]+$");
-    }
-    function isValidEmail(email) {
-      // Define your custom logic to validate the email address format
-      // Replace the following regular expression with your own validation logic
-      return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+
+    function isAdmin() {
+      let userDoc = get(/databases/$(database)/documents/user/$(request.auth.uid));
+      return userDoc != null && userDoc.data.role == 'admin';
     }
 
-    function isValidAddress(address) {
-      // Check if the address has the required fields
-      return address is map &&
-      'addressLines' in address &&
-      'postcode' in address &&
-      'locality' in address &&
-      'regionCode' in address &&
-      address.addressLines is list && address.addressLines.size() >= 2 &&
-      address.addressLines[0] is string && 
-      address.addressLines[1] is string &&
-      address.addressLines[0].size() >= 1 &&
-      address.addressLines[1].size() >= 1 &&
-      address.addressLines[0].size() <= 255 &&
-      address.addressLines[1].size() <= 255 &&
-      address.postcode is string &&
-      address.locality is string &&
-      address.regionCode is string && address.regionCode.size() == 2;
+    function isValidElectionData(data){
+      return data.keys().hasAll(['name', 'description', 'startDate', 'endDate', 'candidates']) &&
+      data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+      data.description is string && data.description.size() > 0 && data.description.size() < 100 &&
+      data.startDate is timestamp &&
+      data.endDate is timestamp &&
+      data.candidates is list && data.candidates.size() > 0 && data.candidates.size() < 100;
     }
-    function isUserAdmin(uid) {
-      return get(/databases/$(database)/documents/users/$(uid)).data.role.hasAny(['admin']);
-    }
-    function isValidDOB(dob) {
-      // Define your custom logic to validate the date of birth format
-      // This is a basic example, you might want to adjust it based on your needs
-      return dob.matches("^\\d{4}-\\d{2}-\\d{2}$");
-    }
-    function isValidFirstName(firstName) {
-      // Define your custom logic to validate the first name
-      // This is a basic example; adjust it based on your needs
-      return firstName is string && firstName.length > 0 && firstName.length < 255;
+    // Need for stripe
+    match /customers/{uid} {
+      allow read, write: if request.auth.uid == uid;
+
+      match /checkout_sessions/{id} {
+        allow read, write: if request.auth.uid == uid;
+      }
+
+      match /subscriptions/{id} {
+        allow read: if request.auth.uid == uid;
+      }
+
+      match /payments/{id} {
+        allow read: if request.auth.uid == uid;
+      }
     }
 
-    function isValidLastName(lastName) {
-      // Define your custom logic to validate the last name
-      // This is a basic example; adjust it based on your needs
-      return lastName is string && lastName.length > 0 && firstName.length < 255;
+    // Define rules for the 'products' collection
+    match /products/{id} {
+      allow read: if true;
+
+      match /prices/{id} {
+        allow read: if true;
+      }
+
+      match /tax_rates/{id} {
+        allow read: if true;
+      }
     }
+
     // User document rules
     match /user/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId
-        && request.resource.data.keys().hasAll(['email', 'firstName', 'lastName', 'dob', 'address', 'phone', 'role'])
-        && request.resource.data.email is string // && isValidEmail(request.resource.data.email)
-        && request.resource.data.firstName is string //&& isValidFirstName(firstName)
-        && request.resource.data.lastName is string //&& isValidLastName(lastName)
-        && request.resource.data.dob is string //&& isValidDOB(request.resource.data.dob)
-        && request.resource.data.address is map && isValidAddress(request.resource.data.address)
-        && request.resource.data.phone is string //&& isValidPhoneNumber(request.resource.data.phone)
-        && request.resource.data.role is list && request.resource.data.role.size() == 0;
-      // allow read, write: if isUserAdmin(request.auth.uid);
+      // Function to validate address lines
+      function isValidAddressLines(addressLines) {
+        return addressLines is list &&
+        addressLines.size() == 2 &&
+        addressLines[0] is string &&
+        addressLines[0].size() <= 50 &&
+        addressLines[1] is string &&
+        addressLines[1].size() <= 50;
+      }
+
+      // Function to validate user data
+      function isValidUserData(user) {
+        return user is map && user.keys().hasAll(['firstName', 'lastName', 'dob', 'address', 'role']) &&
+        user.firstName is string && user.firstName.size() <= 50 &&
+        user.lastName is string && user.lastName.size() <= 50 &&
+        user.dob is string &&
+        user.address is map &&
+        isValidAddressLines(user.address.addressLines) &&
+        user.address.postcode is string && user.address.postcode.size() <= 50 &&
+        user.address.locality is string && user.address.locality.size() <= 50 &&
+        user.address.regionCode is string &&
+        user.role is list && user.role.size() == 0;
+      }
+      // Allowing write access if the user data is valid and the UID matches
+      allow write: if (isValidUserData(request.resource.data) || isAdmin()) && request.auth.uid == userId;
+
+      // Allowing read access if the UID matches
+      allow read: if request.auth.uid == userId;
+      allow write: if isAdmin();
     }
 
-    // Rules for /election/{electionId} path
+    // Election document rules
+    match /election {
+      allow list: if request.auth != null;
+    }
+    // Election document rules for a specific electionId
     match /election/{electionId} {
-      allow read: if request.auth != null; // Add your specific conditions for read
-
-      // allow read, write: if isUserAdmin(request.auth.uid) &&
-      // isValidElectionData(request.resource.data);
-
-      // Function to check if the election data is valid
-      function isValidElectionData(data) {
-        return data != null &&
-        data.keys().hasAll(['startTime', 'endTime', 'title']) &&
-        data.startTime is timestamp &&
-        data.endTime is timestamp &&
-        data.title is string &&
-        // Add additional conditions for start time, end time, and title as needed
-        isValidStartTime(data.startTime) &&
-        isValidEndTime(data.endTime) &&
-        isValidTitle(data.title);
-      }
-
-      // Function to check if the start time is valid (customize as needed)
-      function isValidStartTime(startTime) {
-        // Add your specific logic for validating the start time
-        return startTime != null && startTime.toMillis() > now();
-      }
-
-      // Function to check if the end time is valid (customize as needed)
-      function isValidEndTime(endTime) {
-        // Add your specific logic for validating the end time
-        return endTime != null && endTime.toMillis() > now();
-      }
-
-      // Function to check if the title is valid (customize as needed)
-      function isValidTitle(title) {
-        // Add your specific logic for validating the title
-        return title != null && title.matches("^[a-zA-Z0-9 ]+$"); // Example: Alphanumeric with spaces
-      }
+      allow read: if request.auth.uid != null;
+      allow write: if isAdmin();
+      allow list: if request.auth != null;
     }
 
-    // Rules for /election/{electionId}/candidate/{candidateId} path
+    // Candidate document rules within a specific election
     match /election/{electionId}/candidate/{candidateId} {
-      allow read: if request.auth != null; // Add your specific conditions for read
-
-      // allow read, write: if isUserAdmin(request.auth.uid) &&
-      // isValidCandidateData(request.resource.data);
-
-      // Function to check if the candidate data is valid
-      function isValidCandidateData(data) {
-        return data != null &&
-        data.keys().hasAll(['name', 'description']) &&
-        data.name is string &&
-        data.description is string;
-      }
+      allow read: if request.auth.uid != null;
+      allow write: if isAdmin();
+      allow list: if request.auth != null;
     }
 
-    // Rules for /election/{electionId}/vote/{userId} path
-    match /election/{electionId}/vote/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId; // Allow the user to read their own vote
 
-      // allow write: if request.auth != null && isUserAdmin(request.auth.uid) &&
-      // isValidVoteData(request.resource.data);
 
-      // Function to check if the vote data is valid
+    // Vote document rules within a specific election and user
+    match /election/{electionId}/vote/{uid} {
+      // Function to validate vote data
       function isValidVoteData(data) {
-        return data != null &&
-        data.keys().hasAll(['candidateIds']) &&
-        data.candidateIds is list &&
-        isValidCandidateIds(data.candidateIds);
-        // Add additional conditions if needed (e.g., checking if the candidateIds are valid)
+        return data.keys().hasAll(['rankings']) &&
+        data.rankings is map &&
+        data.rankings.keys().hasAll(['candidateId']) &&
+        request.auth.uid == uid;
       }
 
-      // Function to check if the candidateIds are valid
-      function isValidCandidateIds(candidateIds) {
-        // Add your specific logic for validating the list of candidateIds
-        // For example, ensure that each candidateId is a string
-        return candidateIds is list &&
-        candidateIds.size() > 0;
-        
+    // Helper function to check if a value is a list of strings
+      function isStringList(value) {
+        // return (value is list) && value.every((item) => item is string);
+        return true;
       }
+
+    // Helper function to check if all strings in the list exist in the candidate collection
+      function allStringsExistInCandidateCollection(candidateIdList, electionId) {
+        // return candidateIdList.every((candidateId) => {
+        //   return exists(/databases/$(database)/documents/election/$(electionId)/candidate/$(candidateId));
+        // });
+        return true;
+      }
+
+      allow read: if request.auth.uid != null;
+      allow write: if request.auth.uid != null && (isValidVoteData(request.resource.data) || isAdmin());
+      // allow read, write: if isAdmin();
     }
   }
 }

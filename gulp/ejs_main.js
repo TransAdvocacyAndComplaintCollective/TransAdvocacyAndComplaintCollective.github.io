@@ -6,17 +6,15 @@
  */
 
 const MarkdownIt = require("markdown-it");
-
 const matter = require("gray-matter");
 const ejs = require("gulp-ejs");
 const ejsCompiler = require("ejs");
 const path = require("path");
 const fs = require("fs");
+const fsPromises = fs.promises;
 const gulp = require("gulp");
 const each = require("gulp-each");
 const rename = require("gulp-rename");
-const fsPromises = fs.promises;
-const livereload = require('gulp-livereload');
 
 const ARTICLES_PER_PAGE = 10;
 

@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import Input from "./component/Input.jsx";
 import CountriesInput from "./component/CountriesInput.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { createRoot } from 'react-dom/client';
+import { createRoot } from "react-dom/client";
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import {
   validateFirstName,
@@ -25,7 +25,7 @@ import {
   signOut,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import {auth, signUp, isUserLoggedIn } from "./libs/googleAPI.js";
+import { auth, signUp, isUserLoggedIn } from "./libs/googleAPI.js";
 console.log(auth);
 const Register = () => {
   const [billingFrequency, setBillingFrequency] = useState("yearly");
@@ -66,17 +66,17 @@ const Register = () => {
     }
   }
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && !user.isAnonymous) {
-        window.location.href = "/";
-      }
-    });
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user && !user.isAnonymous) {
+  //       window.location.href = "/";
+  //     }
+  //   });
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -138,7 +138,9 @@ const Register = () => {
 
       // If successful, you can perform additional actions here
       console.log("Registration successful!");
+      setMessage(d.message);
     } catch (error) {
+      setMessage(error.message);
       // Handle form submission errors
       console.error("Error submitting the form:", error.message);
       // You might want to update the state to show an error message to the user
@@ -149,7 +151,7 @@ const Register = () => {
     <Container className="py-5">
       <h1>Register</h1>
       {/* show EROOR */}
-      {message && <div className="error">{message}</div>}
+      {message && <div className="alert alert-danger" role="alert">{message}</div>}
       <Form onSubmit={handleSubmit}>
         <Row>
           <Col md={6}>

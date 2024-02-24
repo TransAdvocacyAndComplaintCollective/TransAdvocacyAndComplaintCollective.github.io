@@ -1,94 +1,147 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { Card, ListGroup, ListGroupItem } from 'react-bootstrap';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
+import { Card, ListGroup, ListGroupItem } from "react-bootstrap";
+import { fetchCandidates, fetchAllVotesForElection ,fetchElection} from "./libs/googleAPI.js";
+function countSTVVotes(candidates, ballots) {
+  let remainingCandidates = [...candidates];
+  let electedCandidates = [];
+  let round = 1;
 
+  while (remainingCandidates.length > 1) {
+    const candidateVoteCounts = remainingCandidates.reduce((acc, candidate) => {
+      acc[candidate.id] = 0;
+      return acc;
+    }, {});
 
-// Initialize Firebase app
-let firebaseConfig = {
-  apiKey: "AIzaSyDL2CHHhPUg9K6_tV_5Z2bUl4wWcB3-sic",
-  authDomain: "ptate-df901.firebaseapp.com",
-  projectId: "ptate-df901",
-  storageBucket: "ptate-df901.appspot.com",
-  messagingSenderId: "795297920122",
-  appId: "1:795297920122:web:9cfd9b972dc92213dd77c3",
-  measurementId: "G-9MPXZR194T",
-};
-//  we should check if the doamin  localhost or 127.0.0.1 then we should use the local emulator
-if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-  // Auth emulator takes the port 9099
-  firebaseConfig["authEmulatorHost"] = "http://localhost:9099/";
-  // Functions emulator takes the port 5001 /functions
-  firebaseConfig["functionsEmulatorHost"] = "http://localhost:5001/";
-  // Firestore emulator takes the port 8081
-  firebaseConfig["firestoreEmulatorHost"] = "http://localhost:8081/";
-  // pubsub emulator takes the port 8085
-  firebaseConfig["pubsubEmulatorHost"] = "http://localhost:8085/";
-  // storage emulator takes the port 9199
-  firebaseConfig["storageEmulatorHost"] = "http://localhost:9199/";
-  // Eventarc emulator takes the port 9199
-  firebaseConfig["eventEmulatorHost"] = "http://localhost:8085/";
-  // Emulator Hub running at 127.0.0.1:4400
-  // Other reserved ports: 4500, 9150
+    ballots.forEach((ballot) => {
+      const highestPreference = ballot.find((candidateId) =>
+        remainingCandidates.some((c) => c.id === candidateId)
+      );
+      if (highestPreference) {
+        candidateVoteCounts[highestPreference]++;
+      }
+    });
+
+    const lowestCandidate = getLowestCandidate(candidateVoteCounts);
+    if (!lowestCandidate) {
+      break; // No more elimination needed
+    }
+
+    electedCandidates.push({
+      id: lowestCandidate.id,
+      name: lowestCandidate.name,
+      round: round,
+    });
+
+    remainingCandidates = remainingCandidates.filter(
+      (candidate) => candidate.id !== lowestCandidate.id
+    );
+    round++;
+  }
+
+  // The remaining candidate is declared the winner
+  if (remainingCandidates.length === 1) {
+    electedCandidates.push({
+      id: remainingCandidates[0].id,
+      name: remainingCandidates[0].name,
+      round: round,
+    });
+  }
+
+  return {
+    electedCandidates: electedCandidates,
+    remainingCandidates: remainingCandidates,
+    round: round,
+  };
 }
-else {
 
+function getLowestCandidate(candidateVoteCounts) {
+  let lowestVotes = Number.MAX_SAFE_INTEGER;
+  let lowestCandidate = null;
+
+  for (const candidateId in candidateVoteCounts) {
+    if (candidateVoteCounts[candidateId] < lowestVotes) {
+      lowestVotes = candidateVoteCounts[candidateId];
+      lowestCandidate = candidates.find(
+        (candidate) => candidate.id === candidateId
+      );
+    }
+  }
+
+  return lowestCandidate;
 }
-let app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-
 
 const AdminElectionResults = () => {
   const [candidates, setCandidates] = useState([]);
   const [voters, setVoters] = useState([]);
+  const [electionResults, setElectionResults] = useState(null);
+  const [votingData, setVotingData] = useState({ "title": "", "stat": "", "end": "" });
 
-  useEffect(() => {
-    // Fetch candidates from Firestore collection
-    const fetchCandidates = async () => {
-      const candidatesSnapshot = await firestore.collection('candidates').get();
-      const candidatesData = candidatesSnapshot.docs.map((doc) => doc.data());
-      setCandidates(candidatesData);
-    };
-
-    // Fetch voters from Firestore collection
-    const fetchVoters = async () => {
-      const votersSnapshot = await firestore.collection('voters').get();
-      const votersData = votersSnapshot.docs.map((doc) => doc.data());
-      setVoters(votersData);
-    };
-
-    fetchCandidates();
-    fetchVoters();
+  useEffect(async () => {
+    try {
+      const electionId = window.location.pathname.split("/").pop();
+      const candidate = await fetchCandidates(electionId);
+      const ballots = await fetchAllVotesForElection(electionId);
+      const election = await fetchElection(electionId);
+      const results = countSTVVotes(candidate, ballots);
+      setElectionResults(results);
+      setCandidates(candidate);
+      setVoters(ballots);
+      setVotingData(election);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // Handle the error (e.g., show an error message)
+    }
   }, []);
 
   return (
-    <Card>
-      <Card.Body>
-        <Card.Title>Election Results</Card.Title>
-        <Card.Text>
-          <strong>Candidates:</strong>
-          <ListGroup>
-            {candidates.map((candidate, index) => (
-              <ListGroupItem key={index}>{candidate.name}</ListGroupItem>
-            ))}
-          </ListGroup>
-        </Card.Text>
-        <Card.Text>
-          <strong>Voters:</strong>
-          <ListGroup>
-            {voters.map((voter, index) => (
-              <ListGroupItem key={index}>{voter.name}</ListGroupItem>
-            ))}
-          </ListGroup>
-        </Card.Text>
-      </Card.Body>
-    </Card>
+    <div>
+      <h2>Election Results</h2>
+      {electionResults && (
+        <div>
+          <h3>Title: {votingData.title}</h3>
+          <p>Start Time: {votingData.start}</p>
+          <p>End Time: {votingData.end}</p>
+
+          <div>
+            <h4>Candidates:</h4>
+            <ListGroup>
+              {candidates.map((candidate, index) => (
+                <ListGroupItem key={index}>{candidate.name}</ListGroupItem>
+              ))}
+            </ListGroup>
+          </div>
+
+          <div>
+            <h4>Voters:</h4>
+            <ListGroup>
+              {voters.map((voter, index) => (
+                <ListGroupItem key={index}>{voter.name}</ListGroupItem>
+              ))}
+            </ListGroup>
+          </div>
+
+          <div>
+            <h4>Election Results:</h4>
+            <ListGroup>
+              {electionResults.electedCandidates.map((electedCandidate, index) => (
+                <ListGroupItem key={index}>
+                  {`${electedCandidate.name} (Round ${electedCandidate.round})`}
+                </ListGroupItem>
+              ))}
+            </ListGroup>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
+
+
 ReactDOM.render(
-  React.createElement(AdminElectionResults),
+  <React.StrictMode>
+    <AdminElectionResults />
+  </React.StrictMode>,
   document.getElementById("AdminElectionResultsCreation")
 );
 

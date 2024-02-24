@@ -43,9 +43,10 @@ export const placeVote = async (electionId, rankings) => {
         }
 
         const uid = user.uid;
-        const voteRef = doc(collection(db, "votes", electionId, "user", uid));
+        const voteRef = doc(db, `election/${electionId}/vote/${uid}`);
 
-        await updateDoc(voteRef, { rankings });
+        // Use setDoc to create a new document or overwrite an existing one
+        await setDoc(voteRef, { rankings:rankings });
     } catch (error) {
         console.error("Error placing vote:", error);
     }
@@ -60,7 +61,7 @@ export const retrieveVote = async (electionId) => {
         }
 
         const uid = user.uid;
-        const voteRef = doc(collection(db, "votes", electionId, "users", uid));
+        const voteRef = doc(db, "election", electionId, "vote", uid);
         const voteDoc = await getDoc(voteRef);
 
         if (voteDoc.exists()) {
@@ -77,7 +78,7 @@ export const retrieveVote = async (electionId) => {
 
 export const fetchVotingElections = async () => {
     try {
-        const electionsRef = collection(db, "elections");
+        const electionsRef = collection(db, "election");
         const snapshot = await getDocs(electionsRef);
 
         const elections = snapshot.docs.map((doc) => ({
@@ -94,7 +95,7 @@ export const fetchVotingElections = async () => {
 
 export const fetchCandidates = async (electionId) => {
     try {
-        const candidatesRef = collection(db, "election", electionId, "candidates");
+        const candidatesRef = collection(db, "election", electionId, "candidate");
         const snapshot = await getDocs(candidatesRef);
 
         const candidates = snapshot.docs.map((doc) => ({
@@ -188,6 +189,12 @@ export const signUp = async (firstName, lastName, dob, email, address1, address2
             },
             "role": []
         });
+        if (docRef) {
+            console.log("Document written with ID: ", docRef.id);
+        }
+        else {
+            console.log("Document not written with ID: ", docRef.id);
+        }
 
         return {
             message: "Account created successfully",
@@ -200,5 +207,141 @@ export const signUp = async (firstName, lastName, dob, email, address1, address2
             isValid: false,
             isAccountCreated: isAccountCreated
         }
+    }
+};
+
+
+export const make_election = async (electionData, candidatesData) => {
+    try {
+        // Create Election
+        const electionRef = await setDoc(doc(collection(db, "election")), electionData);
+
+        // Add Candidates
+        if (electionRef) {
+            const electionId = electionRef.id;
+
+            const candidatesCollectionRef = collection(db, "election", electionId, "candidate");
+
+            for (const candidate of candidatesData) {
+                await setDoc(doc(candidatesCollectionRef), candidate);
+            }
+
+            console.log("Election and candidates added successfully.");
+        }
+
+        return {
+            message: "Election and candidates added successfully.",
+            isValid: true,
+        };
+    } catch (error) {
+        console.error("Error making election:", error);
+        return {
+            message: error.message,
+            isValid: false,
+        };
+    }
+};
+export const update_election = async (electionData, candidatesData, id) => {
+    try {
+        // Update Election
+        const electionRef = doc(collection(db, "election"), id);
+        await updateDoc(electionRef, electionData);
+
+        // Update or add Candidates
+        const candidatesCollectionRef = collection(db, "election", id, "candidate");
+
+        for (const candidate of candidatesData) {
+            const candidateId = candidate.id; // Assuming candidates have unique IDs
+            const candidateRef = doc(candidatesCollectionRef, candidateId);
+
+            if (candidateId) {
+                // Update existing candidate
+                await updateDoc(candidateRef, candidate);
+            } else {
+                // Add new candidate
+                await setDoc(doc(candidatesCollectionRef), candidate);
+            }
+        }
+
+        console.log("Election and candidates updated successfully.");
+
+        return {
+            message: "Election and candidates updated successfully.",
+            isValid: true,
+        };
+    } catch (error) {
+        console.error("Error updating election:", error);
+        return {
+            message: error.message,
+            isValid: false,
+        };
+    }
+};
+
+
+export const is_admin = async () =>{
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("User not authenticated.");
+            return null;
+        }
+
+        const uid = user.uid;
+        const userRef = doc(collection(db, "users", uid));
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+            if (userDoc.data().role.includes("admin")) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        } else {
+            console.log("User document does not exist.");
+            return false;
+        }
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        return false;
+    }
+
+}
+
+export const fetchAllVotesForElection = async (electionId) => {
+    try {
+        const votesRef = collection(db, "election", electionId, "user");
+        const snapshot = await getDocs(votesRef);
+
+        const votes = snapshot.docs.map((doc) => ({
+            userId: doc.id,
+            ...doc.data(),
+        }));
+
+        return votes;
+    } catch (error) {
+        console.error("Error fetching votes for election:", error);
+        return [];
+    }
+};
+
+export const fetchElection = async (electionId) => {
+    try {
+        const electionRef = doc(collection(db, "election"), electionId);
+        const electionDoc = await getDoc(electionRef);
+
+        if (electionDoc.exists()) {
+            return {
+                id: electionDoc.id,
+                ...electionDoc.data(),
+            };
+        } else {
+            console.log("Election document does not exist.");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching election:", error);
+        return null;
     }
 };

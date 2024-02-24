@@ -6,7 +6,7 @@ import { fetchVotingElections } from "./libs/googleAPI.js";
 
 const VotingListPage = () => {
   const [votingElections, setVotingElections] = useState([]);
-
+  console.log("votingElections:",votingElections);
   useEffect(() => {
     const fetchElections = async () => {
       const elections = await fetchVotingElections();
@@ -24,7 +24,7 @@ const VotingListPage = () => {
             <Card.Body>
               <Card.Title>{election.name}</Card.Title>
               <Card.Text>{election.description}</Card.Text>
-              <a href={`/voting/${election.id}`}>Take Part</a>
+              <a href={`/VoteCasting.htmk?id=${election.id}`}>Take Part</a>
             </Card.Body>
           </Card>
         ))}

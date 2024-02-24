@@ -16,16 +16,27 @@ service cloud.firestore {
         );
     }
 
-    function isValidUserData(data, requireAdmin) {
-      return data.keys().hasAll(['email', 'firstName', 'lastName', 'dob', 'address', 'phone',"role"]) &&
-             data.email is string && data.email.size() > 0 && data.email.size() < 100 && data.email.matches('^[^@]+@[^@]+$') &&
-             data.firstName is string && data.firstName.size() > 0 && data.firstName.size() < 100 &&
-             data.lastName is string && data.lastName.size() > 0 && data.lastName.size() < 100 &&
-             data.address is map && isValidAddress(data.address) &&
-             data.phone is string && data.phone.size() > 0 && data.phone.size() < 100 &&
-             (!requireAdmin || (data.role is list && data.role.size() == 0 && isAdmin()));
+    function isValidAddressLines(addressLines) {
+      // Add your address lines validation logic here
+      return addressLines is list && addressLines.size() == 2 && addressLines[0] is string && addressLines[1] is string;
     }
-    
+
+    function isValidUserData(user) {
+      return  user.firstName is string &&
+             user.lastName is string ;
+            // user is map &&
+            //  isValidEmail(user.email) &&
+             // &&
+             //user.dob is string //&&
+            //  isValidPhone(user.phone) &&
+            //  user.address is map &&
+            //  isValidAddressLines(user.address.addressLines) &&
+            //  user.address.postcode is string &&
+            //  user.address.locality is string &&
+            //  user.address.regionCode is string &&
+            //  user.role is list && user.role.size() == 0;
+    }
+
   function isValidAddress(address) {
     return address.addressLines is list && address.addressLines.size() == 2 &&
       address.addressLines[0] is string && address.addressLines[0].size() > 0 && address.addressLines[0].size() < 100 &&
@@ -83,21 +94,27 @@ service cloud.firestore {
     }
 
     // User document rules
-    match /user/{uid} {
-      allow read, write: if request.auth.uid == uid && isValidUserData(request.resource.data, false);
-      allow read, write: if isAdmin();
+    match /user/{userId} {
+      allow write: if isValidUserData(request.resource.data) & request.auth.uid == userId;
+      allow read: if request.auth.uid == userId;
+    }
+    // Election document rules
+    match /election {
+      allow list: if request.auth != null
     }
 
     // Election document rules
     match /election/{electionId} {
       allow read: if request.auth.uid != null;
       allow write: if isAdmin();
+      allow list: if request.auth != null
     }
 
     // Candidate document rules
     match /election/{electionId}/candidate/{candidateId} {
       allow read: if request.auth.uid != null;
       allow write: if isAdmin();
+      allow list: if request.auth != null
     }
 
     function isValidVoteData(data) {
@@ -107,7 +124,8 @@ service cloud.firestore {
     }
     // Vote document rules
     match /election/{electionId}/vote/{uid} {
-      allow read, write: if request.auth.uid != null && isValidVoteData(request.resource.data);
+      allow read: if request.auth.uid != null ;
+      allow write: if request.auth.uid != null  && isValidVoteData(request.resource.data);
       allow read, write: if isAdmin();
     }
   }
