@@ -1,7 +1,6 @@
 const htmlmin = require("gulp-htmlmin");
 // const inline = require("gulp-inline");
 const gulp = require("gulp");
-const livereload = require('gulp-livereload');
 
 function inline_code(cb) {
   return gulp
