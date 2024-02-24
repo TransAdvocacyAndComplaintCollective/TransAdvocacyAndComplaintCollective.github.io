@@ -81,6 +81,6 @@ function UserStatus() {
   }
 }
 
-const domNode = document.getElementById("userStatusContainer")
-const root = createRoot(domNode);
-root.render(<UserStatus />);
+// const domNode = document.getElementById("userStatusContainer")
+// const root = createRoot(domNode);
+// root.render(<UserStatus />);
