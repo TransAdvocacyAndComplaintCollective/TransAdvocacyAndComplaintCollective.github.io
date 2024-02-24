@@ -82,6 +82,7 @@
     "gulp-clean-dir": "^1.0.2",
     "gulp-cwebp": "^4.0.2",
     "gulp-livereload": "^4.0.2",
+    "gulp-rimraf": "^1.0.0",
     "gulp-webp": "^5.0.0",
     "highlight.js": "^11.9.0",
     "ical": "^0.8.0",

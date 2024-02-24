@@ -10,6 +10,7 @@ var copy = require("./gulp/copy.js");
 var compresss = require("./gulp/compresss.js");
 var clean = require("./gulp/clean.js");
 var markdown = require("./gulp/markdownToGemtext.js");
+const publish = require("./gulp/publish.js");
 
 // Add missing function calls
 // markdown.generateArticleGemPages();
@@ -43,9 +44,6 @@ const task_ejs = gulp.parallel(
 const task_feed = gulp.parallel(feed.generate_rss_feed, feed.generate_rss_feeds);
 const task_compress = gulp.parallel(compresss.compressHtmlWithBrotli, compresss.compressHtmlWithGzip, compresss.sitemap_gzip_copy);
 const task_clean = gulp.parallel(clean.cleanOutputDirectory, clean.cleanOutputDirectory, clean.cleanPublicBrDirectory, clean.cleanPublicGzipDirectory);
-
-
-
 
 // Define build task
 exports.build = gulp.series(task_clean, task_images, task_ejs, task_feed, task_compress);
