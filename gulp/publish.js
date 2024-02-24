@@ -45,4 +45,4 @@ function gitPublish(done) {
 
 gulp.task('publish', gulp.series(cleanExceptGit,copyFiles,gitPublish));
 
-exports.default = gulp.series(cleanExceptGit, copyFiles,gitPublish);
+exports.publish = gulp.series(cleanExceptGit, copyFiles,gitPublish);
