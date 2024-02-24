@@ -27,14 +27,36 @@ function copyFiles() {
     .pipe(gulp.dest('./pirate-party-uk.github.io'));
 }
 
-function gitPublish() {
-    return gulp.src('./pirate-party-uk.github.io')
-        .pipe(git.add({ args: '.' }))   
-        .pipe(git.commit('Update website'))
-        // .pipe(git.push('origin', 'master', function (err) {
-        //     console.log(err);
-        //     if (err) throw err;
-        // }));
+function gitPublish(done) {
+    exec("cd pirate-party-uk.github.io", (err, stdout, stderr) => {
+        if (err) {
+        console.error(err);
+        return;
+        }
+        console.log(stdout);
+    });
+    exec("git add .", (err, stdout, stderr) => {
+        if (err) {
+        console.error(err);
+        return;
+        }
+        console.log(stdout);
+    });
+    exec("git commit -m \"Publish\"", (err, stdout, stderr) => {
+        if (err) {
+        console.error(err);
+        return;
+        }
+        console.log(stdout);
+    });
+    // exec('cd pirate-party-uk.github.io && git add . && git commit -m "Publish" && git push', (err, stdout, stderr) => {
+    //     if (err) {
+    //     console.error(err);
+    //     return;
+    //     }
+    //     console.log(stdout);
+    // });
+    done();
      
 }
 
