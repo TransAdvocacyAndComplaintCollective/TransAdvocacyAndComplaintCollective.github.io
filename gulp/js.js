@@ -15,8 +15,6 @@ function javascript(cb) {
     entry[name] = './src/js/' + file;
   });
 
-  console.log(entry);
-
   return gulp
     .src(["src/**/*.js", "src/**/*.jsx"])
     .pipe(
