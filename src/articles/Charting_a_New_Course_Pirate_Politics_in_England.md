@@ -1,33 +1,31 @@
 ---
 author:
--    name: jack hare
+  - name: Jack Hare
 contributor:
--    name: jack hare
+  - name: Jack Hare
 imageUrl: /media/PP.png
 imageAlt: "Pirate Party Logo"
 title: "Charting a New Course: Embracing Pirate Politics for 21st Century England"
-summary: "
-The essay introduces the concept of "pirate politics," which advocates for digital freedom, privacy rights, and transparent governance in England. It contrasts traditional political parties' inability to address modern challenges with pirate politics' emphasis on grassroots participation, direct democracy, and technological innovation. The movement's focus on transparency, accountability, and internet freedom resonates with a society disillusioned with institutional trust. Ultimately, pirate politics offers a path towards a more democratic, transparent, and innovative England, rekindling the nation's adventurous spirit for a brighter future."
+summary: >
+  The essay introduces the concept of "pirate politics," which advocates for digital freedom, privacy rights, and transparent governance in England. It contrasts traditional political parties' inability to address modern challenges with pirate politics' emphasis on grassroots participation, direct democracy, and technological innovation. The movement's focus on transparency, accountability, and internet freedom resonates with a society disillusioned with institutional trust. Ultimately, pirate politics offers a path towards a more democratic, transparent, and innovative England, rekindling the nation's adventurous spirit for a brighter future.
 keywords: 
-- Pirate politics
-- England
-- Innovation
-- Digital freedom
-- Privacy rights
-- Transparent governance
-- Grassroots participation
-- Direct democracy
-- Technology
-- Transparency
-- Accountability
-- Internet freedom
-- Modern governance
-- Progressive
-- Democracy
-publishDate: "29 feb 2024"
+  - Pirate politics
+  - England
+  - Innovation
+  - Digital freedom
+  - Privacy rights
+  - Transparent governance
+  - Grassroots participation
+  - Direct democracy
+  - Technology
+  - Transparency
+  - Accountability
+  - Internet freedom
+  - Modern governance
+  - Progressive
+  - Democracy
+publishDate: "2024-02-29"
 ---
-
-
 
 In the vibrant and ever evolving political landscape of England, the call for innovation, boldness, and a touch of rebellious spirit is louder than ever s screaming from the grave of Thomas Paine. Enter the concept of pirate politics, a movement that, far from advocating for swashbuckling brigands of the high seas, represents a fresh, progressive force that could steer the ship of state into new waters. Pirate politics, with its roots in advocating for digital freedom, privacy rights, and transparent governance, embodies a spirit of adventure and a quest for treasure not of gold, but of democracy that is more inclusive, participatory, and responsive to the needs of the 21st-century citizen.
 
