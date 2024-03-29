@@ -75,4 +75,3 @@ function countSTVVotes(candidates, ballots) {
     ['candidate2', 'candidate3', 'candidate1'],
     ['candidate3', 'candidate1', 'candidate2'],
   ];
-console.log(countSTVVotes(candidates, voteBallots));
