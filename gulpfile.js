@@ -23,7 +23,7 @@ const task_images = gulp.parallel(
   copy.copyCssFiles,
   copy.sitemap_copy,
   copy.text_copy,
-  copy.robots_copy,
+  copy.robots_copy, 
   copy.style_copy,
   js.javascript
   );
@@ -35,10 +35,9 @@ const task_ejs = gulp.parallel(
   ejs_main.generateArticleHtmlPages,
   ejs_main.generatePaths_user,
   ejs_main.generatePaths_page,
-  style.compileCss,
-  style.compileSass,
-  markdown.generateArticleGemPages,
-  sitemap.genSitemap
+  ejs_main.generatePolicyHtmlPages,
+  markdown.generateArticleGemPages
+
 );
 const task_feed = gulp.parallel(feed.generate_rss_feed, feed.generate_rss_feeds);
 const task_clean = gulp.parallel(clean.cleanOutputDirectory, clean.cleanOutputDirectory, clean.cleanPublicBrDirectory, clean.cleanPublicGzipDirectory);

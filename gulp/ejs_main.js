@@ -237,9 +237,10 @@ function generatePolicyHtmlPages(cb) {
   );
 
   return gulp
-    .src("policy/**/*.md")
+    .src("./policy/**/*.md")
     .pipe(
       each(function (content, file, callback) {
+        console.log(content);
         const { data, content: markdownContent } = matter(content);
         const htmlContent = md.render(markdownContent);
         const fileHistory = file.history[0];
