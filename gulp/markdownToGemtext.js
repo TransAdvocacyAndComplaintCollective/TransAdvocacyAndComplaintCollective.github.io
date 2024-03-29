@@ -2,7 +2,6 @@ const markdownIt = require('markdown-it')();
 const hljs = require('highlight.js');
 const gulp = require("gulp");
 const matter = require("gray-matter");
-const livereload = require('gulp-livereload');
 
 const each = require("gulp-each");
 const rename = require("gulp-rename");

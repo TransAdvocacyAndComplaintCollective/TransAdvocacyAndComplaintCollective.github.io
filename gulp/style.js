@@ -2,7 +2,7 @@ const gulp = require("gulp");
 const postcss = require("gulp-postcss");
 const autoprefixer = require("autoprefixer");
 const sass = require("gulp-sass")(require("sass"));
-const livereload = require('gulp-livereload');
+
 function compileCss(cb) {
   var plugins = [autoprefixer()];
   return gulp
