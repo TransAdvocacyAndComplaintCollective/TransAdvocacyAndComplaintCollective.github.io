@@ -1,15 +1,15 @@
-var gulp = require("gulp");
-var style = require("./gulp/style.js");
-var sitemap = require("./gulp/sitemap.js");
-var js = require("./gulp/js.js");
-var images = require("./gulp/images.js");
-var html = require("./gulp/html.js");
-var feed = require("./gulp/feed.js");
-var ejs_main = require("./gulp/ejs_main.js");
-var copy = require("./gulp/copy.js");
-var compresss = require("./gulp/compresss.js");
-var clean = require("./gulp/clean.js");
-var markdown = require("./gulp/markdownToGemtext.js");
+const gulp = require("gulp");
+const style = require("./gulp/style.js");
+const sitemap = require("./gulp/sitemap.js");
+const js = require("./gulp/js.js");
+const images = require("./gulp/images.js");
+const html = require("./gulp/html.js");
+const feed = require("./gulp/feed.js");
+const ejs_main = require("./gulp/ejs_main.js");
+const copy = require("./gulp/copy.js");
+const compresss = require("./gulp/compresss.js");
+const clean = require("./gulp/clean.js");
+const markdown = require("./gulp/markdownToGemtext.js");
 const publish = require("./gulp/publish.js");
 
 // Add missing function calls
@@ -38,6 +38,7 @@ const task_ejs = gulp.parallel(
   ejs_main.generateArticleHtmlPages,
   ejs_main.generatePaths_user,
   ejs_main.generatePaths_page,
+  ejs_main.generatePolicyHtmlPages,
   markdown.generateArticleGemPages
 
 );

@@ -126,11 +126,6 @@ function generateArticleHtmlPages(cb) {
         const fileHistory = file.history[0];
         const articleSlug = fileHistory.slice(0, -3);
         const date = new Date(Date.parse(data.publishDate))
-        // console.log(articleSlug);
-        // console.log("data", data);
-        // console.log("data", data.publishDate);
-        // console.log("data",Date.parse(data.publishData));
-        // Render the EJS template with the article data
         const renderedPage = ejsCompiler.render(
           indexArticleTemplate,
           {
@@ -248,9 +243,10 @@ function generatePolicyHtmlPages(cb) {
   );
 
   return gulp
-    .src("./src/policy/**/*.md")
+    .src("./policy/**/*.md")
     .pipe(
       each(function (content, file, callback) {
+        console.log(content);
         const { data, content: markdownContent } = matter(content);
         const htmlContent = md.render(markdownContent);
         const fileHistory = file.history[0];
@@ -279,6 +275,8 @@ function generatePolicyHtmlPages(cb) {
     .pipe(gulp.dest("./output/policy/"));
   cb();
 }
+
+
 
 // Export the functions as Gulp tasks
 exports.generateConstitutionHtmlPages = generateConstitutionHtmlPages;

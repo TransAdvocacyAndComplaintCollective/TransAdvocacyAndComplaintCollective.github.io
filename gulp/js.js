@@ -10,7 +10,7 @@ function javascript(cb) {
 
   files.forEach(file => {
     let ext = file.split('.')[1];
-    if (ext !== 'jsx' && ext !== 'js') return;
+    if (ext !== 'jsx' && ext !== 'js' && ext !== 'tsx' && ext !== 'ts') return;
     let name = file.split('.')[0];
     entry[name] = './src/js/' + file;
   });
@@ -18,7 +18,7 @@ function javascript(cb) {
   console.log(entry);
 
   return gulp
-    .src(["src/**/*.js", "src/**/*.jsx"])
+    .src(["src/**/*.js", "src/**/*.jsx","src/**/*.ts", "src/**/*.tsx"])
     .pipe(
       webpackStream({
         mode: "development",
@@ -27,39 +27,56 @@ function javascript(cb) {
           filename: "[name].js",
         },
         resolve: {
-          extensions: ['.js', '.jsx'],
+          extensions: ['.js', '.jsx', '.ts', '.tsx', '.d.ts'],
           roots: [path.resolve(__dirname, 'src/js')],
         },
         module: {
           rules: [
+      // {
+      //   test: /\.tsx?$/,
+      //   use: 'ts-loader',
+      //   exclude: /node_modules/,
+      // },
             {
-              test: /\.(js|jsx)$/,
+              test: /\.(ts|js|jsx|tsx)$/,
               exclude: /node_modules/,
               use: {
                 loader: "babel-loader",
                 options: {
-                  presets: ["@babel/preset-react"],
+                  presets: [
+                  "@babel/preset-env",
+                  "@babel/preset-react",
+                  // "@babel/preset-typescript",
+                  // "module:metro-react-native-babel-preset"
+                ],
+                "plugins": [
+                  "@babel/proposal-class-properties",
+                  "@babel/proposal-object-rest-spread",
+                  // "@babel/plugin-transform-object-rest-spread",
+                  // "react-native-web",
+                  // "@babel/plugin-syntax-typescript"
+                ]
                 },
               },
-            },
-            {
-              test:/\.(ical|vcf|vcard|ics|ifb|icalendar)$/,
-              use: 'raw-loader'
             },
             {
               test: /\.css$/i,
               use: ["style-loader", "css-loader"],
             },
+            {
+              test: /\.s[ac]ss$/i,
+              use: ["style-loader", "css-loader", "sass-loader"],
+            },
           ],
         },
         plugins: [
-          new webpack.SourceMapDevToolPlugin({
-            filename: "[file].map",
-          }),
-          new webpack.ProvidePlugin({
-            process: 'process/browser',
-            Buffer: ['buffer', 'Buffer'],
-          }),
+          // new webpack.SourceMapDevToolPlugin({
+          //   filename: "[file].map",
+          // }),
+          // new webpack.ProvidePlugin({
+          //   process: 'process/browser',
+          //   Buffer: ['buffer', 'Buffer'],
+          // }),
         ],
       })
     )
