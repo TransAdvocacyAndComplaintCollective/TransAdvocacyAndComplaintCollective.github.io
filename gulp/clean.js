@@ -5,7 +5,6 @@ const gulp = require("gulp");
 
 
 function cleanOutputDirectory(cb) {
-  console.log("cleanOutputDirectory");
   try {
     fs.rmSync("./output", { recursive: true, force: true });
     cb(null);
@@ -14,7 +13,6 @@ function cleanOutputDirectory(cb) {
   }
 }
 function cleanPublicBrDirectory(cb) {
-  console.log("cleanPublicBrDirectory");
   try {
     fs.rmSync("public_br", { recursive: true, force: true });
     cb(null);
@@ -25,7 +23,6 @@ function cleanPublicBrDirectory(cb) {
 }
 
 function cleanPublicGzipDirectory(cb) {
-  console.log("cleanPublicGzipDirectory");
   try {
     fs.rmSync("./public_gzip", { recursive: true, force: true });
     cb(null);
@@ -37,7 +34,6 @@ function cleanPublicGzipDirectory(cb) {
 function clean_style(cb) {
   try {
     fs.rmSync("output/styles", { recursive: true, force: true });
-    console.log("Temporary directory cleaned successfully.");
     cb(null);
   } catch (error) {
     console.error("Error cleaning temporary directory:", error);
@@ -48,7 +44,6 @@ function clean_style(cb) {
 function clean_policy(cb) {
   try {
     fs.rmSync("output/policy", { recursive: true, force: true });
-    console.log("Temporary directory cleaned successfully.");
     cb(null);
   } catch (error) {
     console.error("Error cleaning temporary directory:", error);
@@ -59,7 +54,6 @@ function clean_policy(cb) {
 function clean_media(cb) {
   try {
     fs.rmSync("output/media", { recursive: true, force: true });
-    console.log("Temporary directory cleaned successfully.");
     cb(null);
   } catch (error) {
     console.error("Error cleaning temporary directory:", error);
@@ -70,7 +64,6 @@ function clean_media(cb) {
 function clean_js(cb) {
   try {
     fs.rmSync("output/js", { recursive: true, force: true });
-    console.log("Temporary directory cleaned successfully.");
     cb(null);
   } catch (error) {
     console.error("Error cleaning temporary directory:", error);
@@ -81,7 +74,6 @@ function clean_js(cb) {
 function clean_articles(cb) {
   try {
     fs.rmSync("output/articles/", { recursive: true, force: true });
-    console.log("Temporary directory cleaned successfully.");
     cb(null);
   } catch (error) {
     console.error("Error cleaning temporary directory:", error);
@@ -92,7 +84,6 @@ function clean_articles(cb) {
 function clean_media(cb) {
   try {
     fs.rmSync("output/media", { recursive: true, force: true });
-    console.log("Temporary directory cleaned successfully.");
     cb(null);
   } catch (error) {
     console.error("Error cleaning temporary directory:", error);
