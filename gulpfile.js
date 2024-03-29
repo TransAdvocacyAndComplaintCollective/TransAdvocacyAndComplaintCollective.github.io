@@ -15,7 +15,6 @@ console.log(sitemap.genSitemap);
 // Define tasks
 // const task_style = gulp.parallel(style.copyStyle, style.compileSass, style.compileCss);
 const task_images = gulp.parallel(
-  // images.convertImagesToWebP,
   images.optimizeSvg,
   images.copy_image,
   copy.copyMediaFiles,

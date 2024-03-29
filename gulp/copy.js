@@ -22,9 +22,13 @@ function robots_copy(cb) {
 function style_copy(cb) {
   return gulp.src("temp/style/**.css").pipe(gulp.dest(`output/style/`));
 }
+function copytoPages(cb) {
+  return gulp.src("output/**/*").pipe(gulp.dest("pirate-party-uk.github.io/"));
+}
 exports.copyMediaFiles = copyMediaFiles;
 exports.copyCssFiles = copyCssFiles;
 exports.sitemap_copy = sitemap_copy;
 exports.text_copy = text_copy;
 exports.robots_copy = robots_copy;
 exports.style_copy = style_copy;
+exports.copytoPages = copytoPages;
