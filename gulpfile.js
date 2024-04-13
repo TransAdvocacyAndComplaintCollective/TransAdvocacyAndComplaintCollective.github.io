@@ -1,8 +1,20 @@
 const gulp = require('gulp');
 const webpack = require('webpack-stream');
+const fs = require('fs');
 
+gulp.task('default', function (done) {
 
-gulp.task('default', function(done) {
+  let files = fs.readdirSync('src/js/');
+  let entry = {};
+  console.log(files);
+
+  files.forEach(file => {
+    let ext = file.split('.')[1];
+    if (ext !== 'jsx'&& ext !== 'tsx') return;
+    let name = file.split('.')[0];
+    entry[name] = './src/js/' + file;
+  });
+  console.log(entry);
 
   return gulp.src('src/*.jsx')
     .pipe(webpack({
@@ -20,6 +32,10 @@ gulp.task('default', function(done) {
                 presets: [
                   '@babel/preset-env',
                   '@babel/preset-react'
+                ],
+                "plugins": [
+                  "@babel/proposal-class-properties",
+                  // "@babel/proposal-object-rest-spread",
                 ]
               }
             }
@@ -31,10 +47,6 @@ gulp.task('default', function(done) {
         ]
       }
     }))
-    .on('error', function(err) { // Error handling
-      console.error('Error in gulp task:', err.toString());
-      this.emit('end');
-    })
     .pipe(gulp.dest('dist/'))
     .on('end', done); // Signal task completion
 });
