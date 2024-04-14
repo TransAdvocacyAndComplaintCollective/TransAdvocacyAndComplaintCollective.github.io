@@ -19,9 +19,10 @@ gulp.task('default', function (done) {
   return gulp.src('src/*.jsx')
     .pipe(webpack({
       mode: 'development',
-      output: {
-        filename: '[name].js'
-      },
+      entry: entry,
+      // output: {
+      //   filename: '[name].js'
+      // },
       module: {
         rules: [
           {
