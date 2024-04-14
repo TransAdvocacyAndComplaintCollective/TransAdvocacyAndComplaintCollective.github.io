@@ -1,10 +1,9 @@
 import React from 'react';
 import BodyPage from 'partials/BodyPage';
-import './styles/bootstrap.css'; // Assuming you have your Bootstrap styles imported properly
 
 const RestartPage = () => {
   return (
-    <BodyPage>
+    <BodyPage tite={"Restarting the Party"}>
         <div className="container pb-5 mb-5">
           <section className="container">
             <h2>The Restart:</h2>

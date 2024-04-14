@@ -1,11 +1,10 @@
 import React from 'react';
 import BodyPage from 'partials/BodyPage';
-import './styles/bootstrap.css'; // Assuming you have your Bootstrap styles imported properly
 import Container from 'react-bootstrap/Container';
 
 const NotFoundPage = () => {
   return (
-    <BodyPage  title={"Not Found"}>
+    <BodyPage  title={"Not Found"} description="Page Not Found">
       {/*  className="container pb-5 mb-5" */}
       <Container > 
         <div className="p-5 text-center bg-body-tertiary rounded-3">

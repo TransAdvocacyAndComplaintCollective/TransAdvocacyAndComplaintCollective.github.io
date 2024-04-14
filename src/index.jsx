@@ -1,10 +1,11 @@
 import React from "react";
 import { Container, Card } from "react-bootstrap";
-import BodyPage from "./partials/BodyPage";
+import BodyPage from "./partials/BodyPage"
+import { Discord } from 'react-bootstrap-icons';
 
 function App() {
   return (
-    <BodyPage title={"Home"}>
+    <BodyPage title={"Home"} description={"GGGGG"}>
       <Container className="pb-5 mb-5">
         <div className="p-5 text-center bg-body-tertiary rounded-3">
           {/* <img className="bi mt-4 mb-3" src="/media/PP.svg" alt="PP Logo" /> */}
@@ -42,8 +43,9 @@ function App() {
               and events on our website.{" "}
               <a
                 href="https://discord.gg/t8EDRgXzMH"
-                className="bi bi-discord"
-              ></a>
+              >
+                <Discord size={24} />
+              </a>
             </Card.Text>
           </Card.Body>
         </Card>

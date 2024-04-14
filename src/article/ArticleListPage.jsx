@@ -1,12 +1,11 @@
 import React from 'react';
 import Header from './partials/Header';
 import Footer from './partials/Footer';
-import './styles/bootstrap.css'; // Assuming you have your Bootstrap styles imported properly
+import BodyPage from '../partials/BodyPage';
 
 const ArticleListPage = ({ articles, page, hasNextPage }) => {
   return (
-    <div>
-      <Header />
+    <BodyPage title={"Article List Page"}>
       <div className="container pb-5 mb-5">
         <h1 className="text-body-emphasis">Articles</h1>
         <div className="row">
@@ -48,8 +47,7 @@ const ArticleListPage = ({ articles, page, hasNextPage }) => {
           )}
         </div>
       </div>
-      <Footer />
-    </div>
+    </BodyPage>
   );
 };
 

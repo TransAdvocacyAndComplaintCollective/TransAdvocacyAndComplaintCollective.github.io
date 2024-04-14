@@ -23,8 +23,6 @@ const ContactUsPage = () => {
   return (
     <BodyPage>
       <div>
-        {/* Include your header component here */}
-
         <div className="container pb-5 mb-5" style={{ height: "100px" }}>
           <h1 className="text-body-emphasis">contact us</h1>
           <div className="card mb-3">

@@ -1,19 +1,25 @@
 import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const BodyPage = ({ children, title="Pirate Party UK" }) => {
+
+
+const BodyPage = ({ children, title = "Pirate Party UK" ,description = ""}) => {
   return (
-    <html>
+    <html lang="en">
       <head>
         <title>{title}</title>
         <meta charSet="UTF-8" />
+        <meta name="description" content={description}/>
+
         <link href="styles/bootstrap.css" rel="stylesheet" />
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
-        />
         <link rel="icon" href="media/PP.svg" />
+        <meta name="theme-color" content="#4285f4" />
+        <style>
+          
+        </style>
+        <meta name="viewport" content="width=device-width"/>
       </head>
       <body>
         <Header />

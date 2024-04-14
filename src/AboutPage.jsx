@@ -1,11 +1,12 @@
 import React from "react";
 import BodyPage from './partials/BodyPage';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
 
 const AboutPage = () => {
   return (
     <BodyPage title={"About"}>
-      <div className="container pb-5 mb-5">
+      <Container className="container pb-5 mb-5">
         <h1>What we believe</h1>
         <p>
           The Pirate Party in the UK adopted a set of nine principles on which
@@ -87,7 +88,7 @@ const AboutPage = () => {
           continually assess our positions, a process that we would encourage
           you to take part in.
         </p>
-      </div>
+      </Container>
     </BodyPage>
   );
 };
