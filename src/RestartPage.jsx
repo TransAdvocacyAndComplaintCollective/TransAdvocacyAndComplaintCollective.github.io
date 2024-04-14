@@ -1,21 +1,10 @@
 import React from 'react';
-import Header from './partials/Header.jsx';
-import Footer from './partials/Footer.jsx';
+import BodyPage from 'partials/BodyPage';
 import './styles/bootstrap.css'; // Assuming you have your Bootstrap styles imported properly
 
 const RestartPage = () => {
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <title>Restart and Recent Updates</title>
-        <link href="styles/bootstrap.css" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-        <link rel="icon" href="media/PP.svg" />
-        <script src="/js/ElectionCreation.js" defer></script>
-      </head>
-      <body>
-        <Header />
+    <BodyPage>
         <div className="container pb-5 mb-5">
           <section className="container">
             <h2>The Restart:</h2>
@@ -57,9 +46,7 @@ const RestartPage = () => {
             <p>Thank you for your unwavering support as we embark on this exciting journey of renewal and growth. Together, we are redefining the future of pirate politics.</p>
           </footer>
         </div>
-        <Footer />
-      </body>
-    </html>
+    </BodyPage>
   );
 };
 
