@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 
 const AboutPage = () => {
   return (
-    <BodyPage>
+    <BodyPage title={"About"}>
       <div className="container pb-5 mb-5">
         <h1>What we believe</h1>
         <p>

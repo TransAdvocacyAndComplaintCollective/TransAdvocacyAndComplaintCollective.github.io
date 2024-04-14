@@ -2,7 +2,7 @@ import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 
-const BodyPage = ({ children, title }) => {
+const BodyPage = ({ children, title="Pirate Party UK" }) => {
   return (
     <html>
       <head>
