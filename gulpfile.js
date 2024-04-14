@@ -40,7 +40,7 @@ const webpackConfig = {
           loader: "babel-loader",
           options: {
             presets: ["@babel/preset-env", "@babel/preset-react"],
-            plugins: ["@babel/proposal-class-properties", "babel-plugin-inline-import","babel-plugin-transform-scss","babel-plugin-css-modules-transform"]
+            plugins: ["@babel/proposal-class-properties", "babel-plugin-inline-import", "babel-plugin-transform-scss", "babel-plugin-css-modules-transform"]
           }
         },
       },
@@ -80,7 +80,7 @@ const webpackConfig = {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
-      },    
+      },
       {
         test: /\.svg$/,
         use: [
@@ -114,41 +114,50 @@ function requireFromString(src, filename, rootDir = process.cwd()) {
 
   return m.exports;
 }
-function articleGenerator(done) {
+function generateArticles(done) {
   let articles = {};
-  gulp.src(["src/articles/*.md"]).
-    pipe(plumber()) 
-    .pipe(each((content, file, callback) => {
-      const { data, content:text } = matter(content.toString());
-      const htmlContent = markdown.render(text);
-      articles[file.path] = { ...data, htmlContent };
-      console.log(articles);
-      callback();
+  return gulp.src(["src/article/ArticlePage.jsx"])
+    .pipe(plumber())
+    .pipe(webpackStream({ ...webpackConfig }))
+    .pipe(each((articleJSXContent, file, callback) => {
+      gulp.src(["src/articles/*.md"]).
+        pipe(plumber())
+        .pipe(each((markdownContent, file, callback) => {
+          const { data, content: markdownText } = matter(markdownContent.toString());
+          const htmlContent = markdown.render(markdownText);
+          articles[file.path] = { ...data, htmlContent };
+          const articleModule = requireFromString(articleJSXContent.toString(), file.path);
+          const ArticleComponent = articleModule.default({});
+          const renderedArticle = ReactDOMServer.renderToString(ArticleComponent);
+          callback(null, "<!DOCTYPE html>" + renderedArticle);
+        })).pipe(gulp.dest("output/"));
+        callback(null, articles);
+
     }))
 }
-function buildStaicPage(done) {
-  const files = fs.readdirSync('src/');
-  const entry = {};
+function buildStaticPage(done) {
+  const filesInSrcDir = fs.readdirSync('src/');
+  const entryPoints = {};
 
-  files.forEach(file => {
-    const ext = path.extname(file);
-    if (['.jsx'].includes(ext)) {
-      const name = path.basename(file, ext);
-      entry[name] = path.resolve(__dirname, 'src', file);
+  filesInSrcDir.forEach(file => {
+    const fileExtension = path.extname(file);
+    if (['.jsx'].includes(fileExtension)) {
+      const fileName = path.basename(file, fileExtension);
+      entryPoints[fileName] = path.resolve(__dirname, 'src', file);
     }
   });
 
-  return gulp.src(["src/*.jsx","src/styles/*.css"])
+  return gulp.src(["src/*.jsx", "src/styles/*.css"])
     .pipe(plumber())
-    .pipe(webpackStream({...webpackConfig, entry:entry}))
+    .pipe(webpackStream({ ...webpackConfig, entry: entryPoints }))
     .pipe(plumber())
     .pipe(ext_replace('.html'))
-    .pipe(each((content, file, callback) => {
-      const cccx = requireFromString(content.toString(), file.path);
-      console.log(cccx.default);  
-      const App = cccx.default({});
-      const p = ReactDOMServer.renderToString(App);
-      callback(null, "<!DOCTYPE html>"+p);
+    .pipe(each((jsxContent, file, callback) => {
+      const moduleFromJSX = requireFromString(jsxContent.toString(), file.path);
+      console.log(moduleFromJSX.default);
+      const App = moduleFromJSX.default({});
+      const renderedPage = ReactDOMServer.renderToString(App);
+      callback(null, "<!DOCTYPE html>" + renderedPage);
     }))
     .pipe(inline({
       // js: uglify,
@@ -159,13 +168,14 @@ function buildStaicPage(done) {
     .pipe(minifyInline())
     .pipe(gulp.dest("output/"));
 }
+
 function copyStyles() {
   return gulp.src('src/styles/bootstrap.css')
-  .pipe(purgecss({
-    content: ['output/**/*.html']
-  }))
-  .pipe(cleanCSS())
-  .pipe(gulp.dest('output/styles'));
+    .pipe(purgecss({
+      content: ['output/**/*.html']
+    }))
+    .pipe(cleanCSS())
+    .pipe(gulp.dest('output/styles'));
 }
 
-exports.default = gulp.series(buildStaicPage, copyStyles, articleGenerator);
+exports.default = gulp.series(buildStaticPage, copyStyles, generateArticles);
