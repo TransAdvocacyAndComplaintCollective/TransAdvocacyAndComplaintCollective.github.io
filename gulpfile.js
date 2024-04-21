@@ -21,10 +21,17 @@ const md = require('markdown-it')({});
 const uglify = require('gulp-uglify');
 const replace = require('gulp-replace');
 const sitemap = require('gulp-sitemap');
+const { resolve } = require('path');
+const {  createWriteStream } = require('fs');
 const {
-  simpleSitemapAndIndex
+  SitemapAndIndexStream,
+  SitemapStream
 } = require('sitemap')
 const { title } = require('process');
+const { createGzip } = require('zlib')
+
+
+
 let sitemap_list = []
 
 const webpackConfigSaver = {
@@ -387,13 +394,34 @@ function copyToOutput() {
 }
 
 function buildPlainSiteMap(cb) {
-  simpleSitemapAndIndex({
-    hostname: 'https://example.com',
-    destinationDir: './output/sitemap',
-    sourceData: [...sitemap_list],
-  }).then(() => {
-    cb()
-  })
+  try {
+    // Create the sitemap directory if it doesn't exist
+    fs.mkdirSync('./output/sitemap', { recursive: true });
+
+    const sms = new SitemapAndIndexStream({
+      getSitemapStream: (i) => {
+        const sitemapStream = new SitemapStream({ hostname: 'https://ukpirate.party/' });
+        const path = `./output/sitemap/sitemap-${i}.xml`; 
+        console.log(path);
+        // Create a write stream to the sitemap file
+        const ws = sitemapStream.pipe(createWriteStream(resolve(path)));
+
+        // Handle stream errors
+        ws.on('error', (err) => {
+          console.error(`Error writing sitemap ${path}: ${err.message}`);
+          // Optionally, you can emit an event to handle this error outside this function
+        });
+
+        return [new URL(path, 'https://ukpirate.party/').toString(), sitemapStream, ws];
+      },
+    });
+    sitemap_list.forEach(item => sms.write(item));
+    sms.end();
+    cb();
+  } catch (err) {
+    console.error('Error building sitemap:', err);
+    // Optionally, you can throw the error or handle it differently based on your application's requirements
+  }
 }
 
 exports.default = gulp.series(clean, copyMedia, mkdir, buildStaticPage, generateArticlePages, generatePolicy, copyJsx, generateArticles, copyStyles, copycss, autoInline, copyToOutput, buildPlainSiteMap);
