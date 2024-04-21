@@ -12,8 +12,7 @@ const BodyPage = ({ children, title = "Pirate Party UK" ,description = ""}) => {
         <title>{title}</title>
         <meta charSet="UTF-8" />
         <meta name="description" content={description}/>
-
-        <link href="styles/bootstrap.css" rel="stylesheet" />
+        <link href="/styles/bootstrap.min.css" rel="stylesheet"/>
         <link rel="icon" href="media/PP.svg" />
         <meta name="theme-color" content="#4285f4" />
         <style>

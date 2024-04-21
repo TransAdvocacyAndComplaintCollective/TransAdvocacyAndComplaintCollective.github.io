@@ -16,6 +16,8 @@ const cleanCSS = require('gulp-clean-css');
 const markdown = require('markdown-it')();
 const matter = require('gray-matter');
 const htmlmin = require('gulp-htmlmin');
+const { dest } = require('gulp-dest');
+const md = require('markdown-it')({});
 
 const webpackConfigSaver = {
   mode: "development",
@@ -26,11 +28,8 @@ const webpackConfigSaver = {
     libraryTarget: 'commonjs2'
   },
   resolve: {
-    extensions: ['.jsx'],
-    modules: [
-      path.resolve(__dirname, 'src'),
-      path.resolve(__dirname, 'node_modules')
-    ],
+    extensions: ['.jsx', ".tsx"],
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'], // Adjust as needed
   },
   module: {
     rules: [
@@ -41,9 +40,9 @@ const webpackConfigSaver = {
           options: {
             presets: ["@babel/preset-env", "@babel/preset-react"],
             plugins: ["@babel/proposal-class-properties", "babel-plugin-inline-import", "babel-plugin-transform-scss", "babel-plugin-css-modules-transform",
-            ["preprocessor", {
-              "symbols": { "IS_BROWSER": false },
-            }]]
+              ["preprocessor", {
+                "symbols": { "IS_BROWSER": false },
+              }]]
           }
         },
       },
@@ -119,26 +118,8 @@ function requireFromString(src, filename, rootDir = process.cwd()) {
 
   return m.exports;
 }
-function generateArticlesList(done) {
-  let articles = [];
-  filesInSrcDir.forEach(file => {
-    const fileExtension = path.extname(file);
-    if (['.md'].includes(fileExtension)) {
-      const fileName = path.basename(file, fileExtension);
-      articles[fileName] = path.resolve(__dirname, 'src/articles', file);
-    }
-  });
 
 
-
-  return gulp.src(["src/article/ArticlePage.jsx"])
-    .pipe(plumber())
-    .pipe(webpackStream({ ...webpackConfigSaver }))
-    .pipe(each((markdownContent, file, callback) => {
-      
-    }))
-
-}
 function requireFromString(src, filename, rootDir = process.cwd()) {
   const Module = module.constructor;
   const m = new Module(filename, module.parent);
@@ -157,26 +138,94 @@ function requireFromString(src, filename, rootDir = process.cwd()) {
   return m.exports;
 }
 
+function generatePolicy(done) {
+  const articles = {};
+  fs.mkdirSync('output/policy', { recursive: true });
+  gulp.src(["src/article/ArticlePage.jsx"])
+    .pipe(plumber()) // Plumber for error handling
+    .pipe(webpackStream(webpackConfigSaver))
+    .pipe(each((articleJSXContent, file, callback) => {
+      const articlePath = file.path;
+
+      gulp.src("src/policy/**/*.md")
+        .pipe(plumber()) // Plumber for error handling
+        .pipe(each((content, file, callback) => {
+          const { data, content: markdownText } = matter(content.toString());
+          const htmlContent = markdown.render(markdownText);
+
+          articles[file.path] = { ...data, htmlContent };
+
+          const ArticleModule = requireFromString(articleJSXContent.toString(), articlePath);
+          const ArticleComponent = ArticleModule.default({
+            article: {
+              imageUrl: data.imageUrl,
+              imageAlt: data.imageAlt,
+              title: data.title,
+              filename: "article.html",
+              slug: data.slug,
+              summary: data.summary,
+              tags: data.keywords,
+              name: data.author[0].name,
+              datePublished: new Date(Date.parse(data.publishDate)),
+              htmlContent,
+            }
+          });
+
+          const renderedArticle = ReactDOMServer.renderToString(ArticleComponent);
+          callback(null, "<!DOCTYPE html>" + renderedArticle);
+        }))
+        .pipe(inline({
+          css: [minifyCss],
+          base: 'src/styles/'
+        }))
+        .pipe(minifyInline())
+        .pipe(ext_replace('.html'))
+        .pipe(gulp.dest('output/policy/'))
+        .on('end', () => { done(); });
+    }));
+}
+
 
 function generateArticlePages(done) {
-  let articles = {};
-  const entryPoints = {};
+  const articles = [];
+  const ARTICLES_PER_PAGE = 10;
   const filesInSrcDir = fs.readdirSync('src/articles');
+
   filesInSrcDir.forEach(file => {
     const fileExtension = path.extname(file);
-    if (['.md'].includes(fileExtension)) {
+    if (fileExtension === '.md') {
       const fileName = path.basename(file, fileExtension);
-      entryPoints[fileName] = path.resolve(__dirname, 'src/articles', file);
+      const fileContent = fs.readFileSync(path.join('src/articles', file), 'utf8');
+      const { data, content } = matter(fileContent);
+      articles.push({ data, content, fileName });
     }
   });
 
+  articles.sort((a, b) => new Date(b.data.publishDate) - new Date(a.data.publishDate));
+
+  const totalPages = Math.ceil(articles.length / ARTICLES_PER_PAGE);
+
   return gulp.src(["src/article/ArticleListPage.jsx"])
     .pipe(plumber())
-    .pipe(webpackStream({ ...webpackConfigSaver }))
-    .pipe(each((ArticleListPage, file, callback) => {
+    .pipe(webpackStream(webpackConfigSaver))
+    .pipe(each(function (jsxContent, file, callback) {
+      for (let page = 0; page < totalPages; page++) {
+        const articlesForCurrentPage = articles.slice(
+          page * ARTICLES_PER_PAGE,
+          (page + 1) * ARTICLES_PER_PAGE
+        );
 
-    }))
+        const moduleFromJSX = requireFromString(jsxContent.toString(), file.path);
+        const App = moduleFromJSX.default({ articles: articlesForCurrentPage });
+        const renderedPage = ReactDOMServer.renderToString(App);
+        fs.writeFileSync(`output/articles/page-${page}.html`, "<!DOCTYPE html>" + renderedPage);
+      }
+      callback(null, jsxContent);
+    })).on('end', done);
 }
+
+
+
 
 
 function generateArticles(done) {
@@ -187,8 +236,8 @@ function generateArticles(done) {
     .pipe(each((articleJSXContent, file, callback) => {
       gulp.src(["src/articles/*.md"]).
         pipe(plumber())
-        .pipe(each((markdownContent, file, callback) => {
-          const { data, content: markdownText } = matter(markdownContent.toString());
+        .pipe(each((content, file, callback) => {
+          const { data, content: markdownText } = matter(content.toString());
           const htmlContent = markdown.render(markdownText);
           articles[file.path] = { ...data, htmlContent };
           const articleModule = requireFromString(articleJSXContent.toString(), file.path);
@@ -217,11 +266,13 @@ function generateArticles(done) {
         // .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(minifyInline())
         .pipe(ext_replace('.html'))
-        .pipe(gulp.dest("output/articles/"));
-      callback(null, articles);
+        .pipe(gulp.dest("output/articles/")).on('end', () => { done() });
 
     }))
 }
+
+
+
 function buildStaticPage(done) {
   const filesInSrcDir = fs.readdirSync('src/');
   const entryPoints = {};
@@ -241,7 +292,6 @@ function buildStaticPage(done) {
     .pipe(ext_replace('.html'))
     .pipe(each((jsxContent, file, callback) => {
       const moduleFromJSX = requireFromString(jsxContent.toString(), file.path);
-      console.log(moduleFromJSX.default);
       const App = moduleFromJSX.default({});
       const renderedPage = ReactDOMServer.renderToString(App);
       callback(null, "<!DOCTYPE html>" + renderedPage);
@@ -270,4 +320,19 @@ function copyJsx(done) {
   return gulp.src(["src/*.jsx"])
     .pipe(gulp.dest("output/"));
 }
-exports.default = gulp.series(buildStaticPage, copyStyles, copyJsx, generateArticles);
+function autoInline(done) {
+  return gulp.src('src/**/*.html')
+    .pipe(inline({
+      // js: uglify,
+      css: [minifyCss],
+      base: 'output/styles/'
+    }))
+    .pipe(minifyInline())
+    .pipe(gulp.dest('output/'));
+}
+function copycss() {
+  return gulp.src('src/styles/*.css')
+    .pipe(gulp.dest('output/styles'));
+}
+
+exports.default = gulp.series(buildStaticPage, generateArticlePages, copyJsx, generateArticles, copyStyles, copycss, autoInline);
