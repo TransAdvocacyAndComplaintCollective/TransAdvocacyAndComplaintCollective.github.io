@@ -121,12 +121,22 @@ function requireFromString(src, filename, rootDir = process.cwd()) {
 }
 function generateArticlesList(done) {
   let articles = [];
+  filesInSrcDir.forEach(file => {
+    const fileExtension = path.extname(file);
+    if (['.md'].includes(fileExtension)) {
+      const fileName = path.basename(file, fileExtension);
+      articles[fileName] = path.resolve(__dirname, 'src/articles', file);
+    }
+  });
 
-  
+
 
   return gulp.src(["src/article/ArticlePage.jsx"])
     .pipe(plumber())
     .pipe(webpackStream({ ...webpackConfigSaver }))
+    .pipe(each((markdownContent, file, callback) => {
+      
+    }))
 
 }
 function requireFromString(src, filename, rootDir = process.cwd()) {
