@@ -16,13 +16,14 @@ const cleanCSS = require('gulp-clean-css');
 const markdown = require('markdown-it')();
 const matter = require('gray-matter');
 const htmlmin = require('gulp-htmlmin');
+const rimraf = require('gulp-rimraf');
 const { dest } = require('gulp-dest');
 const md = require('markdown-it')({});
 const uglify = require('gulp-uglify');
 const replace = require('gulp-replace');
 const sitemap = require('gulp-sitemap');
 const { resolve } = require('path');
-const {  createWriteStream } = require('fs');
+const { createWriteStream } = require('fs');
 const {
   SitemapAndIndexStream,
   SitemapStream
@@ -203,7 +204,7 @@ function generateArticlePages(done) {
         );
 
         const moduleFromJSX = requireFromString(jsxContent.toString(), file.path);
-        const App = moduleFromJSX.default({ 
+        const App = moduleFromJSX.default({
           articles: articlesForCurrentPage,
           pageNo: page,
           totalPages
@@ -374,13 +375,20 @@ function copyMedia() {
     .pipe(gulp.dest('output/media'));
 }
 
+
+// Function to recursively delete directories, skipping the .git directory
 function clean() {
-  fs.rmdirSync('output', { recursive: true });
-  fs.rmdirSync('temp', { recursive: true });
-  fs.mkdirSync('output', { recursive: true });
-  fs.mkdirSync('temp', { recursive: true });
-  return Promise.resolve();
+  return gulp.src([
+    'output/**/*.html','temp/**/*.html',
+    'output/**/*.xml','temp/**/*.xml',
+    'output/**/*.html','temp/**/*.html',
+    'output/**/*.css','temp/**/*.css',
+    'output/**/*.png','temp/**/*.png',
+    'output/**/*.svg','temp/**/*.svg',
+], { read: false })
+  .pipe(rimraf());
 }
+
 function mkdir(done) {
   fs.mkdirSync('./output', { recursive: true });
   fs.mkdirSync('./temp', { recursive: true });
@@ -389,7 +397,7 @@ function mkdir(done) {
 
 
 function copyToOutput() {
-  return gulp.src('temp/**/*')
+  return gulp.src(['temp/**/*', "src/*.txt"])
     .pipe(gulp.dest('output/'));
 }
 
@@ -401,7 +409,7 @@ function buildPlainSiteMap(cb) {
     const sms = new SitemapAndIndexStream({
       getSitemapStream: (i) => {
         const sitemapStream = new SitemapStream({ hostname: 'https://ukpirate.party/' });
-        const path = `./output/sitemap/sitemap-${i}.xml`; 
+        const path = `./output/sitemap/sitemap-${i}.xml`;
         console.log(path);
         // Create a write stream to the sitemap file
         const ws = sitemapStream.pipe(createWriteStream(resolve(path)));
@@ -424,6 +432,6 @@ function buildPlainSiteMap(cb) {
   }
 }
 
-exports.default = gulp.series(clean, copyMedia, mkdir, buildStaticPage, generateArticlePages, generatePolicy, copyJsx, generateArticles, copyStyles, copycss, autoInline, copyToOutput, buildPlainSiteMap);
+exports.default = gulp.series(clean, copyMedia, mkdir, buildStaticPage, generateArticlePages, generatePolicy, copyJsx, generateArticles, copyStyles, copycss, autoInline, copyToOutput);
 exports.clean = clean;
 exports.mkdir = mkdir;
