@@ -37,8 +37,7 @@ const ArticlePage = ({ article }) => {
         </header>
         <div className="container">
           <div className="entry-content" itemProp="articleBody">
-            {/* Assuming article.htmlContent contains JSX */}
-            {article.htmlContent}
+            <div dangerouslySetInnerHTML={{__html:article.htmlContent}} />
           </div>
         </div>
         <Footer />

@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Card } from "react-bootstrap";
 import BodyPage from "./partials/BodyPage"
 import { Discord } from 'react-bootstrap-icons';
+import ReactDOM from 'react-dom'
 
 function App() {
   return (
@@ -53,5 +54,7 @@ function App() {
     </BodyPage>
   );
 }
-
+if (typeof document !== 'undefined'){
+  ReactDOM.hydrate(<App />, document)
+}
 export default App;

@@ -17,7 +17,6 @@ const BodyPage = ({ children, title = "Pirate Party UK" ,description = ""}) => {
         <link rel="icon" href="media/PP.svg" />
         <meta name="theme-color" content="#4285f4" />
         <style>
-          
         </style>
         <meta name="viewport" content="width=device-width"/>
       </head>
@@ -29,4 +28,6 @@ const BodyPage = ({ children, title = "Pirate Party UK" ,description = ""}) => {
     </html>
   );
 };
+
+
 export default BodyPage;

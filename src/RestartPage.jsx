@@ -1,7 +1,11 @@
-import React from 'react';
+"use client"
+
 import BodyPage from 'partials/BodyPage';
+import React, { useState } from "react";
+
 
 const RestartPage = () => {
+
   return (
     <BodyPage tite={"Restarting the Party"}>
         <div className="container pb-5 mb-5">
