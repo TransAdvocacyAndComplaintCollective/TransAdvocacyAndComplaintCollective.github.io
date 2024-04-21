@@ -1,48 +1,79 @@
-import React from 'react';
-import Header from 'partials/Header';
-import Footer from 'partials/Footer';
+import React from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import BodyPage from "../partials/BodyPage";
 
 const ArticlePage = ({ article }) => {
+  // Destructure article object
+  const { title, description, summary, author, datePublished, htmlContent, imageUrl, id } = article || {};
+
+  // Function to format date
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toDateString();
+  };
+
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <title>{article.title}</title>
-        <link rel="icon" href="/media/PP.svg" />
-        <meta name="description" content={article.description} />
-        <meta name="author" content={article.author} />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="/styles/bootstrap.css" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-        <title>Pirate Party UK (PPUK) - {article.title}</title>
-      </head>
-      <body>
-        <Header />
-        <header>
-          <h1 className="entry-title" itemProp="headline">{article.title}</h1>
-          <div className="summary text-muted" itemProp="description">
-            {article.summary}
-          </div>
-          <div className="dateline">
-            by
-            <span itemProp="author" itemScope itemType="http://schema.org/Person">
-              <span itemProp="name">{article.name}</span>
-            </span>
-            <p>
-              <time itemProp="datePublished" dateTime={article.datePublished}>
-                published {new Date(article.datePublished).toDateString()}
-              </time>
-            </p>
-          </div>
-        </header>
-        <div className="container">
-          <div className="entry-content" itemProp="articleBody">
-            <div dangerouslySetInnerHTML={{__html:article.htmlContent}} />
-          </div>
-        </div>
-        <Footer />
-      </body>
-    </html>
+    <BodyPage
+      title={"Home"}
+      description={"Welcome to the Pirate Party UK"}
+      header={
+        <>
+          {/* Use optional chaining to avoid errors if article is null */}
+          <meta property="og:title" content={title} />
+          {description && <meta property="og:description" content={description} />}
+          <meta property="og:type" content="article" />
+          <meta property="og:url" content={`https://example.com/articles/${id}`} />
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Article",
+              headline: title,
+              description: description,
+              author: {
+                "@type": "Person",
+                name: author,
+              },
+              datePublished: datePublished,
+              image: imageUrl,
+              publisher: {
+                "@type": "Organization",
+                name: "Pirate Party UK (PPUK)",
+                logo: {
+                  "@type": "ImageObject",
+                  url: "/media/PPUK-logo.png",
+                },
+              },
+            })}
+          </script>
+        </>
+      }
+    >
+      {/* Use Container for main content */}
+      <Container>
+        <Row className="justify-content-center">
+          {/* Use Col to control content width */}
+          <Col lg={8}>
+            <article>
+              {/* Render article title */}
+              <h1 className="entry-title">{title}</h1>
+              {/* Render article summary if available */}
+              {summary && <p className="summary text-muted">{summary}</p>}
+              {/* Render author and publication date */}
+              <div className="dateline">
+                by <span itemProp="name">{author}</span>
+                <p>
+                  <time itemProp="datePublished" dateTime={datePublished}>
+                    published {formatDate(datePublished)}
+                  </time>
+                </p>
+              </div>
+              {/* Render HTML content dangerously (ensure HTML is safe) */}
+              <div className="entry-content" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+            </article>
+          </Col>
+        </Row>
+      </Container>
+    </BodyPage>
   );
 };
 

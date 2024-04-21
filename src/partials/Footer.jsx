@@ -1,37 +1,35 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
+import { FaDiscord, FaGithub, FaMastodon, FaTwitter } from 'react-icons/fa';
 
 const Footer = () => {
   return (
-    <div className="mt-5 navbar fixed-bottom bg-body-tertiary bg-dark" data-bs-theme="dark">
+    <footer className="footer bg-dark py-4">
       <Container>
-        <Row>
-          <Col md={3}>
-            <span className="mb-3 mb-md-0 text-body-secondary">
-              Copyright &copy; {new Date().getFullYear()} Pirate Party UK
-            </span>
+        <Row className="align-items-center justify-content-center justify-content-md-between">
+          <Col md={4} className="text-center text-md-start mb-3 mb-md-0">
+            <p className="text-light m-0">&copy; {new Date().getFullYear()} Pirate Party UK</p>
           </Col>
-          <Col md={3} className="text-end">
-            <span className="mb-3 mb-md-0 text-body-secondary">
-              <a href="https://discord.gg/t8EDRgXzMH" className="bi bi-discord"></a>
-            </span>
-            <span className="mb-3 mb-md-0 text-body-secondary">
-              <a href="https://github.com/pirate-party-uk" className="bi bi-github"></a>
-            </span>
-            <span className="mb-3 mb-md-0 text-body-secondary">
-              <a rel="me" className="bi bi-mastodon" href="https://tech.lgbt/@pirate_party_uk"></a>
-            </span>
-            <span className="mb-3 mb-md-0 text-body-secondary">
-              <a rel="me" className="bi bi-twitter" href="https://twitter.com/_PiratePartyUK"></a>
-            </span>
-            {/* Facebook link commented out */}
-            {/* <span className="mb-3 mb-md-0 text-body-secondary">
-              <a rel="me" className="bi bi-facebook" href="https://www.facebook.com/profile.php?id=100094049784840"></a>
-            </span> */}
+          <Col md={4} className="text-center">
+            <p className="mb-2 mb-md-0 text-light">Follow us:</p>
+            <div className="social-links">
+              <a href="https://discord.gg/t8EDRgXzMH" className="social-link me-3" title="Join us on Discord">
+                <FaDiscord size={24} className="text-light" />
+              </a>
+              <a href="https://github.com/pirate-party-uk" className="social-link me-3" title="Check out our GitHub">
+                <FaGithub size={24} className="text-light" />
+              </a>
+              <a rel="me" href="https://tech.lgbt/@pirate_party_uk" className="social-link me-3" title="Follow us on Mastodon">
+                <FaMastodon size={24} className="text-light" />
+              </a>
+              <a rel="me" href="https://twitter.com/_PiratePartyUK" className="social-link" title="Follow us on Twitter">
+                <FaTwitter size={24} className="text-light" />
+              </a>
+            </div>
           </Col>
         </Row>
       </Container>
-    </div>
+    </footer>
   );
 };
 

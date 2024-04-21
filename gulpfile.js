@@ -18,6 +18,14 @@ const matter = require('gray-matter');
 const htmlmin = require('gulp-htmlmin');
 const { dest } = require('gulp-dest');
 const md = require('markdown-it')({});
+const uglify = require('gulp-uglify');
+const replace = require('gulp-replace');
+const sitemap = require('gulp-sitemap');
+const {
+  simpleSitemapAndIndex
+} = require('sitemap')
+const { title } = require('process');
+let sitemap_list = []
 
 const webpackConfigSaver = {
   mode: "development",
@@ -138,57 +146,11 @@ function requireFromString(src, filename, rootDir = process.cwd()) {
   return m.exports;
 }
 
-function generatePolicy(done) {
-  const articles = {};
-  fs.mkdirSync('output/policy', { recursive: true });
-  gulp.src(["src/article/ArticlePage.jsx"])
-    .pipe(plumber()) // Plumber for error handling
-    .pipe(webpackStream(webpackConfigSaver))
-    .pipe(each((articleJSXContent, file, callback) => {
-      const articlePath = file.path;
-
-      gulp.src("src/policy/**/*.md")
-        .pipe(plumber()) // Plumber for error handling
-        .pipe(each((content, file, callback) => {
-          const { data, content: markdownText } = matter(content.toString());
-          const htmlContent = markdown.render(markdownText);
-
-          articles[file.path] = { ...data, htmlContent };
-
-          const ArticleModule = requireFromString(articleJSXContent.toString(), articlePath);
-          const ArticleComponent = ArticleModule.default({
-            article: {
-              imageUrl: data.imageUrl,
-              imageAlt: data.imageAlt,
-              title: data.title,
-              filename: "article.html",
-              slug: data.slug,
-              summary: data.summary,
-              tags: data.keywords,
-              name: data.author[0].name,
-              datePublished: new Date(Date.parse(data.publishDate)),
-              htmlContent,
-            }
-          });
-
-          const renderedArticle = ReactDOMServer.renderToString(ArticleComponent);
-          callback(null, "<!DOCTYPE html>" + renderedArticle);
-        }))
-        .pipe(inline({
-          css: [minifyCss],
-          base: 'src/styles/'
-        }))
-        .pipe(minifyInline())
-        .pipe(ext_replace('.html'))
-        .pipe(gulp.dest('output/policy/'))
-        .on('end', () => { done(); });
-    }));
-}
-
 
 function generateArticlePages(done) {
   const articles = [];
   const ARTICLES_PER_PAGE = 10;
+  fs.mkdirSync('temp/article', { recursive: true });
   const filesInSrcDir = fs.readdirSync('src/articles');
 
   filesInSrcDir.forEach(file => {
@@ -197,7 +159,25 @@ function generateArticlePages(done) {
       const fileName = path.basename(file, fileExtension);
       const fileContent = fs.readFileSync(path.join('src/articles', file), 'utf8');
       const { data, content } = matter(fileContent);
-      articles.push({ data, content, fileName });
+      sitemap_list.push({
+        url: `/article/${fileName}`,
+        changefreq: 'daily',
+        priority: 0.3,
+        lastmod: new Date(data.publishDate),
+        news: {
+          publication: {
+            name: 'Example Blog',
+            language: 'en'
+          },
+          publication_date: new Date(data.publishDate),
+          title: data.title,
+          keywords: data.keywords
+        },
+        genres: data.keywords,
+        title: data.title,
+        keywords: data.keywords
+      });
+      articles.push({ data: { ...data, slug: fileName }, content, fileName });
     }
   });
 
@@ -216,9 +196,13 @@ function generateArticlePages(done) {
         );
 
         const moduleFromJSX = requireFromString(jsxContent.toString(), file.path);
-        const App = moduleFromJSX.default({ articles: articlesForCurrentPage });
+        const App = moduleFromJSX.default({ 
+          articles: articlesForCurrentPage,
+          pageNo: page,
+          totalPages
+        });
         const renderedPage = ReactDOMServer.renderToString(App);
-        fs.writeFileSync(`output/articles/page-${page}.html`, "<!DOCTYPE html>" + renderedPage);
+        fs.writeFileSync(`temp/article/page-${page}.html`, "<!DOCTYPE html>" + renderedPage);
       }
       callback(null, jsxContent);
     })).on('end', done);
@@ -243,6 +227,7 @@ function generateArticles(done) {
           const articleModule = requireFromString(articleJSXContent.toString(), file.path);
           const ArticleComponent = articleModule.default({
             article: {
+              id: file.path,
               imageUrl: data.imageUrl,
               imageAlt: data.imageAlt,
               title: data.title,
@@ -258,15 +243,16 @@ function generateArticles(done) {
           const renderedArticle = ReactDOMServer.renderToString(ArticleComponent);
           callback(null, "<!DOCTYPE html>" + renderedArticle);
         }))
-        .pipe(inline({
-          // js: uglify,
-          css: [minifyCss],
-          base: 'src/styles/'
-        }))
+        // .pipe(inline({
+        //   // js: uglify,
+        //   css: [minifyCss],
+        //   svg
+        //   base: 'src/styles/'
+        // }))
         // .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(minifyInline())
         .pipe(ext_replace('.html'))
-        .pipe(gulp.dest("output/articles/")).on('end', () => { done() });
+        .pipe(gulp.dest("temp/article/")).on('end', () => { done() });
 
     }))
 }
@@ -282,10 +268,11 @@ function buildStaticPage(done) {
     if (['.jsx'].includes(fileExtension)) {
       const fileName = path.basename(file, fileExtension);
       entryPoints[fileName] = path.resolve(__dirname, 'src', file);
+
     }
   });
 
-  return gulp.src(["src/*.jsx", "src/styles/*.css"])
+  return gulp.src(["src/*.jsx"])
     .pipe(plumber())
     .pipe(webpackStream({ ...webpackConfigSaver, entry: entryPoints }))
     .pipe(plumber())
@@ -296,43 +283,119 @@ function buildStaticPage(done) {
       const renderedPage = ReactDOMServer.renderToString(App);
       callback(null, "<!DOCTYPE html>" + renderedPage);
     }))
-    .pipe(inline({
-      // js: uglify,
-      css: [minifyCss],
-      base: 'src/styles/'
-    }))
-    .pipe(htmlmin())
-    .pipe(minifyInline())
-    .pipe(gulp.dest("output/"));
+    .pipe(gulp.dest("temp/"));
 }
 
 function copyStyles() {
   return gulp.src('src/styles/bootstrap.css')
     .pipe(purgecss({
-      content: ['output/**/*.html']
+      content: ['temp/**/*.html']
     }))
     .pipe(cleanCSS())
-    .pipe(gulp.dest('output/styles'));
+    .pipe(gulp.dest('temp/styles'));
 }
 
 function copyJsx(done) {
   let articles = {};
   return gulp.src(["src/*.jsx"])
-    .pipe(gulp.dest("output/"));
+    .pipe(gulp.dest("temp/"));
 }
 function autoInline(done) {
-  return gulp.src('src/**/*.html')
+  return gulp.src('temp/**/*.html')
     .pipe(inline({
-      // js: uglify,
+      js: uglify,
       css: [minifyCss],
-      base: 'output/styles/'
+      base: 'temp/'
     }))
+    .pipe(each(function (content, file, callback) {
+      sitemap_list.push({
+        url: file.path.replace(file._base, ""),
+      });
+      callback(null, content);
+    }))
+    .pipe(htmlmin())
     .pipe(minifyInline())
+    .pipe(replace(/(\[.*\]\()([\w\/\+\.]+)(\.md\))/g, '$1$2.html$3')) // Replace .md with .html in URLs
     .pipe(gulp.dest('output/'));
 }
 function copycss() {
   return gulp.src('src/styles/*.css')
-    .pipe(gulp.dest('output/styles'));
+    .pipe(purgecss({
+      content: ['temp/**/*.html']
+    }))
+    .pipe(gulp.dest('temp/styles'));
 }
 
-exports.default = gulp.series(buildStaticPage, generateArticlePages, copyJsx, generateArticles, copyStyles, copycss, autoInline);
+
+function generatePolicy(done) {
+  fs.mkdirSync('./output/policy', { recursive: true });
+  let articles = {};
+
+  gulp.src(["src/docs/main.jsx"])
+    .pipe(plumber())
+    .pipe(webpackStream(webpackConfigSaver))
+    .pipe(each(function (articleJSXContent, file, callback) {
+      gulp.src(["policy/**/*.md"])
+        .pipe(each(function (content, file, callback) {
+          const { data, content: markdownText } = matter(content.toString());
+          const htmlContent = markdown.render(markdownText);
+
+          // Modify URLs in anchor tags to point to HTML files
+          const modifiedHtmlContent = htmlContent.replace(/<a href="([^"]+).md"/g, '<a href="$1.html"');
+
+          articles[file.path] = { ...data, htmlContent: modifiedHtmlContent };
+          const xpath = file.path.replace(file._base, "");
+          const articleModule = requireFromString(articleJSXContent.toString(), file.path);
+          const ArticleComponent = articleModule.default({
+            doc: {
+              main: modifiedHtmlContent // Use the modified HTML content
+            }
+          });
+          const renderedArticle = ReactDOMServer.renderToString(ArticleComponent);
+          // fs.writeFileSync(`./output/policy${xpath}`, "<!DOCTYPE html>" + renderedArticle);
+          callback(null, "<!DOCTYPE html>" + renderedArticle);
+        }))
+        .pipe(ext_replace('.html'))
+        .pipe(gulp.dest("temp/policy"))
+    }))
+  done();
+}
+
+
+function copyMedia() {
+  return gulp.src('src/media/**/*')
+    .pipe(gulp.dest('output/media'));
+}
+
+function clean() {
+  fs.rmdirSync('output', { recursive: true });
+  fs.rmdirSync('temp', { recursive: true });
+  fs.mkdirSync('output', { recursive: true });
+  fs.mkdirSync('temp', { recursive: true });
+  return Promise.resolve();
+}
+function mkdir(done) {
+  fs.mkdirSync('./output', { recursive: true });
+  fs.mkdirSync('./temp', { recursive: true });
+  done();
+}
+
+
+function copyToOutput() {
+  return gulp.src('temp/**/*')
+    .pipe(gulp.dest('output/'));
+}
+
+function buildPlainSiteMap(cb) {
+  simpleSitemapAndIndex({
+    hostname: 'https://example.com',
+    destinationDir: './output/sitemap',
+    sourceData: [...sitemap_list],
+  }).then(() => {
+    cb()
+  })
+}
+
+exports.default = gulp.series(clean, copyMedia, mkdir, buildStaticPage, generateArticlePages, generatePolicy, copyJsx, generateArticles, copyStyles, copycss, autoInline, copyToOutput, buildPlainSiteMap);
+exports.clean = clean;
+exports.mkdir = mkdir;
