@@ -432,6 +432,6 @@ function buildPlainSiteMap(cb) {
   }
 }
 
-exports.default = gulp.series(clean, copyMedia, mkdir, buildStaticPage, generateArticlePages, generatePolicy, copyJsx, generateArticles, copyStyles, copycss, autoInline, copyToOutput);
+exports.default = gulp.series(clean, copyMedia, mkdir, buildStaticPage, generateArticlePages, generatePolicy, copyJsx, generateArticles, copyStyles, copycss, autoInline, copyToOutput,buildPlainSiteMap);
 exports.clean = clean;
 exports.mkdir = mkdir;
