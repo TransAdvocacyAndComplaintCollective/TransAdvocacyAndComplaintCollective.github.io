@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 
-const Header = ({}) => {
+const Header = () => {
   return (
     <Navbar bg="dark" variant="dark" expand="lg" className="p-3 mb-3">
       <Container>
@@ -23,10 +23,7 @@ const Header = ({}) => {
             <Nav.Link href="/policy/readme.html">Policy</Nav.Link>
             {/* Additional Nav Links can go here */}
           </Nav>
-          <div className="dropdown text-end">
-            <div id="userStatusContainer">HI</div> 
-          </div>
-  
+          {/* You can add your dropdown menu here */}
         </Navbar.Collapse>
       </Container>
     </Navbar>
