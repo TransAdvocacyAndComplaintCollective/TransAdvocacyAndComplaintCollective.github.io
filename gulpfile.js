@@ -210,7 +210,7 @@ function generateArticlePages(done) {
           totalPages
         });
         const renderedPage = ReactDOMServer.renderToString(App);
-        fs.writeFileSync(`temp/article/page-${page}.html`, "<!DOCTYPE html>" + renderedPage);
+        fs.writeFileSync(`temp/article/page-${page}.html`,  renderedPage);
       }
       callback(null, jsxContent);
     })).on('end', done);
@@ -249,13 +249,13 @@ function generateArticles(done) {
             }
           });
           const renderedArticle = ReactDOMServer.renderToString(ArticleComponent);
-          callback(null, "<!DOCTYPE html>" + renderedArticle);
+          callback(null,  renderedArticle);
         }))
         // .pipe(inline({
         //   // js: uglify,
         //   css: [minifyCss],
         //   svg
-        //   base: 'src/styles/'
+        //   base: 'src/'
         // }))
         // .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(minifyInline())
@@ -289,7 +289,7 @@ function buildStaticPage(done) {
       const moduleFromJSX = requireFromString(jsxContent.toString(), file.path);
       const App = moduleFromJSX.default({});
       const renderedPage = ReactDOMServer.renderToString(App);
-      callback(null, "<!DOCTYPE html>" + renderedPage);
+      callback(null,  renderedPage);
     }))
     .pipe(gulp.dest("temp/"));
 }
@@ -321,8 +321,8 @@ function autoInline(done) {
       });
       callback(null, content);
     }))
-    .pipe(htmlmin())
-    .pipe(minifyInline())
+    // .pipe(htmlmin())
+    // .pipe(minifyInline())
     .pipe(replace(/(\[.*\]\()([\w\/\+\.]+)(\.md\))/g, '$1$2.html$3')) // Replace .md with .html in URLs
     .pipe(gulp.dest('output/'));
 }
@@ -360,8 +360,8 @@ function generatePolicy(done) {
             }
           });
           const renderedArticle = ReactDOMServer.renderToString(ArticleComponent);
-          // fs.writeFileSync(`./output/policy${xpath}`, "<!DOCTYPE html>" + renderedArticle);
-          callback(null, "<!DOCTYPE html>" + renderedArticle);
+          // fs.writeFileSync(`./output/policy${xpath}`,  renderedArticle);
+          callback(null,  renderedArticle);
         }))
         .pipe(ext_replace('.html'))
         .pipe(gulp.dest("temp/policy"))
@@ -381,6 +381,8 @@ function clean() {
   return gulp.src([
     'output/**/*.html','temp/**/*.html',
     'output/**/*.xml','temp/**/*.xml',
+    'output/**/*.tsx','temp/**/*.tsx',
+    'output/**/*.jsx','temp/**/*.jsx',
     'output/**/*.html','temp/**/*.html',
     'output/**/*.css','temp/**/*.css',
     'output/**/*.png','temp/**/*.png',
@@ -431,7 +433,14 @@ function buildPlainSiteMap(cb) {
     // Optionally, you can throw the error or handle it differently based on your application's requirements
   }
 }
+function copyjs(done) {
+  return gulp.src('src/js/**/*')
+    .pipe(gulp.dest('temp/js'));
+}
+function ejsTemaplate(html,jsx){
+}
 
-exports.default = gulp.series(clean, copyMedia, mkdir, buildStaticPage, generateArticlePages, generatePolicy, copyJsx, generateArticles, copyStyles, copycss, autoInline, copyToOutput,buildPlainSiteMap);
+
+exports.default = gulp.series(clean, copyMedia, mkdir,copyjs, buildStaticPage, generateArticlePages, generatePolicy, copyJsx, generateArticles, copyStyles, copycss, autoInline, copyToOutput,buildPlainSiteMap);
 exports.clean = clean;
 exports.mkdir = mkdir;
