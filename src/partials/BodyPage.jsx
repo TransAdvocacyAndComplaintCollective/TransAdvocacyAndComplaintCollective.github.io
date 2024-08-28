@@ -2,8 +2,7 @@ import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 
-
-const BodyPage = ({ children, title = "Pirate Party UK", description = "", header = null }) => {
+const BodyPage = ({ children, title = "Trans Advocacy and Complaint Collective", description = "", header = null }) => {
   return (
     <html lang="en">
       <head>
@@ -12,9 +11,9 @@ const BodyPage = ({ children, title = "Pirate Party UK", description = "", heade
         <meta name="description" content={description} />
         <link href="/styles/bootstrap.min.css" rel="stylesheet" />
         <script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
-        <link rel="icon" href="media/PP.svg" />
+        <link rel="icon" href="/media/trans-icon.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#4285f4" />
+        <meta name="theme-color" content="#121212" />
         <style>
           {`
             html, body {
@@ -31,17 +30,22 @@ const BodyPage = ({ children, title = "Pirate Party UK", description = "", heade
 
             .content {
               flex: 1;
+              padding: 20px;
+            }
+
+            footer {
+              margin-top: auto;
             }
           `}
         </style>
         {header ? header : null}
       </head>
       <body>
-        <Header />
         <div id="root">
+          <Header />
           <div className="content">{children}</div>
+          <Footer />
         </div>
-        <Footer />
       </body>
     </html>
   );

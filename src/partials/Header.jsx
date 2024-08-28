@@ -1,39 +1,113 @@
 import React, { useState } from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
-import 'bootstrap/dist/css/bootstrap.css';
 
 const Header = () => {
   const [expanded, setExpanded] = useState(false);
 
   const toggleNavbar = () => {
-    console.log("expanded",expanded);
     setExpanded(!expanded);
   };
 
   return (
-    <Navbar bg="dark" variant="dark" expand="md" className="p-3 mb-3">
+    <Navbar
+      expand="md"
+      style={{
+        backgroundColor: "#121212", // Darker background color
+        borderBottom: "3px solid #3C9CD4", // Muted Trans Pride blue accent
+        padding: "16px",
+        color: "#E0E0E0", // Light gray color for text
+      }}
+      expanded={expanded}
+    >
       <Container>
-        <Navbar.Brand href="/" aria-label="Pirate Party Logo">
+        <Navbar.Brand href="/" aria-label="Trans Advocacy and Complaint Collective Logo">
           <img
-            src="/media/PP.svg"
+            src="/media/tacc.png" // Replace with an actual Trans-themed logo or image
             width="50"
-            alt="Pirate Party Logo"
+            alt="Trans Advocacy and Complaint Collective Logo"
+            style={{
+              borderRadius: "50%", // Rounded logo image
+            }}
           />
         </Navbar.Brand>
-        {/* <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={toggleNavbar} /> */}
-        {/* <Navbar.Collapse id="basic-navbar-nav" expanded={expanded}> */}
+        <Navbar.Toggle
+          aria-controls="basic-navbar-nav"
+          onClick={toggleNavbar}
+          aria-label="Toggle navigation"
+          style={{
+            borderColor: "#E0E0E0", // Light gray border for toggle
+          }}
+        />
+        <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="/article/page-0.html">Articles</Nav.Link>
-            <Nav.Link href="/about.html">About</Nav.Link>
-            <Nav.Link href="/contact.html">Contact</Nav.Link>
-            <Nav.Link href="/policy/readme.html">Policy</Nav.Link>
-            {/* Additional Nav Links can go here */}
+            <Nav.Link
+              href="/"
+              style={{
+                color: "#E0E0E0", // Light gray color for nav links
+                marginRight: "16px",
+              }}
+              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")} // Hover color to muted Trans Pride blue
+              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
+            >
+              Home
+            </Nav.Link>
+            <Nav.Link
+              href="/article/page-0.html"
+              style={{
+                color: "#E0E0E0",
+                marginRight: "16px",
+              }}
+              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")}
+              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
+            >
+              Articles
+            </Nav.Link>
+            <Nav.Link
+              href="/press_release/page-0.html"
+              style={{
+                color: "#E0E0E0",
+                marginRight: "16px",
+              }}
+              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")}
+              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
+            >
+              Press Release
+            </Nav.Link>
+            <Nav.Link
+              href="/about.html"
+              style={{
+                color: "#E0E0E0",
+                marginRight: "16px",
+              }}
+              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")}
+              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
+            >
+              About
+            </Nav.Link>
+            <Nav.Link
+              href="/contact.html"
+              style={{
+                color: "#E0E0E0",
+                marginRight: "16px",
+              }}
+              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")}
+              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
+            >
+              Contact
+            </Nav.Link>
+            <Nav.Link
+              href="/get-involved.html"
+              style={{
+                color: "#E0E0E0",
+                marginRight: "16px",
+              }}
+              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")}
+              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
+            >
+              Get Involved
+            </Nav.Link>
           </Nav>
-          <div className="text-end">
-            <div id="userStatusContainer">HI</div>
-          </div>
-        {/* </Navbar.Collapse> */}
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );

@@ -1,8 +1,8 @@
 import React from "react";
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Alert } from "react-bootstrap";
 import BodyPage from "partials/BodyPage";
 import ReactDOM from "react-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 // import "./ArticleListPage.css"; // Import custom CSS for styling
 
 const ArticleListPage = ({ articles, pageNo, totalPages }) => {
@@ -10,7 +10,9 @@ const ArticleListPage = ({ articles, pageNo, totalPages }) => {
   if (!articles || !Array.isArray(articles) || articles.length === 0) {
     return (
       <BodyPage title="" description="">
-        <p>No articles available.</p>
+        <Alert variant="warning" className="text-center">
+          No articles available.
+        </Alert>
       </BodyPage>
     );
   }
@@ -25,7 +27,7 @@ const ArticleListPage = ({ articles, pageNo, totalPages }) => {
               <Card key={id} className="mb-3">
                 <Card.Body>
                   <Card.Title>{data.title}</Card.Title>
-                  <Card.Text>{data.summary}</Card.Text>
+                  <Card.Text>{data.summary}</Card.Text> 
                   <Button variant="primary" href={`/article/${data.slug}.html`}>
                     Read More
                   </Button>
