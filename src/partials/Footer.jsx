@@ -29,17 +29,8 @@ const Footer = () => {
           <Col md={4} className="text-center">
             <p className="mb-2 mb-md-0" style={{ color: "#FFFFFF" }}>Follow us:</p>
             <div className="social-links d-flex justify-content-center">
-              <a href="https://twitter.com" className="mx-2" aria-label="Twitter">
-                <FaTwitter size={24} style={{ color: "#3C9CD4" }} />
-              </a>
-              <a href="https://github.com" className="mx-2" aria-label="GitHub">
-                <FaGithub size={24} style={{ color: "#3C9CD4" }} />
-              </a>
-              <a href="https://discord.com" className="mx-2" aria-label="Discord">
+              <a href="https://discord.gg/KMxjhabAxN" className="mx-2" aria-label="Discord">
                 <FaDiscord size={24} style={{ color: "#3C9CD4" }} />
-              </a>
-              <a href="https://mastodon.social" className="mx-2" aria-label="Mastodon">
-                <FaMastodon size={24} style={{ color: "#3C9CD4" }} />
               </a>
             </div>
           </Col>
