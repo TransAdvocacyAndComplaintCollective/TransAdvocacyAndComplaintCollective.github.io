@@ -122,17 +122,26 @@ function mkdir(done) {
   done();
 }
 
-// Task to generate HTML pages from JSX files for articles
+// Updated Task to generate HTML pages from JSX files for articles
 function generateArticlePages(done) {
   const articles = [];
+  const articlesDir = 'articles';
+
+  // Check if 'articles' directory exists
+  if (!fs.existsSync(articlesDir)) {
+    console.error(`Directory '${articlesDir}' does not exist. Skipping article generation.`);
+    done(); // Call done to indicate task completion
+    return;
+  }
+
   fs.mkdirSync('temp/article', { recursive: true });
 
-  const filesInSrcDir = fs.readdirSync('articles');
+  const filesInSrcDir = fs.readdirSync(articlesDir);
   filesInSrcDir.forEach(file => {
     const fileExtension = path.extname(file);
     if (fileExtension === '.md') {
       const fileName = path.basename(file, fileExtension);
-      const fileContent = fs.readFileSync(path.join('articles', file), 'utf8');
+      const fileContent = fs.readFileSync(path.join(articlesDir, file), 'utf8');
       const { data, content } = matter(fileContent);
       sitemapList.push({
         url: `/article/${fileName}`,
@@ -183,7 +192,6 @@ function generateArticlePages(done) {
     }))
     .on('end', done);
 }
-
 
 // Task to generate HTML pages from JSX files for press releases
 function generatePressReleasePages(done) {
@@ -246,7 +254,6 @@ function generatePressReleasePages(done) {
     }))
     .on('end', done);
 }
-
 
 // Task to build static pages
 function buildStaticPage(done) {
@@ -338,6 +345,7 @@ const build = gulp.series(
   autoInline,
   buildPlainSiteMap
 );
-exports.default = build
+
+exports.default = build;
 exports.clean = clean;
 exports.build = build;
