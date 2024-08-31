@@ -1,5 +1,5 @@
 [submodule "etc/press_releases"]
-  path = output
+  path = etc/press_releases
   url = https://github.com/TransAdvocacyAndComplaintCollective/press_releases.git
 
 [submodule "etc/articles"]
