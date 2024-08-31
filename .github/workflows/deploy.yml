@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Trigger on push to main branch
+      - main  # Adjust if needed
 
 jobs:
   build:
@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          submodules: true  # Ensures submodules are checked out
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -22,7 +24,7 @@ jobs:
         run: npm install
 
       - name: Build Project
-        run: npm run gulp build
+        run: npm run gulp  # Updated to run the gulp script
 
       - name: Deploy to GitHub Pages
         if: success()
