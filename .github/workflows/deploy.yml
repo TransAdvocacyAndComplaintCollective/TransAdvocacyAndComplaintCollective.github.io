@@ -28,7 +28,7 @@ jobs:
         run: npm install --global gulp-cli
 
       - name: Build Project
-        run: npm run gulp  # Updated to run the gulp script
+        run: npm run gulp  # Runs the gulp script to build the project
 
       - name: Deploy to GitHub Pages
         if: success()
@@ -39,6 +39,3 @@ jobs:
           external_repository: Collaboration-of-International-Pirates/Collaboration-of-International-Pirates.github.io
           publish_branch: main  # Branch to deploy to in the GitHub Pages repo
           force_orphan: true  # Creates a new commit history in the branch to avoid conflicts
-
-      # - name: Clean Up
-      #   run: rm -rf ./output  # Clean up build artifacts
