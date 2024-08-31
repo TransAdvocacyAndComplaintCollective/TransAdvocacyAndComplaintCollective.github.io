@@ -125,7 +125,7 @@ function mkdir(done) {
 // Updated Task to generate HTML pages from JSX files for articles
 function generateArticlePages(done) {
   const articles = [];
-  const articlesDir = 'articles';
+  const articlesDir = 'etc/articles';
 
   // Check if 'articles' directory exists
   if (!fs.existsSync(articlesDir)) {
@@ -198,12 +198,12 @@ function generatePressReleasePages(done) {
   const pressReleases = [];
   fs.mkdirSync('temp/press_release', { recursive: true });
 
-  const filesInSrcDir = fs.readdirSync('press_releases');
+  const filesInSrcDir = fs.readdirSync('etc/press_releases');
   filesInSrcDir.forEach(file => {
     const fileExtension = path.extname(file);
     if (fileExtension === '.md') {
       const fileName = path.basename(file, fileExtension);
-      const fileContent = fs.readFileSync(path.join('press_releases', file), 'utf8');
+      const fileContent = fs.readFileSync(path.join("etc",'press_releases', file), 'utf8');
       const { data, content } = matter(fileContent);
       sitemapList.push({
         url: `/press_release/${fileName}`,
