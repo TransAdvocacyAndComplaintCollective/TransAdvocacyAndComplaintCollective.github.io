@@ -28,7 +28,7 @@ const HomePage = () => {
         <Card className="mb-4">
           <Card.Body>
             <Card.Title>What We Offer</Card.Title>
-            <Card.Text>
+            <Card.Text as="div">
               <ul>
                 <li><strong>Organized Activism:</strong> We’re planning targeted actions, campaigns, and events to challenge transphobia and promote equality.</li>
                 <li><strong>FOI Requests:</strong> Join our efforts to obtain crucial information through Freedom of Information requests, shining a light on issues affecting the trans community.</li>
@@ -45,18 +45,15 @@ const HomePage = () => {
         <Card className="mb-4">
           <Card.Body>
             <Card.Title>How You Can Get Involved</Card.Title>
-            <Card.Text>
+            <Card.Text as="div">
               <ul>
                 <li><strong>Join Our Discord:</strong> Our Discord server is the hub for all our activities. Whether you want to take part in specific actions or just connect with like-minded people, we’d love to have you.</li>
                 <li><strong>Share Your Ideas:</strong> We’re always looking for fresh ideas and perspectives. Your input can help shape the direction of our collective.</li>
                 <li><strong>Spread the Word:</strong> Even if you can’t join, spreading the word about our collective can help us reach more people who might be interested.</li>
               </ul>
             </Card.Text>
-            <Button variant="primary" href="https://discord.com/invite/your-discord-link" className="me-2">
+            <Button variant="primary" href="https://discord.gg/KMxjhabAxN" className="me-2">
               <Discord /> Join Our Discord
-            </Button>
-            <Button variant="secondary" href={`mailto:${email}`} className="me-2">
-              <Envelope /> Contact Us
             </Button>
           </Card.Body>
         </Card>
@@ -73,15 +70,11 @@ const HomePage = () => {
           </Card.Body>
         </Card>
 
-        {/* Social Media Links */}
+        {/* Social Media Links Section */}
         <Card className="mb-4">
-          <Card.Body className="text-center">
-            <Button variant="outline-primary" href="https://twitter.com/your-twitter-link" className="me-2">
-              <Twitter /> Twitter
-            </Button>
-            <Button variant="outline-primary" href="https://mastodon.social/@your-mastodon-link" className="me-2">
-              <Mastodon /> Mastodon
-            </Button>
+          <Card.Body>
+            <Card.Title>Connect With Us</Card.Title>
+            <Card.Text>Stay in touch through our social media channels:</Card.Text>
           </Card.Body>
         </Card>
       </Container>
