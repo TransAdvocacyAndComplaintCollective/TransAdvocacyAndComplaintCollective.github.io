@@ -19,6 +19,7 @@ const sitemap = require('gulp-sitemap');
 const { SitemapAndIndexStream, SitemapStream } = require('sitemap');
 const { createWriteStream } = require('fs');
 const { resolve } = require('path');
+const exp = require('constants');
 
 const ARTICLES_PER_PAGE = 10;
 const sitemapList = [];
@@ -326,7 +327,7 @@ function buildPlainSiteMap(done) {
 }
 
 // Main task sequence
-exports.default = gulp.series(
+const build = gulp.series(
   clean,
   mkdir,
   copyMedia,
@@ -337,5 +338,6 @@ exports.default = gulp.series(
   autoInline,
   buildPlainSiteMap
 );
-
+exports.default = build
 exports.clean = clean;
+exports.build = build;
