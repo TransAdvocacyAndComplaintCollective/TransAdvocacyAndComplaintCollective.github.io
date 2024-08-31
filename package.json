@@ -27,6 +27,7 @@
     "file-loader": "^6.2.0",
     "gray-matter": "^4.0.3",
     "gulp-clean-css": "^4.3.0",
+    "gulp-cli": "^3.0.0",
     "gulp-dest": "^0.2.3",
     "gulp-each": "^0.5.0",
     "gulp-ext-replace": "^0.3.0",
