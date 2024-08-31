@@ -13,7 +13,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
         with:
-          submodules: true  # Ensures submodules are checked out
+          submodules: recursive  # Ensures all submodules are checked out recursively
+          fetch-depth: 0  # Fetch all history for tags and branches
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -22,6 +23,9 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+
+      - name: Install Gulp Globally
+        run: npm install --global gulp-cli
 
       - name: Build Project
         run: npm run gulp  # Updated to run the gulp script
@@ -34,3 +38,7 @@ jobs:
           publish_dir: ./output  # Directory to deploy
           external_repository: Collaboration-of-International-Pirates/Collaboration-of-International-Pirates.github.io
           publish_branch: main  # Branch to deploy to in the GitHub Pages repo
+          force_orphan: true  # Creates a new commit history in the branch to avoid conflicts
+
+      # - name: Clean Up
+      #   run: rm -rf ./output  # Clean up build artifacts
