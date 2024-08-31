@@ -237,9 +237,15 @@ function generatePressReleasePages(done) {
 
         for (let page = 0; page < totalPages; page++) {
           const pressReleasesForCurrentPage = pressReleases.slice(page * ARTICLES_PER_PAGE, (page + 1) * ARTICLES_PER_PAGE);
+          console.log(pressReleases)
           const App = PressReleaseListPage({ pressReleases: pressReleasesForCurrentPage, pageNo: page, totalPages });
           const renderedPage = ReactDOMServer.renderToString(App);
-          fs.writeFileSync(`temp/press_release/page-${page}.html`, renderedPage);
+          try {
+            fs.writeFileSync(`temp/article/page-${page}.html`, renderedPage);
+          } catch (err) {
+            console.error(`Error writing file temp/article/page-${page}.html:`, err);
+            done(err); // Stop the Gulp task on error
+          }
         }
         if (totalPages === 0) {
           const App = PressReleaseListPage({ pressReleases: [], pageNo: 0, totalPages: 1 });
@@ -257,18 +263,18 @@ function generatePressReleasePages(done) {
 
 // Task to build static pages
 function buildStaticPage(done) {
-  const filesInSrcDir = fs.readdirSync('src/');
+  const filesInSrcDir = fs.readdirSync('src/page/');
   const entryPoints = {};
 
   filesInSrcDir.forEach(file => {
     const fileExtension = path.extname(file);
     if (['.jsx'].includes(fileExtension)) {
       const fileName = path.basename(file, fileExtension);
-      entryPoints[fileName] = path.resolve(__dirname, 'src', file);
+      entryPoints[fileName] = path.resolve(__dirname, 'src/page/', file);
     }
   });
 
-  return gulp.src(["src/*.js","src/*.jsx"])
+  return gulp.src(["src/page/**/*.js","src/page/**/*.jsx"])
     .pipe(plumber())
     .pipe(webpackStream({ ...webpackConfig, entry: entryPoints }))
     .pipe(each((jsxContent, file, callback) => {
