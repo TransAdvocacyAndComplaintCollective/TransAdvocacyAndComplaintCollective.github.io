@@ -27,8 +27,8 @@ jobs:
       - name: Install Gulp Globally
         run: npm install --global gulp-cli
 
-      - name: Build Project
-        run: npm run gulp  # Runs the gulp script to build the project
+      - name: Run Gulp Tasks
+        run: npm run gulp  # Runs the gulp script defined in package.json
 
       - name: Deploy to GitHub Pages
         if: success()
