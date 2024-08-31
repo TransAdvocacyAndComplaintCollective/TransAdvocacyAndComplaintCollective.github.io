@@ -3,42 +3,39 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Adjust if needed
+      - main  # Trigger on push to main branch
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the repository and submodules
       - name: Checkout Code
         uses: actions/checkout@v3
         with:
-          submodules: recursive  # Ensures all submodules are checked out recursively
-          fetch-depth: 0  # Fetch all history for tags and branches
+          submodules: true  # Ensures submodules are checked out
 
+      # Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '16'  # Use a stable and recent version of Node.js
 
+      # Install dependencies
       - name: Install Dependencies
-        run: npm install
+        run: npm ci  # Use npm ci for a clean install based on package-lock.json
 
-      - name: Install Gulp Globally
-        run: npm install --global gulp-cli
+      # Run Gulp tasks to build the project
+      - name: Build Project with Gulp
+        run: npx gulp build  # Use npx to run the locally installed gulp command
 
-      - name: Run Gulp Task
-        run: npm run gulp  # Runs the gulp script defined in package.json
-
+      # Deploy to GitHub Pages using the built files
       - name: Deploy to GitHub Pages
         if: success()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./output  # Directory to deploy
+          publish_dir: ./dist  # Directory containing the build output
           external_repository: Collaboration-of-International-Pirates/Collaboration-of-International-Pirates.github.io
           publish_branch: main  # Branch to deploy to in the GitHub Pages repo
-          force_orphan: true  # Creates a new commit history in the branch to avoid conflicts
-
-      - name: Clean Up
-        run: rm -rf ./output  # Clean up build artifacts
