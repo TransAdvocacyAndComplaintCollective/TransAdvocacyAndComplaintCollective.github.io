@@ -1,11 +1,3 @@
-[submodule "rules"]
-    path = rules
-    url = https://github.com/pirate-party-uk/rules.git
-
-[submodule "policy"]
-    path = policy
-    url = https://github.com/pirate-party-uk/policy.git
-
-[submodule "pirate-party-uk.github.io"]
-    path = pirate-party-uk.github.io
-    url = https://github.com/pirate-party-uk/pirate-party-uk.github.io.git
+[submodule "output"]
+  path = pirate-party-uk.github.io
+  url = https://github.com/Collaboration-of-International-Pirates/Collaboration-of-International-Pirates.github.io.git
