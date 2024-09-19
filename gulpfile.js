@@ -1,4 +1,5 @@
 const gulp = require('gulp');
+const webpack = require('webpack');  // <-- Import Webpack here
 const webpackStream = require('webpack-stream');
 const plumber = require('gulp-plumber');
 const path = require('path');
@@ -263,36 +264,80 @@ function generatePressReleasePages(done) {
 
 // Task to build static pages
 function buildStaticPage(done) {
-  const filesInSrcDir = fs.readdirSync('src/page/');
+  const filesInSrcDir = fs.readdirSync('src/');
   const entryPoints = {};
 
+  // Prepare entry points for client-side JavaScript bundles
   filesInSrcDir.forEach(file => {
     const fileExtension = path.extname(file);
     if (['.jsx'].includes(fileExtension)) {
       const fileName = path.basename(file, fileExtension);
-      entryPoints[fileName] = path.resolve(__dirname, 'src/page/', file);
+      entryPoints[fileName] = path.resolve(__dirname, 'src', file);
     }
   });
 
-  return gulp.src(["src/page/**/*.js","src/page/**/*.jsx"])
-    .pipe(plumber())
-    .pipe(webpackStream({ ...webpackConfig, entry: entryPoints }))
-    .pipe(each((jsxContent, file, callback) => {
-      try {
-        const moduleFromJSX = requireFromString(jsxContent.toString(), file.path);
-        const App = moduleFromJSX.default || moduleFromJSX;
-        const renderedPage = ReactDOMServer.renderToString(App({}));
-        callback(null, renderedPage);
-      } catch (err) {
-        console.error(`Error in file ${file.path}:`, err);
-        callback(err);
+  // Generate the client-side bundle using Webpack
+  webpack(
+    {
+      ...webpackConfig,
+      entry: entryPoints,
+    },
+    (err, stats) => {
+      if (err || stats.hasErrors()) {
+        console.error('Webpack compilation error:', err || stats.toJson().errors);
+        done(err || new Error('Webpack compilation error'));
+        return;
       }
-    }))
-    .pipe(ext_replace('.html'))
-    .pipe(gulp.dest("temp/"))
-    .on('end', done);
-}
 
+      // Generate the static HTML files
+      gulp.src(['src/*.js', 'src/*.jsx'])
+        .pipe(plumber())
+        .pipe(
+          webpackStream({
+            ...webpackConfig,
+            target: 'node', // For server-side rendering
+            externals: [require('webpack-node-externals')()], // Ignore Node.js built-in modules
+          })
+        )
+        .pipe(
+          each((jsxContent, file, callback) => {
+            try {
+              const moduleFromJSX = requireFromString(jsxContent.toString(), file.path);
+              const App = moduleFromJSX.default || moduleFromJSX;
+
+              // Render HTML with SSR
+              const renderedPage = ReactDOMServer.renderToString(App({}));
+
+              // Embed the client-side bundle in the HTML
+              const htmlWithScript = `
+                <!DOCTYPE html>
+                <html lang="en">
+                  <head>
+                    <meta charset="UTF-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>${path.basename(file.path, '.jsx')}</title>
+                  </head>
+                  <body>
+                    <div id="root">${renderedPage}</div>
+                    <script src="/js/${path.basename(file.path, '.jsx')}.js"></script>
+                  </body>
+                </html>
+              `;
+
+              callback(null, htmlWithScript);
+            } catch (err) {
+              console.error(`Error in file ${file.path}:`, err);
+              callback(err);
+            }
+          })
+        )
+        .pipe(ext_replace('.html'))
+        .pipe(gulp.dest('temp/'))
+        .on('end', done);
+    }
+  );
+}
 // Task to copy and minify styles
 function copyStyles() {
   return gulp.src('src/styles/**/*.css')
