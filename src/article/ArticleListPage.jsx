@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Alert } from "react-bootstrap"; // Keep only necessary imports
-import BodyPage from "partials/BodyPage";
+import BodyPage from "../page/partials/BodyPage";
 import ReactDOM from "react-dom";
 
 const ArticleListPage = ({ articles, pageNo, totalPages }) => {

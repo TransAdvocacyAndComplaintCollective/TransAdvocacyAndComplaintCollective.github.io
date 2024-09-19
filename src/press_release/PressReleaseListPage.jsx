@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Button, Alert } from "react-bootstrap";
-import BodyPage from "partials/BodyPage";
+import BodyPage from "../page/partials/BodyPage";
 import ReactDOM from "react-dom";
 
 // Import custom CSS for styling (if needed)

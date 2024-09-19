@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
-import BodyPage from '../partials/BodyPage';
+import BodyPage from './page/partials/BodyPage';
 
 const ContactPage = ({doc}) => {
   return (

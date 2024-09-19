@@ -1,5 +1,5 @@
 import React from 'react';
-import BodyPage from '../partials/BodyPage';
+import BodyPage from './page/partials/BodyPage';
 
 const ContactPage = () => {
   // Assuming `email` is defined elsewhere, replace `email` with the actual email or pass it as a prop.
