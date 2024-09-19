@@ -23,17 +23,11 @@ const { resolve } = require('path');
 const ARTICLES_PER_PAGE = 10;
 const sitemapList = [];
 
-// Improved webpack config with environment detection
-const webpackConfig = {
+// Common Webpack config
+const commonWebpackConfig = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  target: 'node',
-  externals: [nodeExternals()],
-  output: {
-    filename: '[name].js',
-    libraryTarget: 'commonjs2',
-  },
   resolve: {
-    extensions: ['.jsx', '.tsx'],
+    extensions: ['.jsx', '.tsx', '.js', '.ts'],
     modules: [path.resolve(__dirname, 'src/'), 'node_modules'],
   },
   module: {
@@ -83,6 +77,30 @@ const webpackConfig = {
   },
 };
 
+// Client-side Webpack config
+const clientWebpackConfig = {
+  ...commonWebpackConfig,
+  entry: {
+    app: path.resolve(__dirname, 'src/client/index.jsx'),
+  },
+  output: {
+    path: path.resolve(__dirname, 'output/js'),
+    filename: '[name].bundle.js',
+    publicPath: '/js/',
+  },
+};
+
+// Server-side Webpack config
+const serverWebpackConfig = {
+  ...commonWebpackConfig,
+  target: 'node',
+  externals: [nodeExternals()],
+  output: {
+    filename: '[name].js',
+    libraryTarget: 'commonjs2',
+  },
+};
+
 // Helper function for centralized error handling
 function handleError(err, done) {
   console.error(`Error: ${err.message}`);
@@ -121,7 +139,7 @@ function mkdir(done) {
   done();
 }
 
-// Centralized function to generate HTML pages from JSX files
+// Centralized function to generate HTML pages from JSX files (server-side rendering)
 function generatePages(type, done) {
   const items = [];
   const dir = `etc/${type}`;
@@ -141,22 +159,21 @@ function generatePages(type, done) {
       const content = fs.readFileSync(path.join(dir, file), 'utf8');
       const { data } = matter(content);
 
-      // Validate and fix invalid or missing publishDate
       const publishDate = data.publishDate ? new Date(data.publishDate) : new Date();
       if (isNaN(publishDate.getTime())) {
         console.warn(`Invalid publishDate for file ${fileName}. Using current date as fallback.`);
-        publishDate.setTime(Date.now()); // Fallback to current date if invalid
+        publishDate.setTime(Date.now());
       }
 
       sitemapList.push({
         url: `/${type}/${fileName}`,
         changefreq: 'daily',
         priority: 0.3,
-        lastmod: publishDate.toISOString(), // Safe to use since we validated it
+        lastmod: publishDate.toISOString(),
         title: data.title,
         keywords: data.keywords,
       });
-      
+
       items.push({ data: { ...data, slug: fileName }, fileName });
     }
   });
@@ -168,7 +185,7 @@ function generatePages(type, done) {
 
   return gulp.src(`src/${type === 'articles' ? 'article' : 'press_release'}/${jsxFile}`, { allowEmpty: true })
     .pipe(plumber())
-    .pipe(webpackStream(webpackConfig))
+    .pipe(webpackStream(serverWebpackConfig))
     .pipe(each((jsxContent, file, callback) => {
       try {
         const ModuleFromJSX = requireFromString(jsxContent.toString(), file.path);
@@ -189,9 +206,8 @@ function generatePages(type, done) {
     .on('end', done);
 }
 
-
-// Task to build static pages
-function buildStaticPage(done) {
+// Task to build static pages (Server-side rendering)
+function buildStaticPagesSSR(done) {
   const filesInSrcDir = fs.readdirSync('src/');
   const entryPoints = {};
 
@@ -203,44 +219,33 @@ function buildStaticPage(done) {
     }
   });
 
-  webpack({ ...webpackConfig, entry: entryPoints }, (err, stats) => {
+  webpack({ ...serverWebpackConfig, entry: entryPoints }, (err, stats) => {
     if (err || stats.hasErrors()) {
       return handleError(err || new Error('Webpack compilation error'), done);
     }
 
-    gulp.src(['src/*.js', 'src/*.jsx'], { allowEmpty: true })
-      .pipe(plumber())
-      .pipe(webpackStream({ ...webpackConfig, target: 'node', externals: [require('webpack-node-externals')()] }))
-      .pipe(each((jsxContent, file, callback) => {
-        try {
-          const ModuleFromJSX = requireFromString(jsxContent.toString(), file.path);
-          const App = ModuleFromJSX.default || ModuleFromJSX;
-          const renderedPage = ReactDOMServer.renderToString(App({}));
-
-          const htmlWithScript = `
-            <!DOCTYPE html>
-            <html lang="en">
-              <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>${path.basename(file.path, '.jsx')}</title>
-              </head>
-              <body>
-                <div id="root">${renderedPage}</div>
-                <script src="/js/${path.basename(file.path, '.jsx')}.bundle.js"></script>
-              </body>
-            </html>
-          `;
-
-          callback(null, htmlWithScript);
-        } catch (err) {
-          handleError(err, done);
-          callback(err);
-        }
-      }))
+    gulp.src('temp/**/*.html')
+      .pipe(inline({ base: 'temp/' }))
+      .pipe(minifyInline())
       .pipe(ext_replace('.html'))
-      .pipe(gulp.dest('temp/'))
+      .pipe(gulp.dest('output/'))
       .on('end', done);
+  });
+}
+
+// Task to build client-side bundle with better error handling
+function buildClientSide(done) {
+  webpack(clientWebpackConfig, (err, stats) => {
+    if (err) {
+      handleError(err, done);
+    } else if (stats.hasErrors()) {
+      const info = stats.toJson();
+      console.error('Webpack compilation errors:', info.errors);
+      done(new Error('Client-side Webpack compilation error'));
+    } else {
+      console.log(stats.toString({ colors: true }));
+      done();
+    }
   });
 }
 
@@ -274,10 +279,10 @@ function buildPlainSiteMap(done) {
 
     const sms = new SitemapAndIndexStream({
       getSitemapStream: (i) => {
-        const sitemapStream = new SitemapStream({ hostname: 'https://ukpirate.party/' });
+        const sitemapStream = new SitemapStream({ hostname: 'https://transadvocacyandcomplaintcollective.github.io/' });
         const path = `./output/sitemap/sitemap-${i}.xml`;
         const ws = sitemapStream.pipe(createWriteStream(resolve(path)));
-        return [new URL(path, 'https://ukpirate.party/').toString(), sitemapStream, ws];
+        return [new URL(path, 'https://transadvocacyandcomplaintcollective.github.io/').toString(), sitemapStream, ws];
       },
     });
 
@@ -289,14 +294,13 @@ function buildPlainSiteMap(done) {
   }
 }
 
-// Main task sequence
+// Main task sequence for building both client and server-side code
 const build = gulp.series(
   clean,
   mkdir,
   copyMedia,
-  buildStaticPage,
-  (done) => generatePages('articles', done),
-  (done) => generatePages('press_releases', done),
+  buildStaticPagesSSR, // Server-side rendering
+  buildClientSide, // Client-side bundle
   copyStyles,
   autoInline,
   buildPlainSiteMap
