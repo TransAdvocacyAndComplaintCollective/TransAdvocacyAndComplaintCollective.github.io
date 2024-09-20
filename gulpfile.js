@@ -19,6 +19,7 @@ const rimraf = require('gulp-rimraf');
 const { SitemapAndIndexStream, SitemapStream } = require('sitemap');
 const { createWriteStream } = require('fs');
 const { resolve } = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const ARTICLES_PER_PAGE = 10;
 const sitemapList = [];
@@ -77,18 +78,6 @@ const commonWebpackConfig = {
   },
 };
 
-// Client-side Webpack config
-const clientWebpackConfig = {
-  ...commonWebpackConfig,
-  entry: {
-    app: path.resolve(__dirname, 'src/client/index.jsx'),
-  },
-  output: {
-    path: path.resolve(__dirname, 'output/js'),
-    filename: '[name].bundle.js',
-    publicPath: '/js/',
-  },
-};
 
 // Server-side Webpack config
 const serverWebpackConfig = {
@@ -100,6 +89,33 @@ const serverWebpackConfig = {
     libraryTarget: 'commonjs2',
   },
 };
+const clientWebpackConfig = {
+  ...commonWebpackConfig,
+  target: 'web',
+  entry: {
+    app: path.resolve(__dirname, 'src/client/index.jsx'),
+    vendor: ['react', 'react-dom']
+  },
+  output: {
+    path: path.resolve(__dirname, 'output/js'),
+    filename: '[name].bundle.js',
+    publicPath: '/js/', // Ensure this is the correct path for your project
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: '../index.html', // Output HTML relative to the output path
+      template: 'src/templates/index.html', // Template file for HTML structure
+      inject: 'body', // Inject JS at the bottom of the body
+    }),
+  ],
+  devServer: {
+    historyApiFallback: true, // Ensures proper routing for single-page apps
+    proxy: {
+      '/api': 'http://localhost:3000', // Proxy API requests to your backend server
+    }
+  }
+};
+
 
 // Helper function for centralized error handling
 function handleError(err, done) {
@@ -224,28 +240,12 @@ function buildStaticPagesSSR(done) {
       return handleError(err || new Error('Webpack compilation error'), done);
     }
 
-    gulp.src('temp/**/*.html')
-      .pipe(inline({ base: 'temp/' }))
-      .pipe(minifyInline())
-      .pipe(ext_replace('.html'))
-      .pipe(gulp.dest('output/'))
+    gulp.src('temp/**/*.html') // Collect HTML files from SSR
+      .pipe(inline({ base: 'temp/' })) // Inline any CSS/JS
+      .pipe(minifyInline()) // Minify inline assets
+      .pipe(ext_replace('.html')) // Ensure .html extension
+      .pipe(gulp.dest('output/')) // Output to the correct directory
       .on('end', done);
-  });
-}
-
-// Task to build client-side bundle with better error handling
-function buildClientSide(done) {
-  webpack(clientWebpackConfig, (err, stats) => {
-    if (err) {
-      handleError(err, done);
-    } else if (stats.hasErrors()) {
-      const info = stats.toJson();
-      console.error('Webpack compilation errors:', info.errors);
-      done(new Error('Client-side Webpack compilation error'));
-    } else {
-      console.log(stats.toString({ colors: true }));
-      done();
-    }
   });
 }
 
@@ -265,6 +265,92 @@ function autoInline() {
     .pipe(ext_replace('.html'))
     .pipe(gulp.dest('output/'));
 }
+// Task to build static pages with client-side rendering
+// Task to build static pages with client-side rendering
+function buildStaticPagesCSR(done) {
+  const filesInSrcDir = fs.readdirSync('src/client/');
+  const entryPoints = {};
+
+  // Set up entry points from the client directory
+  filesInSrcDir.forEach(file => {
+    const ext = path.extname(file);
+    if (['.jsx'].includes(ext)) {
+      const fileName = path.basename(file, ext);
+      entryPoints[fileName] = path.resolve(__dirname, 'src/client', file);
+    }
+  });
+
+  if (Object.keys(entryPoints).length === 0) {
+    console.error('No JSX files found in src/client to generate entry points.');
+    return done();
+  }
+
+  // Ensure the temp/client directory exists before writing
+  const clientTempDir = path.resolve(__dirname, 'temp/client');
+  if (!fs.existsSync(clientTempDir)) {
+    fs.mkdirSync(clientTempDir, { recursive: true });
+  }
+
+  webpack({
+    ...clientWebpackConfig,
+    entry: entryPoints,
+    stats: 'errors-warnings',
+  }, (err, stats) => {
+    if (err || stats.hasErrors()) {
+      console.error(stats.toString({ all: false, warnings: true, errors: true, errorDetails: true }));
+      return handleError(err || new Error('Webpack compilation error'), done);
+    }
+
+    console.log('Client-side Webpack build completed successfully.');
+
+    // Check if the JS bundles exist before proceeding
+    Object.keys(entryPoints).forEach((entry) => {
+      const outputJSPath = path.join(__dirname, 'output/js', `${entry}.bundle.js`);
+      if (!fs.existsSync(outputJSPath)) {
+        console.error(`JS bundle for ${entry} not found at ${outputJSPath}`);
+        return handleError(new Error(`JS bundle for ${entry} not found`), done);
+      }
+    });
+
+    // Dynamically generate HTML for each entry point
+    Object.keys(entryPoints).forEach((entry) => {
+      try {
+        const outputJSPath = path.join(__dirname, 'output/js', `${entry}.bundle.js`);
+        const outputJS = fs.readFileSync(outputJSPath, 'utf8');
+
+        // Dynamically create an HTML file for each JSX entry
+        const generatedHTML = `
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${entry}</title>
+            <!-- Optionally link CSS here -->
+          </head>
+          <body>
+            <div id="root"></div>
+            <script>${outputJS}</script> <!-- Inject JS directly into HTML -->
+          </body>
+          </html>
+        `;
+
+        // Write the generated HTML to the temp/client folder
+        fs.writeFileSync(`temp/client/${entry}.html`, generatedHTML);
+        console.log(`Generated HTML for ${entry}.jsx`);
+      } catch (err) {
+        console.error(`Error generating HTML for ${entry}:`, err);
+        handleError(err, done);
+      }
+    });
+
+    // Move the generated HTML files to the output directory
+    gulp.src('temp/client/**/*.html')
+      .pipe(gulp.dest('output/'))
+      .on('end', done);
+  });
+}
+
 
 // Task to copy media files
 function copyMedia() {
@@ -294,15 +380,21 @@ function buildPlainSiteMap(done) {
   }
 }
 
+// Task to build the copy data
+function copyData() {
+  return gulp.src('etc/data/**/*', { allowEmpty: true })
+    .pipe(gulp.dest('output/data')); // Ensure this folder is accessible to the server
+}
+
 // Main task sequence for building both client and server-side code
 const build = gulp.series(
   clean,
   mkdir,
   copyMedia,
   buildStaticPagesSSR, // Server-side rendering
-  buildClientSide, // Client-side bundle
+  buildStaticPagesCSR,
   copyStyles,
-  autoInline,
+  autoInline, copyData,
   buildPlainSiteMap
 );
 
