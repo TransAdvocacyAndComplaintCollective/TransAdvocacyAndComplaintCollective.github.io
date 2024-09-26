@@ -49,6 +49,7 @@
     "react-icons": "^5.2.1",
     "require-from-string": "^2.0.2",
     "sitemap": "^8.0.0",
+    "stream-to-promise": "^3.0.0",
     "style-loader": "^4.0.0",
     "webpack-node-externals": "^3.0.0"
   },

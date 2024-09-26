@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom/client';
+import React, { useState } from 'react';
+import ReactDOM from "react-dom/client"; // Properly import ReactDOM
 
 const articleBehaviors = [
   "Misrepresentation of Trans People as Controversial",
@@ -30,7 +30,7 @@ const disagreementBehaviors = [
   "Generalization of Transgender Experiences"
 ];
 
-// Mock community data for consensus calculation
+// Mock community data
 const mockCommunityResponses = {
   "Misrepresentation of Trans People as Controversial": "yes",
   "Linking Trans Identities to Crime": "no",
@@ -65,53 +65,6 @@ const TransphobiaAssessment = () => {
   const [comments, setComments] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
-  const [articleData, setArticleData] = useState(null); // Store current article data
-  const [articlesList, setArticlesList] = useState([]); // Store list of articles
-
-  // Fetch list of articles on component mount
-  useEffect(() => {
-    const fetchArticlesList = async () => {
-      const response = await fetch('data/articleList.json');
-      if (response.ok) {
-        const articles = await response.json();
-        setArticlesList(articles);
-        loadRandomArticle(articles);
-      }
-    };
-    fetchArticlesList();
-  }, []);
-
-  // Load a random article from the list
-  const loadRandomArticle = async (articles) => {
-    const randomIndex = Math.floor(Math.random() * articles.length);
-    const article = articles[randomIndex];
-    const articleResponse = await fetch(article.local_url);
-    if (articleResponse.ok) {
-      const articleContent = await articleResponse.json();
-      setArticleData(articleContent);
-    }
-  };
-
-  // Handle the submit action
-  const handleSubmit = () => {
-    const totalScore = calculateScore();
-    setScore(totalScore);
-    setSubmitted(true);
-  };
-
-  const handleNextArticle = () => {
-    loadRandomArticle(articlesList);
-    resetAssessment();
-  };
-
-  const resetAssessment = () => {
-    setIsTransRelated(null);
-    setTransphobicRating(50);
-    setArticleResponses({});
-    setDisagreementResponses({});
-    setComments("");
-    setSubmitted(false);
-  };
 
   const handleTransRelatedChange = (event) => {
     setIsTransRelated(event.target.value === 'true');
@@ -159,7 +112,21 @@ const TransphobiaAssessment = () => {
     return matchingResponses / totalBehaviors;
   };
 
-  // Show results after submission
+  const handleSubmit = () => {
+    const totalScore = calculateScore();
+    setScore(totalScore);
+    setSubmitted(true);
+  };
+
+  const handleNext = () => {
+    setIsTransRelated(null);
+    setTransphobicRating(50);
+    setArticleResponses({});
+    setDisagreementResponses({});
+    setComments("");
+    setSubmitted(false);
+  };
+
   if (submitted) {
     const consensusPercentage = Math.round(calculateConsensus() * 100);
     return (
@@ -167,7 +134,7 @@ const TransphobiaAssessment = () => {
         <h2>Results</h2>
         <p>Your score: {score} points</p>
         <p>Community Consensus Match: {consensusPercentage}%</p>
-        <button onClick={handleNextArticle} style={{ padding: '10px 20px', marginTop: '20px' }}>
+        <button onClick={handleNext} style={{ padding: '10px 20px', marginTop: '20px' }}>
           Next Article
         </button>
       </div>
@@ -176,20 +143,9 @@ const TransphobiaAssessment = () => {
 
   return (
     <div className="assessment-container" style={{ border: '1px solid #ccc', padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-      {articleData && (
-        <>
-          <h2>{articleData.title}</h2>
-          <div className="article-body" dangerouslySetInnerHTML={{ __html: articleData.body }}></div>
-          <div className="article-metadata">
-            <p><strong>Source:</strong> {articleData.source}</p>
-            <p><strong>Byline:</strong> {articleData.byline}</p>
-            <p><strong>Date:</strong> {articleData.date}</p>
-            <p><strong>Author:</strong> {articleData.author}</p>
-          </div>
-        </>
-      )}
-
       <div className="assessment-header" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        
+        {/* Radio buttons to determine if the article is trans-related */}
         <div className="related-status" style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
           <label>
             <input
@@ -213,6 +169,7 @@ const TransphobiaAssessment = () => {
           </label>
         </div>
 
+        {/* Show all options if "Trans-related" is selected */}
         {isTransRelated && (
           <>
             <div className="slider-container" style={{ textAlign: 'center' }}>
@@ -233,6 +190,7 @@ const TransphobiaAssessment = () => {
               <p style={{ textAlign: 'center', fontWeight: 'bold', marginTop: '10px' }}>Rating: {transphobicRating}%</p>
             </div>
 
+            {/* Spoiler (collapsible section) for article behavior evaluations */}
             <details className="behavior-responses" style={{ marginTop: '20px' }}>
               <summary style={{ fontWeight: 'bold', cursor: 'pointer' }}>
                 Evaluate the following behaviors in the article [optional]:
@@ -276,6 +234,7 @@ const TransphobiaAssessment = () => {
               ))}
             </details>
 
+            {/* Spoiler (collapsible section) for disagreement behavior evaluations */}
             <details className="disagreement-responses" style={{ marginTop: '20px' }}>
               <summary style={{ fontWeight: 'bold', cursor: 'pointer' }}>
                 Evaluate the following behaviors in how people disagreed [optional]:
@@ -319,6 +278,7 @@ const TransphobiaAssessment = () => {
               ))}
             </details>
 
+            {/* Comment box for additional feedback */}
             <details className="comments-section" style={{ marginTop: '20px' }}>
               <summary style={{ fontWeight: 'bold', cursor: 'pointer' }}>
                 Additional Comments [optional]
@@ -333,16 +293,22 @@ const TransphobiaAssessment = () => {
           </>
         )}
 
+        {/* Submit button appears if either option is selected */}
         {isTransRelated !== null && (
           <button onClick={handleSubmit} style={{ padding: '10px 20px', marginTop: '20px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}>
             Submit
           </button>
         )}
       </div>
+
+      {/* Placeholder for article body to be loaded later */}
+      <div className="article-body" style={{ marginTop: '20px' }}>
+        <p>Loading article content...</p>
+      </div>
     </div>
   );
 };
 
 const container = document.getElementById('root');
-const root = ReactDOM.createRoot(container);
+const root = ReactDOM.createRoot(container); 
 root.render(<TransphobiaAssessment />);

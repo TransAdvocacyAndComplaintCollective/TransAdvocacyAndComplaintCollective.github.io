@@ -1,15 +1,4 @@
-
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>test</title>
-            <!-- Optionally link CSS here -->
-          </head>
-          <body>
-            <div id="root"></div>
-            <script>/*
+/*
  * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
  * This devtool is neither made for production nor for readable output files.
  * It uses "eval()" calls to create a separate source file in the browser devtools.
@@ -20,13 +9,13 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/client/test.jsx":
-/*!*****************************!*\
-  !*** ./src/client/test.jsx ***!
-  \*****************************/
+/***/ "./src/client.jsx":
+/*!************************!*\
+  !*** ./src/client.jsx ***!
+  \************************/
 /***/ (() => {
 
-eval("\n\n//# sourceURL=webpack://website/./src/client/test.jsx?");
+eval("\n\n//# sourceURL=webpack://website/./src/client.jsx?");
 
 /***/ })
 
@@ -37,10 +26,8 @@ eval("\n\n//# sourceURL=webpack://website/./src/client/test.jsx?");
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module can't be inlined because the eval devtool is used.
 /******/ 	var __webpack_exports__ = {};
-/******/ 	__webpack_modules__["./src/client/test.jsx"]();
+/******/ 	__webpack_modules__["./src/client.jsx"]();
+/******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()
-;</script> <!-- Inject JS directly into HTML -->
-          </body>
-          </html>
-        
+;

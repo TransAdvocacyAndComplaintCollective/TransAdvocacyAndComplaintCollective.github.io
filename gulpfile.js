@@ -4,32 +4,34 @@ const webpackStream = require('webpack-stream');
 const plumber = require('gulp-plumber');
 const path = require('path');
 const fs = require('fs');
-const ReactDOMServer = require('react-dom/server');
-const nodeExternals = require('webpack-node-externals');
-const ext_replace = require('gulp-ext-replace');
-const autoprefixer = require('autoprefixer');
+const rimraf = require('gulp-rimraf');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { SitemapStream } = require('sitemap');
+const { createWriteStream } = require('fs');
+const matter = require('gray-matter');
 const each = require('gulp-each');
 const inline = require('gulp-inline');
 const minifyInline = require('gulp-minify-inline');
 const purgecss = require('gulp-purgecss');
 const cleanCSS = require('gulp-clean-css');
-const markdown = require('markdown-it')();
-const matter = require('gray-matter');
-const rimraf = require('gulp-rimraf');
-const { SitemapAndIndexStream, SitemapStream } = require('sitemap');
-const { createWriteStream } = require('fs');
-const { resolve } = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ext_replace = require('gulp-ext-replace');
+const glob = require('glob'); // Make sure to require 'glob' at the top
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+const requireFromString = require('require-from-string');
 
 const ARTICLES_PER_PAGE = 10;
 const sitemapList = [];
 
-// Common Webpack config
+// Webpack common configuration
 const commonWebpackConfig = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   resolve: {
     extensions: ['.jsx', '.tsx', '.js', '.ts'],
     modules: [path.resolve(__dirname, 'src/'), 'node_modules'],
+    alias: {
+      'partials': path.resolve(__dirname, 'src/partials'),
+    },
   },
   module: {
     rules: [
@@ -53,348 +55,459 @@ const commonWebpackConfig = {
               importLoaders: 1,
             },
           },
-          {
-            loader: 'postcss-loader',
-            options: {
-              plugins: () => [autoprefixer()],
-            },
-          },
           'sass-loader',
         ],
       },
       {
         test: /\.svg$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]',
-              outputPath: 'assets/',
-            },
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'assets/',
           },
-        ],
+        },
       },
     ],
   },
+  plugins: [
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        alias: {
+          'partials': path.resolve(__dirname, 'src/partials'),
+        },
+      },
+    }),
+  ],
 };
 
-
-// Server-side Webpack config
+// Server-side Webpack configuration for SSR
 const serverWebpackConfig = {
   ...commonWebpackConfig,
   target: 'node',
-  externals: [nodeExternals()],
+  externals: [require('webpack-node-externals')()],
   output: {
     filename: '[name].js',
     libraryTarget: 'commonjs2',
+    path: path.resolve(__dirname, 'temp/server'),
   },
 };
+
+// Client-side Webpack configuration for CSR
 const clientWebpackConfig = {
   ...commonWebpackConfig,
   target: 'web',
   entry: {
     app: path.resolve(__dirname, 'src/client/index.jsx'),
-    vendor: ['react', 'react-dom']
+    TransphobiaAssessment: path.resolve(__dirname, 'src/client/TransphobiaAssessment.jsx'),
   },
   output: {
     path: path.resolve(__dirname, 'output/js'),
     filename: '[name].bundle.js',
-    publicPath: '/js/', // Ensure this is the correct path for your project
+    publicPath: '/js/',
   },
   plugins: [
     new HtmlWebpackPlugin({
-      filename: '../index.html', // Output HTML relative to the output path
-      template: 'src/templates/index.html', // Template file for HTML structure
-      inject: 'body', // Inject JS at the bottom of the body
+      filename: '../index.html',
+      template: 'src/templates/index.html',
+      inject: 'body',
     }),
   ],
-  devServer: {
-    historyApiFallback: true, // Ensures proper routing for single-page apps
-    proxy: {
-      '/api': 'http://localhost:3000', // Proxy API requests to your backend server
-    }
-  }
 };
-
 
 // Helper function for centralized error handling
 function handleError(err, done) {
-  console.error(`Error: ${err.message}`);
+  const errorMessage = err && err.message ? err.message : 'An unknown error occurred';
+  console.error(`Error: ${errorMessage}`);
   if (done) done(err);
 }
 
-// Helper function to require modules from a string
-function requireFromString(src, filename, rootDir = process.cwd()) {
-  const Module = module.constructor;
-  const m = new Module(filename, module.parent);
-  const filePath = path.resolve(rootDir, filename);
-  m.filename = filePath;
-  const dirname = path.dirname(filePath);
-  m.paths = Module._nodeModulePaths(dirname);
-  m._compile(src, filePath);
-  return m.exports;
-}
-
-// Clean task to remove output and temp directories
-function clean(done) {
-  const paths = ['output/**/*', 'temp/**/*'].filter(fs.existsSync);
-
-  if (paths.length === 0) {
-    return done(); // No paths exist, so just call done.
-  }
-
-  return gulp.src(paths, { read: false, allowEmpty: true })
-    .pipe(plumber({ errorHandler: (err) => handleError(err, done) }))
-    .pipe(rimraf())
-    .on('end', done);
+// Task to clean output and temp directories
+async function clean() {
+  return gulp.src(['output/**/*', 'temp/**/*'], { read: false, allowEmpty: true }).pipe(rimraf());
 }
 
 // Task to create necessary directories
-function mkdir(done) {
-  ['output', 'temp'].forEach(dir => fs.mkdirSync(`./${dir}`, { recursive: true }));
-  done();
+async function mkdir() {
+  ['output', 'temp', 'temp/data'].forEach((dir) => fs.mkdirSync(`./${dir}`, { recursive: true }));
 }
 
-// Centralized function to generate HTML pages from JSX files (server-side rendering)
-function generatePages(type, done) {
-  const items = [];
-  const dir = `etc/${type}`;
-
+// Helper function to read and parse markdown files
+async function readMarkdownFiles(dir) {
   if (!fs.existsSync(dir)) {
-    console.error(`Directory '${dir}' does not exist. Skipping ${type} generation.`);
-    return done();
+    console.error(`Directory '${dir}' does not exist.`);
+    return [];
   }
 
-  fs.mkdirSync(`temp/${type}`, { recursive: true });
+  const files = fs.readdirSync(dir).filter((file) => path.extname(file) === '.md');
+  return files.map((file) => {
+    const content = fs.readFileSync(path.join(dir, file), 'utf8');
+    const { data } = matter(content);
+    const slug = path.basename(file, '.md');
+    return { data: { ...data, slug }, slug };
+  });
+}
 
-  const filesInDir = fs.readdirSync(dir);
-  filesInDir.forEach(file => {
+// Helper function to process pages for specific types (server-side rendered list and page components)
+const streamToPromise = require('stream-to-promise');
+
+async function processPagesForType(type, pageComponent, listComponent = null) {
+  const dir = `etc/${type}`;
+  const outputDir = `temp/${type}`;
+  const webpackConfig = serverWebpackConfig;
+
+  // Ensure the output directory exists
+  fs.mkdirSync(outputDir, { recursive: true });
+
+  // Read and process articles
+  const filesInSrcDir = fs.readdirSync(dir);
+  const articles = [];
+
+  filesInSrcDir.forEach((file) => {
     const ext = path.extname(file);
     if (ext === '.md') {
       const fileName = path.basename(file, ext);
       const content = fs.readFileSync(path.join(dir, file), 'utf8');
-      const { data } = matter(content);
-
-      const publishDate = data.publishDate ? new Date(data.publishDate) : new Date();
-      if (isNaN(publishDate.getTime())) {
-        console.warn(`Invalid publishDate for file ${fileName}. Using current date as fallback.`);
-        publishDate.setTime(Date.now());
-      }
-
-      sitemapList.push({
-        url: `/${type}/${fileName}`,
-        changefreq: 'daily',
-        priority: 0.3,
-        lastmod: publishDate.toISOString(),
-        title: data.title,
-        keywords: data.keywords,
-      });
-
-      items.push({ data: { ...data, slug: fileName }, fileName });
+      const { data } = matter(content); // Parse front matter
+      articles.push({ data: { ...data, slug: fileName }, content, fileName });
     }
   });
 
-  items.sort((a, b) => new Date(b.data.publishDate) - new Date(a.data.publishDate));
-  const totalPages = Math.max(Math.ceil(items.length / ARTICLES_PER_PAGE), 1);
+  articles.sort((a, b) => new Date(b.data.publishDate) - new Date(a.data.publishDate));
+  const totalPages = Math.max(Math.ceil(articles.length / ARTICLES_PER_PAGE), 1);
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-  const jsxFile = type === 'articles' ? 'ArticleListPage.jsx' : 'PressReleaseListPage.jsx';
-
-  return gulp.src(`src/${type === 'articles' ? 'article' : 'press_release'}/${jsxFile}`, { allowEmpty: true })
+  // Adjust the paths in gulp.src() to include the 'src/' directory
+  const listStream = gulp
+    .src(`src/${listComponent}`)
     .pipe(plumber())
-    .pipe(webpackStream(serverWebpackConfig))
-    .pipe(each((jsxContent, file, callback) => {
-      try {
-        const ModuleFromJSX = requireFromString(jsxContent.toString(), file.path);
-        const PageComponent = ModuleFromJSX.default || ModuleFromJSX;
+    .pipe(webpackStream(webpackConfig))
+    .pipe(
+      each((jsxContent, file, callback) => {
+        try {
+          const component = requireFromString(jsxContent, file.path);
+          for (let page = 0; page < totalPages; page++) {
+            const start = page * ARTICLES_PER_PAGE;
+            const end = start + ARTICLES_PER_PAGE;
+            const articlesOnPage = articles.slice(start, end);
+            const html = ReactDOMServer.renderToStaticMarkup(
+              React.createElement(component.default || component, {
+                articles: articlesOnPage,
+                pageNumbers,
+                currentPage: page + 1,
+              })
+            );
+            const pagePath = page === 0 ? 'index' : `page/${page + 1}`;
+            const outputPath = path.join(outputDir, `${pagePath}.html`);
+            console.log(`Generating HTML file: ${outputPath}`);
+            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+            fs.writeFileSync(outputPath, html);
+            sitemapList.push({ url: `${type}/${pagePath}` });
+            console.log(`Generated HTML file: ${outputPath}`);
+          }
+          if (totalPages === 0) {
+            const html = ReactDOMServer.renderToStaticMarkup(
+              React.createElement(component.default || component, {
+                articles: [],
+                pageNumbers: [],
+                currentPage: 0,
+              })
+            );
+            const outputPath = path.join(outputDir, 'index.html');
+            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+            fs.writeFileSync(outputPath, html);
+            sitemapList.push({ url: `${type}/index` });
+            console.log(`Generated HTML file: ${outputPath}`);
+          }
 
-        for (let page = 0; page < totalPages; page++) {
-          const itemsForPage = items.slice(page * ARTICLES_PER_PAGE, (page + 1) * ARTICLES_PER_PAGE);
-          const App = PageComponent({ items: itemsForPage, pageNo: page, totalPages });
-          const renderedPage = ReactDOMServer.renderToString(App);
-          fs.writeFileSync(`temp/${type}/page-${page}.html`, renderedPage);
+          callback(null, jsxContent);
+        } catch (err) {
+          console.error(`Error processing list component: ${err.message}`);
+          callback(err);
         }
-        callback(null, jsxContent);
-      } catch (err) {
-        handleError(err, done);
-        callback(err);
+      })
+    );
+
+  const pageStream = gulp
+    .src(`src/${pageComponent}`)
+    .pipe(plumber())
+    .pipe(webpackStream(webpackConfig))
+    .pipe(
+      each(async (articleJSXContent, file, callback) => {
+        try {
+          const component = requireFromString(articleJSXContent, file.path);
+          for (const article of articles) {
+            const html = ReactDOMServer.renderToStaticMarkup(
+              React.createElement(component.default || component, { article })
+            );
+            const outputPath = path.join(outputDir, `${article.fileName}.html`);
+            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+            fs.writeFileSync(outputPath, html);
+            sitemapList.push({ url: `${type}/${article.fileName}` });
+            console.log(`Generated HTML file: ${outputPath}`);
+          }
+          callback(null, articleJSXContent);
+        } catch (err) {
+          console.error(`Error processing page component: ${err.message}`);
+          callback(err);
+        }
+      })
+    );
+
+  // Wait for both streams to complete
+  await Promise.all([streamToPromise(listStream), streamToPromise(pageStream)]);
+}
+
+// Main task to generate pages for all types (articles, press releases, and claim reviews)
+async function generatePages() {
+  const pageTypes = [
+    {
+      type: 'articles',
+      pageComponent: 'article/ArticlePage.jsx',
+      listComponent: 'article/ArticleListPage.jsx',
+    },
+    {
+      type: 'press_release',
+      pageComponent: 'press_release/PressReleasePage.jsx',
+      listComponent: 'press_release/PressReleaseListPage.jsx',
+    },
+    // Comment out or remove the claim_review type if not in use
+    // {
+    //   type: 'claim_review',
+    //   pageComponent: 'claim_review/FactCheckPage.tsx',
+    //   listComponent: 'claim_review/ClaimReviewListPage.tsx',
+    // },
+  ];
+
+  await Promise.all(
+    pageTypes.map(({ type, pageComponent, listComponent }) =>
+      processPagesForType(type, pageComponent, listComponent)
+    )
+  );
+  console.log('All page types generated successfully.');
+}
+
+
+// Task to build static pages using server-side rendering (SSR)
+function buildStaticPagesSSR() {
+  return new Promise((resolve, reject) => {
+    const pageDir = 'src/page/';
+    if (!fs.existsSync(pageDir)) {
+      console.warn(`Page directory '${pageDir}' does not exist.`);
+      resolve();
+      return;
+    }
+
+    const filesInPageDir = fs.readdirSync(pageDir);
+    const entryPoints = {};
+
+    filesInPageDir.forEach((file) => {
+      const ext = path.extname(file);
+      if (ext === '.jsx' || ext === '.tsx') {
+        const fileName = path.basename(file, ext);
+        entryPoints[fileName] = path.resolve(__dirname, pageDir, file);
       }
-    }))
-    .on('end', done);
-}
+    });
 
-// Task to build static pages (Server-side rendering)
-function buildStaticPagesSSR(done) {
-  const filesInSrcDir = fs.readdirSync('src/');
-  const entryPoints = {};
+    console.log("entryPoints", entryPoints);
 
-  filesInSrcDir.forEach(file => {
-    const ext = path.extname(file);
-    if (['.jsx'].includes(ext)) {
-      const fileName = path.basename(file, ext);
-      entryPoints[fileName] = path.resolve(__dirname, 'src', file);
-    }
-  });
-
-  webpack({ ...serverWebpackConfig, entry: entryPoints }, (err, stats) => {
-    if (err || stats.hasErrors()) {
-      return handleError(err || new Error('Webpack compilation error'), done);
+    if (Object.keys(entryPoints).length === 0) {
+      console.warn('No entry points found for SSR.');
+      resolve();
+      return;
     }
 
-    gulp.src('temp/**/*.html') // Collect HTML files from SSR
-      .pipe(inline({ base: 'temp/' })) // Inline any CSS/JS
-      .pipe(minifyInline()) // Minify inline assets
-      .pipe(ext_replace('.html')) // Ensure .html extension
-      .pipe(gulp.dest('output/')) // Output to the correct directory
-      .on('end', done);
+    const webpackConfig = {
+      ...serverWebpackConfig,
+      entry: entryPoints,
+      output: {
+        ...serverWebpackConfig.output,
+        path: path.resolve(__dirname, 'temp/pages'),
+        filename: '[name].js',
+      },
+    };
+
+    webpack(webpackConfig, async (err, stats) => {
+      if (err) {
+        console.error("Webpack SSR compilation error:", err);
+        reject(err);
+        return;
+      }
+
+      if (stats.hasErrors()) {
+        const info = stats.toJson();
+        console.error("Webpack SSR compilation errors:", info.errors);
+        reject(new Error('Webpack compilation errors'));
+        return;
+      }
+
+      console.log("Webpack SSR compilation completed.");
+
+      try {
+        for (const pageName of Object.keys(entryPoints)) {
+          const compiledFileName = path.join('temp/pages', `${pageName}.js`);
+          const component = require(path.resolve(__dirname, compiledFileName)).default;
+
+          const element = React.createElement(component);
+          const html = ReactDOMServer.renderToStaticMarkup(element);
+
+          const htmlFileName = path.join('output', `${pageName}.html`);
+          fs.writeFileSync(htmlFileName, html);
+
+          console.log(`Generated HTML file: ${htmlFileName}`);
+        }
+
+        resolve();
+      } catch (renderErr) {
+        console.error("Error rendering components to HTML:", renderErr);
+        reject(renderErr);
+      }
+    });
   });
 }
 
-// Task to copy and minify styles
+// Task to build static pages using client-side rendering (CSR)
+function buildStaticPagesCSR() {
+  return new Promise((resolve, reject) => {
+    const filesInClientDir = fs.readdirSync('src/client/');
+    const entryPoints = {};
+
+    filesInClientDir.forEach((file) => {
+      const ext = path.extname(file);
+      if (ext === '.jsx') {
+        const fileName = path.basename(file, ext);
+        entryPoints[fileName] = path.resolve(__dirname, 'src/client', file);
+      }
+    });
+
+    console.log("entryPoints", entryPoints);
+
+    const webpackConfig = {
+      ...clientWebpackConfig,
+      entry: entryPoints,
+      output: {
+        ...clientWebpackConfig.output,
+        filename: '[name].bundle.js',
+      },
+      plugins: [
+        ...clientWebpackConfig.plugins,
+        ...Object.keys(entryPoints).map((entryName) => new HtmlWebpackPlugin({
+          filename: `../${entryName}.html`,
+          template: 'src/templates/index.html',
+          chunks: [entryName],
+          inject: 'body',
+        })),
+      ],
+    };
+
+    webpack(webpackConfig, (err, stats) => {
+      if (err) {
+        console.error("Webpack CSR compilation error:", err);
+        reject(err);
+        return;
+      }
+
+      if (stats.hasErrors()) {
+        const info = stats.toJson();
+        console.error("Webpack CSR compilation errors:", info.errors);
+        reject(new Error('Webpack compilation errors'));
+        return;
+      }
+
+      console.log("Webpack CSR compilation completed.");
+      resolve();
+    });
+  });
+}
+
+// Task to copy and minify CSS styles
 function copyStyles() {
-  return gulp.src('src/styles/**/*.css')
-    .pipe(purgecss({ content: ['temp/**/*.html'] }))
-    .pipe(cleanCSS())
+  return gulp
+    .src('src/styles/**/*.css')
+    // .pipe(purgecss({ content: ['temp/**/*.html'] }))
+    // .pipe(cleanCSS())
     .pipe(gulp.dest('temp/styles'));
 }
 
-// Task to inline CSS and JS in HTML files
-function autoInline() {
-  return gulp.src('temp/**/*.html')
-    .pipe(inline({ base: 'temp/' }))
+// Task to inline CSS/JS and minify, excluding JSON and image files
+async function autoInline() {
+  return gulp
+    .src('temp/**/*.html')
+    .pipe(
+      inline({
+        base: 'temp/',
+        relative: true,
+        disabledTypes: ['img', 'svg', 'json'], // Disable inlining of images, SVGs, and JSON files
+      })
+    )
     .pipe(minifyInline())
-    .pipe(ext_replace('.html'))
+    .pipe(ext_replace('.html')) // Use ext_replace to change extension to .html
     .pipe(gulp.dest('output/'));
 }
-// Task to build static pages with client-side rendering
-// Task to build static pages with client-side rendering
-function buildStaticPagesCSR(done) {
-  const filesInSrcDir = fs.readdirSync('src/client/');
-  const entryPoints = {};
 
-  // Set up entry points from the client directory
-  filesInSrcDir.forEach(file => {
-    const ext = path.extname(file);
-    if (['.jsx'].includes(ext)) {
-      const fileName = path.basename(file, ext);
-      entryPoints[fileName] = path.resolve(__dirname, 'src/client', file);
-    }
-  });
+// Task to copy media files to 'temp/' directory
+async function copyMedia() {
+  return gulp.src('src/media/**/*', { allowEmpty: true }).pipe(gulp.dest('temp/media'));
+}
 
-  if (Object.keys(entryPoints).length === 0) {
-    console.error('No JSX files found in src/client to generate entry points.');
-    return done();
+// Task to generate sitemap
+async function buildPlainSiteMap() {
+  fs.mkdirSync('./output/sitemap', { recursive: true });
+
+  if (sitemapList.length === 0) {
+    console.warn('No URLs to include in sitemap. Skipping sitemap generation.');
+    return Promise.resolve();
   }
 
-  // Ensure the temp/client directory exists before writing
-  const clientTempDir = path.resolve(__dirname, 'temp/client');
-  if (!fs.existsSync(clientTempDir)) {
-    fs.mkdirSync(clientTempDir, { recursive: true });
-  }
-
-  webpack({
-    ...clientWebpackConfig,
-    entry: entryPoints,
-    stats: 'errors-warnings',
-  }, (err, stats) => {
-    if (err || stats.hasErrors()) {
-      console.error(stats.toString({ all: false, warnings: true, errors: true, errorDetails: true }));
-      return handleError(err || new Error('Webpack compilation error'), done);
-    }
-
-    console.log('Client-side Webpack build completed successfully.');
-
-    // Check if the JS bundles exist before proceeding
-    Object.keys(entryPoints).forEach((entry) => {
-      const outputJSPath = path.join(__dirname, 'output/js', `${entry}.bundle.js`);
-      if (!fs.existsSync(outputJSPath)) {
-        console.error(`JS bundle for ${entry} not found at ${outputJSPath}`);
-        return handleError(new Error(`JS bundle for ${entry} not found`), done);
-      }
+  return new Promise((resolve, reject) => {
+    const sitemapStream = new SitemapStream({
+      hostname: 'https://transadvocacyandcomplaintcollective.github.io/',
     });
 
-    // Dynamically generate HTML for each entry point
-    Object.keys(entryPoints).forEach((entry) => {
-      try {
-        const outputJSPath = path.join(__dirname, 'output/js', `${entry}.bundle.js`);
-        const outputJS = fs.readFileSync(outputJSPath, 'utf8');
+    const writeStream = createWriteStream('./output/sitemap/sitemap.xml');
+    sitemapStream.pipe(writeStream);
 
-        // Dynamically create an HTML file for each JSX entry
-        const generatedHTML = `
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>${entry}</title>
-            <!-- Optionally link CSS here -->
-          </head>
-          <body>
-            <div id="root"></div>
-            <script>${outputJS}</script> <!-- Inject JS directly into HTML -->
-          </body>
-          </html>
-        `;
-
-        // Write the generated HTML to the temp/client folder
-        fs.writeFileSync(`temp/client/${entry}.html`, generatedHTML);
-        console.log(`Generated HTML for ${entry}.jsx`);
-      } catch (err) {
-        console.error(`Error generating HTML for ${entry}:`, err);
-        handleError(err, done);
-      }
+    sitemapStream.on('error', (err) => {
+      console.error('Sitemap generation error:', err);
+      reject(err);
     });
 
-    // Move the generated HTML files to the output directory
-    gulp.src('temp/client/**/*.html')
-      .pipe(gulp.dest('output/'))
-      .on('end', done);
+    writeStream.on('finish', () => {
+      console.log('Sitemap generated successfully.');
+      resolve();
+    });
+
+    writeStream.on('error', (err) => {
+      console.error('Write stream error:', err);
+      reject(err);
+    });
+
+    sitemapList.forEach((item) => sitemapStream.write(item));
+    sitemapStream.end();
   });
 }
 
-
-// Task to copy media files
-function copyMedia() {
-  return gulp.src('src/media/**/*', { allowEmpty: true })
-    .pipe(gulp.dest('output/media'));
-}
-
-// Task to build the sitemap
-function buildPlainSiteMap(done) {
-  try {
-    fs.mkdirSync('./output/sitemap', { recursive: true });
-
-    const sms = new SitemapAndIndexStream({
-      getSitemapStream: (i) => {
-        const sitemapStream = new SitemapStream({ hostname: 'https://transadvocacyandcomplaintcollective.github.io/' });
-        const path = `./output/sitemap/sitemap-${i}.xml`;
-        const ws = sitemapStream.pipe(createWriteStream(resolve(path)));
-        return [new URL(path, 'https://transadvocacyandcomplaintcollective.github.io/').toString(), sitemapStream, ws];
-      },
-    });
-
-    sitemapList.forEach(item => sms.write(item));
-    sms.end();
-    done();
-  } catch (err) {
-    handleError(err, done);
+// Task to copy data files to 'temp/' directory
+async function copyData() {
+  if (fs.existsSync('etc/data/') && fs.readdirSync('etc/data/').length > 0) {
+    return gulp.src('etc/data/**/*', { allowEmpty: true }).pipe(gulp.dest('temp/data'));
+  } else {
+    console.warn('No data files to copy from etc/data.');
+    return Promise.resolve();
   }
 }
 
-// Task to build the copy data
-function copyData() {
-  return gulp.src('etc/data/**/*', { allowEmpty: true })
-    .pipe(gulp.dest('output/data')); // Ensure this folder is accessible to the server
-}
-
-// Main task sequence for building both client and server-side code
+// Main build task sequence
 const build = gulp.series(
   clean,
   mkdir,
   copyMedia,
+  generatePages,
+  copyData,
   buildStaticPagesSSR, // Server-side rendering
-  buildStaticPagesCSR,
+  buildStaticPagesCSR, // Client-side rendering
   copyStyles,
-  autoInline, copyData,
+  autoInline,
   buildPlainSiteMap
 );
 

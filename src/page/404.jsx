@@ -1,5 +1,5 @@
 import React from 'react';
-import BodyPage from './page/partials/BodyPage';
+import BodyPage from '../partials/BodyPage';
 import Container from 'react-bootstrap/Container';
 
 const NotFoundPage = () => {
