@@ -123,13 +123,37 @@ function handleError(err, done) {
 }
 
 // Task to clean output and temp directories
-async function clean() {
-  return gulp.src(['output/**/*', 'temp/**/*'], { read: false, allowEmpty: true }).pipe(rimraf());
+function clean(done) {
+  for (const dir of ['output', 'temp']) {
+    if (fs.existsSync(dir)) {
+      fs.rmdirSync(dir, { recursive: true });
+      console.log(`Deleted directory: ${dir}`);
+    }
+  }
+  done()
+  return
 }
 
 // Task to create necessary directories
-async function mkdir() {
-  ['output', 'temp', 'temp/data'].forEach((dir) => fs.mkdirSync(`./${dir}`, { recursive: true }));
+function mkdir(done) {
+  const dirs = ['output', 'temp', 'temp/data', 'output/articles', 'output/press_release'];
+  
+  try {
+    // Create directories recursively
+    dirs.forEach((dir) => {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+        console.log(`Created directory: ${dir}`);
+      }
+    });
+    done(); // Signal task completion
+    return;
+  } catch (error) {
+    console.error(`Error creating directories: ${error.message}`);
+    done(error); // Signal error
+    return;
+  }
+  done(); // Signal task completion
 }
 
 // Helper function to read and parse markdown files
@@ -153,16 +177,20 @@ const streamToPromise = require('stream-to-promise');
 
 async function processPagesForType(type, pageComponent, listComponent = null) {
   const dir = `etc/${type}`;
-  const outputDir = `temp/${type}`;
+  const tempDir = `temp/${type}`;
+  const outputDir = `output/${type}`;
   const webpackConfig = serverWebpackConfig;
 
-  // Ensure the output directory exists
+  // Ensure the temp and output directories exist
+  fs.mkdirSync(tempDir, { recursive: true });
   fs.mkdirSync(outputDir, { recursive: true });
 
-  // Read and process articles
+  console.log(`Processing type: ${type}`);
+
   const filesInSrcDir = fs.readdirSync(dir);
   const articles = [];
 
+  // Read and process articles
   filesInSrcDir.forEach((file) => {
     const ext = path.extname(file);
     if (ext === '.md') {
@@ -172,120 +200,111 @@ async function processPagesForType(type, pageComponent, listComponent = null) {
       articles.push({ data: { ...data, slug: fileName }, content, fileName });
     }
   });
+  if  (articles.length === 0) {
+    return Promise.resolve();
+  }
 
+  // Sort and paginate articles
   articles.sort((a, b) => new Date(b.data.publishDate) - new Date(a.data.publishDate));
   const totalPages = Math.max(Math.ceil(articles.length / ARTICLES_PER_PAGE), 1);
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
-  // Adjust the paths in gulp.src() to include the 'src/' directory
+  // Process the list of articles (list page generation)
   const listStream = gulp
     .src(`src/${listComponent}`)
     .pipe(plumber())
     .pipe(webpackStream(webpackConfig))
-    .pipe(
-      each((jsxContent, file, callback) => {
-        try {
-          const component = requireFromString(jsxContent, file.path);
-          for (let page = 0; page < totalPages; page++) {
-            const start = page * ARTICLES_PER_PAGE;
-            const end = start + ARTICLES_PER_PAGE;
-            const articlesOnPage = articles.slice(start, end);
-            const html = ReactDOMServer.renderToStaticMarkup(
-              React.createElement(component.default || component, {
-                articles: articlesOnPage,
-                pageNumbers,
-                currentPage: page + 1,
-              })
-            );
-            const pagePath = page === 0 ? 'index' : `page/${page + 1}`;
-            const outputPath = path.join(outputDir, `${pagePath}.html`);
-            console.log(`Generating HTML file: ${outputPath}`);
-            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-            fs.writeFileSync(outputPath, html);
-            sitemapList.push({ url: `${type}/${pagePath}` });
-            console.log(`Generated HTML file: ${outputPath}`);
-          }
-          if (totalPages === 0) {
-            const html = ReactDOMServer.renderToStaticMarkup(
-              React.createElement(component.default || component, {
-                articles: [],
-                pageNumbers: [],
-                currentPage: 0,
-              })
-            );
-            const outputPath = path.join(outputDir, 'index.html');
-            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-            fs.writeFileSync(outputPath, html);
-            sitemapList.push({ url: `${type}/index` });
-            console.log(`Generated HTML file: ${outputPath}`);
-          }
+    .pipe(each((jsxContent, file, callback) => {
+      try {
+        const component = requireFromString(jsxContent, file.path);
+        for (let page = 0; page < totalPages; page++) {
+          const start = page * ARTICLES_PER_PAGE;
+          const end = start + ARTICLES_PER_PAGE;
+          const articlesOnPage = articles.slice(start, end);
 
-          callback(null, jsxContent);
-        } catch (err) {
-          console.error(`Error processing list component: ${err.message}`);
-          callback(err);
+          const html = ReactDOMServer.renderToStaticMarkup(
+            React.createElement(component.default || component, {
+              articles: articlesOnPage,
+              pageNumbers,
+              currentPage: page + 1,
+            })
+          );
+
+          const pagePath = page === 0 ? 'index' : `page/${page + 1}`;
+          const outputPath = path.join(outputDir, `${pagePath}.html`);
+
+          fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+          fs.writeFileSync(outputPath, html);
+          sitemapList.push({ url: `${type}/${pagePath}` });
         }
-      })
-    );
+        callback(null, jsxContent);
+      } catch (err) {
+        console.error(`Error processing list component: ${err.message}`);
+        callback(err);
+      }
+    }));
 
+  // Process each individual article (article pages)
   const pageStream = gulp
     .src(`src/${pageComponent}`)
     .pipe(plumber())
     .pipe(webpackStream(webpackConfig))
-    .pipe(
-      each(async (articleJSXContent, file, callback) => {
-        try {
-          const component = requireFromString(articleJSXContent, file.path);
-          for (const article of articles) {
-            const html = ReactDOMServer.renderToStaticMarkup(
-              React.createElement(component.default || component, { article })
-            );
-            const outputPath = path.join(outputDir, `${article.fileName}.html`);
-            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-            fs.writeFileSync(outputPath, html);
-            sitemapList.push({ url: `${type}/${article.fileName}` });
-            console.log(`Generated HTML file: ${outputPath}`);
-          }
-          callback(null, articleJSXContent);
-        } catch (err) {
-          console.error(`Error processing page component: ${err.message}`);
-          callback(err);
+    .pipe(each(async (articleJSXContent, file, callback) => {
+      try {
+        const component = requireFromString(articleJSXContent, file.path);
+        for (const article of articles) {
+          const html = ReactDOMServer.renderToStaticMarkup(
+            React.createElement(component.default || component, { article })
+          );
+          const outputPath = path.join(outputDir, `${article.fileName}.html`);
+
+          fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+          fs.writeFileSync(outputPath, html);
+          sitemapList.push({ url: `${type}/${article.fileName}` });
         }
-      })
-    );
+        callback(null, articleJSXContent);
+      } catch (err) {
+        console.error(`Error processing page component: ${err.message}`);
+        callback(err);
+      }
+    }));
 
   // Wait for both streams to complete
   await Promise.all([streamToPromise(listStream), streamToPromise(pageStream)]);
 }
 
-// Main task to generate pages for all types (articles, press releases, and claim reviews)
-async function generatePages() {
-  const pageTypes = [
-    {
-      type: 'articles',
-      pageComponent: 'article/ArticlePage.jsx',
-      listComponent: 'article/ArticleListPage.jsx',
-    },
-    {
-      type: 'press_release',
-      pageComponent: 'press_release/PressReleasePage.jsx',
-      listComponent: 'press_release/PressReleaseListPage.jsx',
-    },
-    // Comment out or remove the claim_review type if not in use
-    // {
-    //   type: 'claim_review',
-    //   pageComponent: 'claim_review/FactCheckPage.tsx',
-    //   listComponent: 'claim_review/ClaimReviewListPage.tsx',
-    // },
-  ];
 
-  await Promise.all(
-    pageTypes.map(({ type, pageComponent, listComponent }) =>
-      processPagesForType(type, pageComponent, listComponent)
-    )
-  );
-  console.log('All page types generated successfully.');
+// Main task to generate pages for all types (articles, press releases, and claim reviews)
+async function generatePages(done) {
+  try {
+    // Define the types of pages you want to generate
+    const pageTypes = [
+      {
+        type: 'articles',
+        pageComponent: 'article/ArticlePage.jsx',
+        listComponent: 'article/ArticleListPage.jsx',
+      },
+      {
+        type: 'press_release',
+        pageComponent: 'press_release/PressReleasePage.jsx',
+        listComponent: 'press_release/PressReleaseListPage.jsx',
+      },
+    ];
+
+    // Iterate over each type and process pages
+    await Promise.all(
+      pageTypes.map(({ type, pageComponent, listComponent }) =>
+        processPagesForType(type, pageComponent, listComponent)
+      )
+    );
+
+    console.log('All page types generated successfully.');
+    done();  // Signal task completion
+  } catch (error) {
+    console.error(`Error generating pages: ${error.message}`);
+    done(error);  // Signal an error
+  }
 }
+
 
 
 // Task to build static pages using server-side rendering (SSR)
@@ -372,6 +391,7 @@ function buildStaticPagesCSR() {
     const filesInClientDir = fs.readdirSync('src/client/');
     const entryPoints = {};
 
+    // Collecting entry points for Webpack from client directory
     filesInClientDir.forEach((file) => {
       const ext = path.extname(file);
       if (ext === '.jsx') {
@@ -382,6 +402,14 @@ function buildStaticPagesCSR() {
 
     console.log("entryPoints", entryPoints);
 
+    // If no entry points found, resolve the promise and skip Webpack compilation
+    if (Object.keys(entryPoints).length === 0) {
+      console.warn('No entry points found for CSR.');
+      resolve();
+      return;
+    }
+
+    // Configuring Webpack for Client-Side Rendering
     const webpackConfig = {
       ...clientWebpackConfig,
       entry: entryPoints,
@@ -394,31 +422,34 @@ function buildStaticPagesCSR() {
         ...Object.keys(entryPoints).map((entryName) => new HtmlWebpackPlugin({
           filename: `../${entryName}.html`,
           template: 'src/templates/index.html',
-          chunks: [entryName],
+          chunks: [entryName], // Ensure only the respective chunk is loaded in each HTML file
           inject: 'body',
         })),
       ],
     };
 
+    // Running Webpack
     webpack(webpackConfig, (err, stats) => {
       if (err) {
         console.error("Webpack CSR compilation error:", err);
-        reject(err);
+        reject(err); // Reject the promise if an error occurs
         return;
       }
 
+      // Handling Webpack errors (if any)
       if (stats.hasErrors()) {
         const info = stats.toJson();
         console.error("Webpack CSR compilation errors:", info.errors);
-        reject(new Error('Webpack compilation errors'));
+        reject(new Error('Webpack compilation errors')); // Reject if Webpack compilation has errors
         return;
       }
 
       console.log("Webpack CSR compilation completed.");
-      resolve();
+      resolve(); // Resolve the promise when Webpack compilation completes successfully
     });
   });
 }
+
 
 // Task to copy and minify CSS styles
 function copyStyles() {
@@ -446,9 +477,13 @@ async function autoInline() {
 }
 
 // Task to copy media files to 'temp/' directory
-async function copyMedia() {
-  return gulp.src('src/media/**/*', { allowEmpty: true }).pipe(gulp.dest('temp/media'));
+function copyMedia(done) {
+  return gulp
+    .src('src/media/**/*', { allowEmpty: true })
+    .pipe(gulp.dest('temp/media'))
+    .on('end', done);  // Ensure the task signals completion
 }
+
 
 // Task to generate sitemap
 async function buildPlainSiteMap() {
