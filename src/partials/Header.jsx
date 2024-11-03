@@ -52,7 +52,7 @@ const Header = () => {
               Home
             </Nav.Link>
             <Nav.Link
-              href="/article/page-0.html"
+              href="/articles/page/0.html"
               style={{
                 color: "#E0E0E0",
                 marginRight: "16px",
@@ -63,7 +63,7 @@ const Header = () => {
               Articles
             </Nav.Link>
             <Nav.Link
-              href="/press_release/page-0.html"
+              href="/press_release/page/0.html"
               style={{
                 color: "#E0E0E0",
                 marginRight: "16px",

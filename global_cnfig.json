@@ -4,6 +4,11 @@
           "type":"articles",
           "pageComponent":"article/ArticlePage.jsx",
           "listComponent":"article/ArticleListPage.jsx"
+       },
+       {
+          "type":"press_release",
+          "pageComponent":"article/ArticlePage.jsx",
+          "listComponent":"article/ArticleListPage.jsx"
        }
     ],
     "ContentFromMarkdownTask":[
