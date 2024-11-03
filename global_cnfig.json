@@ -1,0 +1,14 @@
+{
+    "ContentPagesTask":[
+       {
+          "type":"articles",
+          "pageComponent":"article/ArticlePage.jsx",
+          "listComponent":"article/ArticleListPage.jsx"
+       }
+    ],
+    "ContentFromMarkdownTask":[
+    ],
+    "Organisation":{
+       
+    }
+ }
