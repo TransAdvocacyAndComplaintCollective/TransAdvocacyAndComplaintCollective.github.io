@@ -30,15 +30,6 @@ const Header = () => {
             }}
           />
         </Navbar.Brand>
-        <Navbar.Toggle
-          aria-controls="basic-navbar-nav"
-          onClick={toggleNavbar}
-          aria-label="Toggle navigation"
-          style={{
-            borderColor: "#E0E0E0", // Light gray border for toggle
-          }}
-        />
-        <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link
               href="/"
@@ -107,7 +98,6 @@ const Header = () => {
               Get Involved
             </Nav.Link>
           </Nav>
-        </Navbar.Collapse>
       </Container>
     </Navbar>
   );
