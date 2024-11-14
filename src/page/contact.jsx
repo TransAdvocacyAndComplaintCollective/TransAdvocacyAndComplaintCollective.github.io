@@ -2,7 +2,6 @@ import React from 'react';
 import BodyPage from '../partials/BodyPage';
 
 const ContactPage = () => {
-  const email = "contact@piratepartyuk.org";
 
   return (
     <BodyPage title={"Contact Us"} description={"Get in touch with the Trans Advocacy and Complaint Collective"}>

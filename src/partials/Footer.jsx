@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer
       style={{
-        backgroundColor: "#121212", // Dark background color
+        backgroundColor: "#5BCEFA", // Dark background color
         padding: "20px",
         textAlign: "center",
         borderTop: "3px solid #C77D9B", // Muted Trans Pride pink accent
@@ -18,28 +18,28 @@ const Footer = () => {
             <p
               className="m-0"
               style={{
-                color: "#3C9CD4",  // Same color for brand consistency
+                color: "#121212",  // Same color for brand consistency
                 fontWeight: "bold", // Increase font weight for better readability
-                textShadow: "1px 1px 2px rgba(0, 0, 0, 0.8)", // Add subtle text shadow for contrast
+                // textShadow: "1px 1px 2px #121212", // Add subtle text shadow for contrast
               }}
             >
               &copy; {new Date().getFullYear()} Trans Advocacy and Complaint Collective
             </p>
           </Col>
           <Col md={4} className="text-center">
-            <p className="mb-2 mb-md-0" style={{ color: "#FFFFFF" }}>Follow us:</p>
+            <p className="mb-2 mb-md-0" style={{ color: "#121212" }}>Follow us:</p>
             <div className="social-links d-flex justify-content-center">
               <a href="https://discord.gg/KMxjhabAxN" className="mx-2" aria-label="Discord">
-                <FaDiscord size={24} style={{ color: "#3C9CD4" }} />
+                <FaDiscord size={24} style={{ color: "#121212" }} />
               </a>
               <a href="https://www.threads.net/@tacc40566" className="mx-2" aria-label="GitHub">
-                <FaThreads size={24} style={{ color: "#3C9CD4" }} />
+                <FaThreads size={24} style={{ color: "#121212" }} />
               </a>
               <a href="https://bsky.app/profile/tacc-uk.bsky.social">
-                <FaBluesky size={24} style={{ color: "#3C9CD4" }} />
+                <FaBluesky size={24} style={{ color: "#121212" }} />
               </a>
               <a href="https://www.facebook.com/profile.php?id=61567774272432" className="mx-2" aria-label="Facebook">
-                <FaFacebook size={24} style={{ color: "#3C9CD4" }} />
+                <FaFacebook size={24} style={{ color: "#121212" }} />
               </a>
             </div>
           </Col>

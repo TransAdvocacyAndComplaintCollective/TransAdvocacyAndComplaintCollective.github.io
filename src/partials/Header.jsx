@@ -12,8 +12,8 @@ const Header = () => {
     <Navbar
       expand="md"
       style={{
-        backgroundColor: "#121212", // Darker background color
-        borderBottom: "3px solid #3C9CD4", // Muted Trans Pride blue accent
+        backgroundColor: "#5BCEFA", // Darker background color
+        borderBottom: "3px solid #C77D9B", // Muted Trans Pride blue accent
         padding: "16px",
         color: "#E0E0E0", // Light gray color for text
       }}
@@ -34,10 +34,10 @@ const Header = () => {
             <Nav.Link
               href="/"
               style={{
-                color: "#E0E0E0", // Light gray color for nav links
+                color: "#121212)", // Light gray color for nav links
                 marginRight: "16px",
               }}
-              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")} // Hover color to muted Trans Pride blue
+              onMouseOver={(e) => (e.target.style.color = "#121212")} // Hover color to muted Trans Pride blue
               onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
             >
               Home
@@ -45,10 +45,10 @@ const Header = () => {
             <Nav.Link
               href="/articles/page/0.html"
               style={{
-                color: "#E0E0E0",
+                color: "#121212",
                 marginRight: "16px",
               }}
-              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")}
+              onMouseOver={(e) => (e.target.style.color = "#121212")}
               onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
             >
               Articles
@@ -56,10 +56,10 @@ const Header = () => {
             <Nav.Link
               href="/press_release/page/0.html"
               style={{
-                color: "#E0E0E0",
+                color: "#121212",
                 marginRight: "16px",
               }}
-              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")}
+              onMouseOver={(e) => (e.target.style.color = "#121212")}
               onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
             >
               Press Release
@@ -67,10 +67,10 @@ const Header = () => {
             <Nav.Link
               href="/about.html"
               style={{
-                color: "#E0E0E0",
+                color: "#121212",
                 marginRight: "16px",
               }}
-              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")}
+              onMouseOver={(e) => (e.target.style.color = "#121212")}
               onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
             >
               About
@@ -78,10 +78,10 @@ const Header = () => {
             <Nav.Link
               href="/contact.html"
               style={{
-                color: "#E0E0E0",
+                color: "#121212",
                 marginRight: "16px",
               }}
-              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")}
+              onMouseOver={(e) => (e.target.style.color = "#121212")}
               onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
             >
               Contact
@@ -89,10 +89,10 @@ const Header = () => {
             <Nav.Link
               href="/get-involved.html"
               style={{
-                color: "#E0E0E0",
+                color: "#121212",
                 marginRight: "16px",
               }}
-              onMouseOver={(e) => (e.target.style.color = "#3C9CD4")}
+              onMouseOver={(e) => (e.target.style.color = "#121212")}
               onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
             >
               Get Involved
