@@ -1,103 +1,78 @@
-import React, { useState } from "react";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import React from "react";
+import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 
 const Header = () => {
-  const [expanded, setExpanded] = useState(false);
-
-  const toggleNavbar = () => {
-    setExpanded(!expanded);
-  };
-
   return (
     <Navbar
       expand="md"
+      className="navbar-expand-md"
       style={{
-        backgroundColor: "#5BCEFA", // Darker background color
-        borderBottom: "3px solid #C77D9B", // Muted Trans Pride blue accent
+        backgroundColor: "#5BCEFA",
+        borderBottom: "3px solid #C77D9B",
         padding: "16px",
-        color: "#E0E0E0", // Light gray color for text
+        color: "#E0E0E0",
       }}
-      expanded={expanded}
     >
       <Container>
         <Navbar.Brand href="/" aria-label="Trans Advocacy and Complaint Collective Logo">
           <img
-            src="/media/tacc.png" // Replace with an actual Trans-themed logo or image
+            src="/media/tacc.png"
             width="50"
             alt="Trans Advocacy and Complaint Collective Logo"
-            style={{
-              borderRadius: "50%", // Rounded logo image
-            }}
+            style={{ borderRadius: "50%" }}
           />
         </Navbar.Brand>
+
+        {/* Toggle button for mobile view with baked-in Bootstrap JS */}
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbar-menu"
+          aria-controls="navbar-menu"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          style={{ borderColor: "#C77D9B" }}
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        <div className="collapse navbar-collapse" id="navbar-menu">
           <Nav className="me-auto">
             <Nav.Link
               href="/"
-              style={{
-                color: "#121212)", // Light gray color for nav links
-                marginRight: "16px",
-              }}
-              onMouseOver={(e) => (e.target.style.color = "#121212")} // Hover color to muted Trans Pride blue
-              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
+              style={{ color: "#121212" }}
+              onMouseOver={(e) => (e.target.style.color = "#121212")}
+              onMouseOut={(e) => (e.target.style.color = "#121212")}
             >
               Home
             </Nav.Link>
+
             <Nav.Link
               href="/articles/page/0.html"
-              style={{
-                color: "#121212",
-                marginRight: "16px",
-              }}
+              style={{ color: "#121212" }}
               onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
+              onMouseOut={(e) => (e.target.style.color = "#121212")}
             >
               Articles
             </Nav.Link>
+
             <Nav.Link
               href="/press_release/page/0.html"
-              style={{
-                color: "#121212",
-                marginRight: "16px",
-              }}
+              style={{ color: "#121212" }}
               onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
+              onMouseOut={(e) => (e.target.style.color = "#121212")}
             >
               Press Release
             </Nav.Link>
-            <Nav.Link
-              href="/about.html"
-              style={{
-                color: "#121212",
-                marginRight: "16px",
-              }}
-              onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
-            >
-              About
-            </Nav.Link>
-            <Nav.Link
-              href="/contact.html"
-              style={{
-                color: "#121212",
-                marginRight: "16px",
-              }}
-              onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
-            >
-              Contact
-            </Nav.Link>
-            <Nav.Link
-              href="/get-involved.html"
-              style={{
-                color: "#121212",
-                marginRight: "16px",
-              }}
-              onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#E0E0E0")}
-            >
-              Get Involved
-            </Nav.Link>
+
+            <NavDropdown title="More" id="nav-dropdown" style={{ color: "#121212" }}>
+              <NavDropdown.Item href="/about.html">About</NavDropdown.Item>
+              <NavDropdown.Item href="/contact.html">Contact</NavDropdown.Item>
+              <NavDropdown.Item href="/get-involved.html">Get Involved</NavDropdown.Item>
+            </NavDropdown>
           </Nav>
+        </div>
       </Container>
     </Navbar>
   );
