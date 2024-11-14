@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { FaDiscord, FaGithub, FaMastodon, FaTwitter } from 'react-icons/fa';
+import { FaDiscord, FaFacebook, FaGithub, FaMastodon, FaTwitter } from 'react-icons/fa';
 
 const Footer = () => {
   return (
@@ -31,6 +31,12 @@ const Footer = () => {
             <div className="social-links d-flex justify-content-center">
               <a href="https://discord.gg/KMxjhabAxN" className="mx-2" aria-label="Discord">
                 <FaDiscord size={24} style={{ color: "#3C9CD4" }} />
+              </a>
+              <a href="https://www.threads.net/@tacc40566" className="mx-2" aria-label="GitHub">
+                <FaGithub size={24} style={{ color: "#3C9CD4" }} />
+              </a>
+              <a href="https://www.facebook.com/profile.php?id=61567774272432" className="mx-2" aria-label="Facebook">
+                <FaFacebook size={24} style={{ color: "#3C9CD4" }} />
               </a>
             </div>
           </Col>

@@ -16,7 +16,7 @@ const GetInvolvedPage = () => {
             <Card.Text>
               Attend one of our upcoming events to learn more about our work, meet other advocates, and engage in meaningful actions. Whether it’s a rally, a workshop, or an online discussion, your presence can make a difference.
             </Card.Text>
-            <Button variant="primary" href="/events" target="_blank">
+            <Button variant="primary" href="/Event.html" target="_blank">
               View Events
             </Button>
           </Card.Body>
