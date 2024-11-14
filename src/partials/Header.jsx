@@ -14,7 +14,10 @@ const Header = () => {
       }}
     >
       <Container>
-        <Navbar.Brand href="/" aria-label="Trans Advocacy and Complaint Collective Logo">
+        <Navbar.Brand
+          href="/"
+          aria-label="Trans Advocacy and Complaint Collective Logo"
+        >
           <img
             src="/media/tacc.png"
             width="50"
@@ -66,11 +69,40 @@ const Header = () => {
               Press Release
             </Nav.Link>
 
-            <NavDropdown title="More" id="nav-dropdown" style={{ color: "#121212" }}>
-              <NavDropdown.Item href="/about.html">About</NavDropdown.Item>
-              <NavDropdown.Item href="/contact.html">Contact</NavDropdown.Item>
-              <NavDropdown.Item href="/get-involved.html">Get Involved</NavDropdown.Item>
-            </NavDropdown>
+            <Nav.Link
+              href="/press_release/page/0.html"
+              style={{ color: "#121212" }}
+              onMouseOver={(e) => (e.target.style.color = "#121212")}
+              onMouseOut={(e) => (e.target.style.color = "#121212")}
+            >
+              Press Release
+            </Nav.Link>
+
+            <Nav.Link
+              href="/about.html"
+              style={{ color: "#121212" }}
+              onMouseOver={(e) => (e.target.style.color = "#121212")}
+              onMouseOut={(e) => (e.target.style.color = "#121212")}
+            >
+              About
+            </Nav.Link>
+
+            <Nav.Link
+              href="/contact.html"
+              style={{ color: "#121212" }}
+              onMouseOver={(e) => (e.target.style.color = "#121212")}
+              onMouseOut={(e) => (e.target.style.color = "#121212")}
+            >
+              Contact
+            </Nav.Link>
+            <Nav.Link
+              href="/get-involved.html"
+              style={{ color: "#121212" }}
+              onMouseOver={(e) => (e.target.style.color = "#121212")}
+              onMouseOut={(e) => (e.target.style.color = "#121212")}
+            >
+              Get Involved
+            </Nav.Link>
           </Nav>
         </div>
       </Container>
