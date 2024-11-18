@@ -3,7 +3,7 @@ import BodyPage from '../partials/BodyPage';
 
 const EventsPage = ({ calendarUrl, title = "Upcoming Events", description = "Stay updated on the latest events hosted by the Trans Advocacy and Complaint Collective" }) => {
   // Default Google Calendar URL (can be replaced via props)
-  const googleCalendarUrl = calendarUrl || "https://calendar.google.com/calendar/embed?src=your_calendar_id%40group.calendar.google.com&ctz=Your/Timezone";
+  const googleCalendarUrl = calendarUrl || "https://calendar.google.com/calendar/u/2/embed?src=b8e2d2038d4a52e7fc437bb22ee4ac01ac38343f9bda27b51978b3f6d221d485@group.calendar.google.com&ctz=Europe/London&csspa=1;
 
   return (
     <BodyPage title={title} description={description}>
