@@ -5,7 +5,7 @@ const Header = () => {
   return (
     <Navbar
       expand="md"
-      className="navbar-expand-md"
+      className="navbar-expand-md" 
       style={{
         backgroundColor: "#5BCEFA",
         borderBottom: "3px solid #C77D9B",
@@ -58,15 +58,6 @@ const Header = () => {
               onMouseOut={(e) => (e.target.style.color = "#121212")}
             >
               Articles
-            </Nav.Link>
-
-            <Nav.Link
-              href="/press_release/page/0.html"
-              style={{ color: "#121212" }}
-              onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#121212")}
-            >
-              Press Release
             </Nav.Link>
 
             <Nav.Link
