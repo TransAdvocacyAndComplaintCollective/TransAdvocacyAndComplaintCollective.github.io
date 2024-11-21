@@ -18,7 +18,7 @@ const Header = () => {
           aria-controls="navbar-menu"
           aria-expanded="false"
           aria-label="Toggle navigation"
-          style={{ borderColor: "#C77D9B" }}
+
         >
           <span className="navbar-toggler-icon"></span>
         </button>
