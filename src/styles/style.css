@@ -35,12 +35,11 @@ a.mr-2 {
     border-bottom: 1px solid #1976d2;
     padding: 16px;
     font-weight: 600;
-    font-size: 1.3rem;
+    /*font-size: 1.2rem;*/
 }
 
 img.logo {
-    width: 100px;
-    border-radius: 50%;
+    width: 250px;
 }
 
 .nav-link {
