@@ -15,12 +15,18 @@ html, body {
     padding: 20px;
     margin-top: 20px;
 }
+
 h1, h2, h3, h4, h5, h6 {
     color: #1976d2;
 }
 
 .btn-primary {
     background-color: #1976d2;
+}
+
+/* This add a right hand margin so that buttons inline have a space on the articles page. */
+a.mr-2 {
+    margin-right: 6px;
 }
 
 .navbar {

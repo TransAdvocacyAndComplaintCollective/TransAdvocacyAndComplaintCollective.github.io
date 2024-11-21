@@ -16,7 +16,7 @@ const Footer = () => {
             <p className="mb-2 mb-md-0 footer">Follow us:</p>
             <div className="social-links d-flex justify-content-center">
               <a href="https://discord.gg/KMxjhabAxN" aria-label="Discord" className="social">
-                <FaDiscord size={30} style={{color: "black"}}/>
+                <FaDiscord size={30} style={{color: "black", paddingBottom: '4px'}} />
               </a>
               <a href="https://bsky.app/profile/tacc-uk.bsky.social"  className="mx-2">
                 <FaBluesky size={24} style={{color: "black"}}/>
