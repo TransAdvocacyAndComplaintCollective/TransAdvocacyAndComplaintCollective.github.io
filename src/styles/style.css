@@ -1,0 +1,70 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+    margin-top: 20px;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #1976d2;
+}
+
+.btn-primary {
+    background-color: #1976d2;
+}
+
+.navbar {
+    background: rgb(247,168,184);
+    background: linear-gradient(45deg, rgba(247,168,184,1) 0%, rgba(255,255,255,1) 45%, rgba(85,205,252,1) 100%);
+    border-bottom: 1px solid #1976d2;
+    padding: 16px;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+img.logo {
+    width: 100px;
+    border-radius: 50%;
+}
+
+.nav-link {
+    color: black;
+}
+
+.nav-link:hover {
+    color: #0d65bd;
+}
+
+.nav-link:active {
+    color: #1976d2;
+}
+
+footer {
+    margin-top: auto;
+    background: rgb(247,168,184);
+    background: linear-gradient(45deg, rgba(247,168,184,1) 0%, rgba(255,255,255,1) 45%, rgba(85,205,252,1) 100%);
+    border-top: 1px solid #1976d2;
+    padding: 20px;
+    text-align: center;
+}
+
+p.footer {
+    font-weight: 600;
+    color: black;
+    font-size: 16px;
+}
+
+div.content {
+    font-family: 'Roboto', 'Tahoma', sans-serif;
+    font-size: 1.0rem;
+}

@@ -8,8 +8,8 @@ import Card from 'react-bootstrap/Card';
 const AboutPage = () => {
   return (
     <BodyPage title={"About"} description={"Learn more about the Trans Advocacy and Complaint Collective UK"}>
-      <Container className="container pb-5 mb-5">
-        <Card className="mt-4">
+      <Container>
+        <Card className="mb-4">
           <Card.Body>
             <Card.Title>Who We Are</Card.Title>
             <Card.Text>
@@ -18,7 +18,7 @@ const AboutPage = () => {
           </Card.Body>
         </Card>
 
-        <Card className="mt-4">
+        <Card className="mb-4">
           <Card.Body>
             <Card.Title>Our Vision</Card.Title>
             <Card.Text>
@@ -27,7 +27,7 @@ const AboutPage = () => {
           </Card.Body>
         </Card>
 
-        <Card className="mt-4">
+        <Card className="mb-4">
           <Card.Body>
             <Card.Title>What We Do</Card.Title>
             <Card.Text>
@@ -42,7 +42,7 @@ const AboutPage = () => {
           </Card.Body>
         </Card>
 
-        <Card className="mt-4">
+        <Card className="mb-4">
           <Card.Body>
             <Card.Title>Get Involved</Card.Title>
             <Card.Text>

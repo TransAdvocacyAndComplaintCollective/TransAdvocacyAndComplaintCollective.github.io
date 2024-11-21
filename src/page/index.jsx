@@ -10,7 +10,7 @@ const HomePage = () => {
 
   return (
     <BodyPage title={"Home Page"} description={"Get in touch with the Trans Advocacy and Complaint Collective UK"}>
-      <Container className="mt-4">
+      <Container>
         {/* Introduction Section */}
         <Card className="mb-4">
           <Card.Body>
@@ -77,6 +77,7 @@ const HomePage = () => {
             <Card.Text>Stay in touch through our social media channels:</Card.Text>
           </Card.Body>
         </Card>
+
       </Container>
     </BodyPage>
   );

@@ -7,10 +7,10 @@ import Button from 'react-bootstrap/Button';
 const GetInvolvedPage = () => {
   return (
     <BodyPage title={"Get Involved"} description={"Join us in advocating for trans rights and making a difference in the community"}>
-      <Container className="pb-5 mb-5">
+      <Container>
         
         {/* Event Section */}
-        <Card className="mt-4">
+        <Card className="mb-4">
           <Card.Body>
             <Card.Title>Event</Card.Title>
             <Card.Text>
@@ -23,7 +23,7 @@ const GetInvolvedPage = () => {
         </Card>
 
         {/* Take Action Section */}
-        <Card className="mt-4">
+        <Card className="mb-4">
           <Card.Body>
             <Card.Title>Take Action</Card.Title>
             <Card.Text>
@@ -36,7 +36,7 @@ const GetInvolvedPage = () => {
         </Card>
 
         {/* Volunteer Section */}
-        <Card className="mt-4">
+        <Card className="mb-4">
           <Card.Body>
             <Card.Title>Volunteer</Card.Title>
             <Card.Text>
@@ -49,7 +49,7 @@ const GetInvolvedPage = () => {
         </Card>
 
         {/* Volunteer Projects Subsection */}
-        <Card className="mt-4" id="volunteer-projects">
+        <Card className="mb-4" id="volunteer-projects">
           <Card.Body>
             <Card.Title>Volunteer Projects</Card.Title>
             <Card.Text>
