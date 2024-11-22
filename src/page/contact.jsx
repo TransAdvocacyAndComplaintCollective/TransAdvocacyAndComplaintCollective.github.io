@@ -1,73 +1,70 @@
 import React from 'react';
 import BodyPage from '../partials/BodyPage';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Card from 'react-bootstrap/Card';
 
 const ContactPage = () => {
 
   return (
     <BodyPage title={"Contact Us"} description={"Get in touch with the Trans Advocacy and Complaint Collective"}>
-      <div className="container pb-5 mb-5">
-        <h1 className="text-body-emphasis">Contact Us</h1>
+      <Container>
 
-        {/* Discord Section */}
-        <div className="card mb-3">
-          <div className="card-body">
-            <h5 className="card-title">
-              <i className="bi bi-discord"></i> Discord
-            </h5>
-            <p className="card-text">
-              Join our Discord community to connect with members of the Trans Advocacy and Complaint Collective. Engage in discussions, share news, and help organize political action.
-            </p>
+        <h2>Contact Us</h2>
+
+        <Card className="mb-4">
+          <Card.Body>
+            <Card.Title>Discord</Card.Title>
+            <Card.Text>
+              Join our Discord community to connect with members of the Trans Advocacy and Complaint Collective. Engage
+              in discussions, share news, and help organize political action.
+            </Card.Text>
             <a href="https://discord.gg/KMxjhabAxN" className="btn btn-primary">
               Join Discord
             </a>
-          </div>
-        </div>
+          </Card.Body>
+        </Card>
+
+        {/* Bluesky Section */}
+        <Card className="mb-4">
+          <Card.Body>
+            <Card.Title>Bluesky</Card.Title>
+            <Card.Text>
+              Connect with us on Bluesky for community updates and discussions..
+            </Card.Text>
+            <a href="https://bsky.app/profile/tacc-uk.bsky.social" className="btn btn-primary">
+              Follow on Bluesky
+            </a>
+          </Card.Body>
+        </Card>
 
         {/* Threads Section */}
-        <div className="card mb-3">
-          <div className="card-body">
-            <h5 className="card-title">
-              <i className="bi bi-threads"></i> Threads
-            </h5>
-            <p className="card-text">
+        <Card className="mb-4">
+          <Card.Body>
+            <Card.Title>Threads</Card.Title>
+            <Card.Text>
               Follow us on Threads for the latest updates and announcements.
-            </p>
+            </Card.Text>
             <a href="https://www.threads.net/@tacc40566" className="btn btn-primary">
               Follow on Threads
             </a>
-          </div>
-        </div>
-
-        {/* Bluesky Section */}
-        <div className="card mb-3">
-          <div className="card-body">
-            <h5 className="card-title">
-              <i className="bi bi-stars"></i> Bluesky
-            </h5>
-            <p className="card-text">
-              Connect with us on Bluesky for community updates and discussions.
-            </p>
-            <a href="https://bsky.app/profile/tacc-uk.bsky.social" className="btn btn-primary">
-              Visit Bluesky
-            </a>
-          </div>
-        </div>
+          </Card.Body>
+        </Card>
 
         {/* Facebook Section */}
-        <div className="card mb-3">
-          <div className="card-body">
-            <h5 className="card-title">
-              <i className="bi bi-facebook"></i> Facebook
-            </h5>
-            <p className="card-text">
+        <Card className="mb-4">
+          <Card.Body>
+            <Card.Title>Facebook</Card.Title>
+            <Card.Text>
               Join our Facebook page for news, events, and updates from TACC.
-            </p>
+            </Card.Text>
             <a href="https://www.facebook.com/profile.php?id=61567774272432" className="btn btn-primary">
               Follow on Facebook
             </a>
-          </div>
-        </div>
-      </div>
+          </Card.Body>
+        </Card>
+
+      </Container>
     </BodyPage>
   );
 };

@@ -1,10 +1,10 @@
 ---
 author:
   - name: Lucy
-imageUrl: /media/trans-advocacy-logo.png
+imageUrl: /media/tacc.png
 imageAlt: "Trans Advocacy and Complaint Collective UK Logo"
 title: "Help Us Push for Change: TACC’s Government Petitions!"
-summary: The Trans Advocacy and Complaint Collective (TACC) is rallying support for government petitions aimed at advocating trans rights and addressing critical issues affecting the trans community in the UK. Join us in supporting these petitions to create meaningful change.
+summary: Please support us by signing these petitions and get our concerns heard.
 keywords: 
   - Trans Advocacy
   - Trans Rights
@@ -17,7 +17,7 @@ publishDate: "2024-11-05"
 ---
 The **Trans Advocacy and Complaint Collective (TACC)** has been actively working on issues that relate to the trans community. We’ve published a set of government petitions on the UK parliamentary website, and we’d like your support to make sure these important issues are heard. By signing and sharing these petitions, you’re helping to amplify our voices and push for real change.
 
-## 📜 List of Petitions:
+## List of Petitions:
 
 1. ### [Lift on the ban on puberty blockers](https://petition.parliament.uk/petitions/700215)
    *Puberty blockers are reversible treatments that give trans youth time to explore their identity without permanent changes. The current ban was made by Ministers not medical practitioners and is based upon an advisory statement in the Cass Review.*
@@ -33,10 +33,6 @@ The **Trans Advocacy and Complaint Collective (TACC)** has been actively working
 
 ---
 
-Please take a moment to sign any (or all!) that resonate with you, and share them with friends, family, and allies. **Together, we can make a difference!**
+Remember to share with friends, family, and allies. **Together, we can make a difference!**
 
----
 
-Thank you for your support and solidarity! Let’s keep pushing for a more inclusive and fair society.
-
----

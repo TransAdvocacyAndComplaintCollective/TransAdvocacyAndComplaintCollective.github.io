@@ -1,101 +1,62 @@
 import React from "react";
 import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
+import {FaBluesky, FaDiscord, FaFacebook, FaThreads} from "react-icons/fa6";
 
 const Header = () => {
   return (
-    <Navbar
-      expand="md"
-      className="navbar-expand-md" 
-      style={{
-        backgroundColor: "#5BCEFA",
-        borderBottom: "3px solid #C77D9B",
-        padding: "16px",
-        color: "#E0E0E0",
-      }}
-    >
+    <Navbar expand="md" className="navbar-expand-md">
       <Container>
-        <Navbar.Brand
-          href="/"
-          aria-label="Trans Advocacy and Complaint Collective Logo"
-        >
-          <img
-            src="/media/tacc.png"
-            width="50"
-            alt="Trans Advocacy and Complaint Collective Logo"
-            style={{ borderRadius: "50%" }}
-          />
+        <Navbar.Brand href="/">
+          <img className="logo" src="/media/tacc.png" alt="Trans Advocacy and Complaint Collective Logo"/>
         </Navbar.Brand>
 
         {/* Toggle button for mobile view with baked-in Bootstrap JS */}
         <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbar-menu"
-          aria-controls="navbar-menu"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-          style={{ borderColor: "#C77D9B" }}
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbar-menu"
+            aria-controls="navbar-menu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+
         >
           <span className="navbar-toggler-icon"></span>
         </button>
 
         <div className="collapse navbar-collapse" id="navbar-menu">
           <Nav className="me-auto">
-            <Nav.Link
-              href="/"
-              style={{ color: "#121212" }}
-              onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#121212")}
-            >
-              Home
-            </Nav.Link>
 
-            <Nav.Link
-              href="/articles/page/0.html"
-              style={{ color: "#121212" }}
-              onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#121212")}
-            >
-              Articles
-            </Nav.Link>
+            <Nav.Link href="/">Home</Nav.Link>
 
-            <Nav.Link
-              href="/press_release/page/0.html"
-              style={{ color: "#121212" }}
-              onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#121212")}
-            >
-              Press Release
-            </Nav.Link>
+            <Nav.Link href="/articles/page/0.html">Articles</Nav.Link>
 
-            <Nav.Link
-              href="/about.html"
-              style={{ color: "#121212" }}
-              onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#121212")}
-            >
-              About
-            </Nav.Link>
+            {/*<Nav.Link href="/press_release/page/0.html">Press Release</Nav.Link>*/}
 
-            <Nav.Link
-              href="/contact.html"
-              style={{ color: "#121212" }}
-              onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#121212")}
-            >
-              Contact
-            </Nav.Link>
-            <Nav.Link
-              href="/get-involved.html"
-              style={{ color: "#121212" }}
-              onMouseOver={(e) => (e.target.style.color = "#121212")}
-              onMouseOut={(e) => (e.target.style.color = "#121212")}
-            >
-              Get Involved
-            </Nav.Link>
+            <Nav.Link href="/Events.html">Events</Nav.Link>
+
+            <Nav.Link href="/about.html">About</Nav.Link>
+
+            {/*<Nav.Link href="/contact.html">Contact</Nav.Link>*/}
+
+            <Nav.Link href="/get-involved.html">Get Involved</Nav.Link>
+
           </Nav>
         </div>
+        {/*<div className="social-links d-flex justify-content-center">*/}
+        {/*  <a href="https://discord.gg/KMxjhabAxN" aria-label="Discord" className="social">*/}
+        {/*    <FaDiscord size={30} style={{color: "#1976d", paddingBottom: '4px'}}/>*/}
+        {/*  </a>*/}
+        {/*  <a href="https://bsky.app/profile/tacc-uk.bsky.social" className="mx-2" aria-label="Bluesky">*/}
+        {/*    <FaBluesky size={24} style={{color: "#1976d"}}/>*/}
+        {/*  </a>*/}
+        {/*  <a href="https://www.threads.net/@tacc40566" aria-label="Threads">*/}
+        {/*    <FaThreads size={24} style={{color: "#1976d"}}/>*/}
+        {/*  </a>*/}
+        {/*  <a href="https://www.facebook.com/profile.php?id=61567774272432" className="mx-2" aria-label="Facebook">*/}
+        {/*    <FaFacebook size={24} style={{color: "#1976d"}}/>*/}
+        {/*  </a>*/}
+        {/*</div>*/}
       </Container>
     </Navbar>
   );
