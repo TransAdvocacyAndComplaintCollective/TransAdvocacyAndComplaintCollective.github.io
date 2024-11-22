@@ -43,20 +43,20 @@ const Header = () => {
 
           </Nav>
         </div>
-        <div className="social-links d-flex justify-content-center">
-          <a href="https://discord.gg/KMxjhabAxN" aria-label="Discord" className="social">
-            <FaDiscord size={30} style={{color: "#1976d", paddingBottom: '4px'}}/>
-          </a>
-          <a href="https://bsky.app/profile/tacc-uk.bsky.social" className="mx-2" aria-label="Bluesky">
-            <FaBluesky size={24} style={{color: "#1976d"}}/>
-          </a>
-          <a href="https://www.threads.net/@tacc40566" aria-label="Threads">
-            <FaThreads size={24} style={{color: "#1976d"}}/>
-          </a>
-          <a href="https://www.facebook.com/profile.php?id=61567774272432" className="mx-2" aria-label="Facebook">
-            <FaFacebook size={24} style={{color: "#1976d"}}/>
-          </a>
-        </div>
+        {/*<div className="social-links d-flex justify-content-center">*/}
+        {/*  <a href="https://discord.gg/KMxjhabAxN" aria-label="Discord" className="social">*/}
+        {/*    <FaDiscord size={30} style={{color: "#1976d", paddingBottom: '4px'}}/>*/}
+        {/*  </a>*/}
+        {/*  <a href="https://bsky.app/profile/tacc-uk.bsky.social" className="mx-2" aria-label="Bluesky">*/}
+        {/*    <FaBluesky size={24} style={{color: "#1976d"}}/>*/}
+        {/*  </a>*/}
+        {/*  <a href="https://www.threads.net/@tacc40566" aria-label="Threads">*/}
+        {/*    <FaThreads size={24} style={{color: "#1976d"}}/>*/}
+        {/*  </a>*/}
+        {/*  <a href="https://www.facebook.com/profile.php?id=61567774272432" className="mx-2" aria-label="Facebook">*/}
+        {/*    <FaFacebook size={24} style={{color: "#1976d"}}/>*/}
+        {/*  </a>*/}
+        {/*</div>*/}
       </Container>
     </Navbar>
   );
