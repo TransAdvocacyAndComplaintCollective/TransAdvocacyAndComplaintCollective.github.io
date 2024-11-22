@@ -99,3 +99,7 @@ div.entry-content a:link {
 div.entry-content a:hover {
     color: #79A3FD;
 }
+
+div.card-title.h5 {
+    color: #1976d2 !important;
+}
