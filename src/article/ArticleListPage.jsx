@@ -16,13 +16,13 @@ const ArticleListPage = ({ articles, currentPage, totalPages }) => {
 
   return (
     <BodyPage title="Article List" description="List of articles">
-      <div className="container pb-5 mb-5">
+      <div className="container mb-4">
         <div className="article-cards">
           {articles.map((article) => {
             const { id, data } = article;
             return (
               // Adding a unique key prop using article id or slug
-              <Card key={data.slug} className="mb-3">
+              <Card key={data.slug} className="mb-4">
                 <Card.Body>
                   <Card.Title>{data.title}</Card.Title>
                   <Card.Text>{data.summary}</Card.Text>
@@ -35,26 +35,26 @@ const ArticleListPage = ({ articles, currentPage, totalPages }) => {
           })}
         </div>
         {/* Pagination Buttons */}
-        <div className="pagination-buttons mt-4">
-          { (
-            <Button
-              variant="outline-primary"
-              href={`/articles/page/${currentPage - 1}.html`}
-              className="mr-2"
-            >
-              Previous
-            </Button>
-          )}
-          {(
-            <Button
-              variant="outline-primary"
-              href={`/articles/page/${currentPage + 1}.html`}
-              className="ml-2"
-            >
-              Next
-            </Button>
-          )}
-        </div>
+        {/*<div className="pagination-buttons mt-4">*/}
+        {/*  { (*/}
+        {/*    <Button*/}
+        {/*      variant="outline-primary"*/}
+        {/*      href={`/articles/page/${currentPage - 1}.html`}*/}
+        {/*      className="mr-2"*/}
+        {/*    >*/}
+        {/*      Previous*/}
+        {/*    </Button>*/}
+        {/*  )}*/}
+        {/*  {(*/}
+        {/*    <Button*/}
+        {/*      variant="outline-primary"*/}
+        {/*      href={`/articles/page/${currentPage + 1}.html`}*/}
+        {/*      className="ml-2"*/}
+        {/*    >*/}
+        {/*      Next*/}
+        {/*    </Button>*/}
+        {/*  )}*/}
+        {/*</div>*/}
       </div>
     </BodyPage>
   );

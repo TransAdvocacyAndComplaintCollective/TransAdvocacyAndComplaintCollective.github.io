@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
+import Card from 'react-bootstrap/Card';
 import BodyPage from "../partials/BodyPage";
 
 const ArticlePage = ({ article }) => {
@@ -38,7 +39,7 @@ const ArticlePage = ({ article }) => {
   return (
     <BodyPage
       title={"Home"}
-      description={"Welcome to the Pirate Party UK"}
+      description={"Welcome to the Trans Advocacy and Complaints Collective."}
       header={
         <>
           <meta property="og:title" content={title} />
@@ -68,10 +69,10 @@ const ArticlePage = ({ article }) => {
               image: imageUrl,
               publisher: {
                 "@type": "Organization",
-                name: "Pirate Party UK (PPUK)",
+                name: "TACC UK",
                 logo: {
                   "@type": "ImageObject",
-                  url: "/media/PPUK-logo.png",
+                  url: "/media/tacc.png",
                 },
               },
             })}
@@ -80,37 +81,27 @@ const ArticlePage = ({ article }) => {
       }
     >
       <Container>
-        <Row className="justify-content-center">
-          <Col lg={8}>
+        <Card className="mb-4">
+          <Card.Body>
             <article>
               {/* Render article title */}
-              <h1 className="entry-title">{title}</h1>
+              <h3 className="entry-title, markdown">{title}</h3>
               {/* Render article summary if available */}
               {summary && <p className="summary text-muted">{summary}</p>}
               {/* Render authors and contributors */}
-              <div className="dateline">
+              <div className="dateline mb-4">
                 {author.length > 0 && (
                   <>
-                    by <span itemProp="name">{renderPeople(author)}</span>
+                    <font id="author">{renderPeople(author)}</font><br/>
+                    <font id="date">{formatDate(publishDate)}</font>
                   </>
-                )}
-                {contributor && (
-                  <>
-                    <br />
-                    Contributors: <span itemProp="contributor">{renderPeople(contributor)}</span>
-                  </>
-                )}
-                <p>
-                  <time itemProp="datePublished" dateTime={publishDate}>
-                    published {formatDate(publishDate)}
-                  </time>
-                </p>
+                   )}
               </div>
               {/* Render HTML content dangerously (ensure HTML is safe) */}
               <div className="entry-content" dangerouslySetInnerHTML={{ __html: content }} />
             </article>
-          </Col>
-        </Row>
+          </Card.Body>
+        </Card>
       </Container>
     </BodyPage>
   );

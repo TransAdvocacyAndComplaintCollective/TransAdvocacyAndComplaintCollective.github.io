@@ -31,13 +31,13 @@ const Header = () => {
 
             <Nav.Link href="/articles/page/0.html">Articles</Nav.Link>
 
-            <Nav.Link href="/press_release/page/0.html">Press Release</Nav.Link>
+            {/*<Nav.Link href="/press_release/page/0.html">Press Release</Nav.Link>*/}
 
             <Nav.Link href="/Events.html">Events</Nav.Link>
 
             <Nav.Link href="/about.html">About</Nav.Link>
 
-            <Nav.Link href="/contact.html">Contact</Nav.Link>
+            {/*<Nav.Link href="/contact.html">Contact</Nav.Link>*/}
 
             <Nav.Link href="/get-involved.html">Get Involved</Nav.Link>
 

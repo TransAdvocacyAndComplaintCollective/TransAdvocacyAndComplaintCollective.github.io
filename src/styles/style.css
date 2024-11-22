@@ -35,7 +35,6 @@ a.mr-2 {
     border-bottom: 1px solid #1976d2;
     padding: 16px;
     font-weight: 600;
-    /*font-size: 1.2rem;*/
 }
 
 img.logo {
@@ -72,4 +71,31 @@ p.footer {
 div.content {
     font-family: 'Roboto', 'Tahoma', sans-serif;
     font-size: 1.0rem;
+}
+
+/* Article Page Css for Markdown Pages. */
+
+#author {
+    font-weight: 500;
+    font-size: 18px;
+}
+#date {
+    font-weight: 300;
+    font-size: 16px;
+}
+
+div.entry-content h2 {
+    font-size: 1.4rem;
+}
+
+div.entry-content h3 {
+    font-size: 1.2rem;
+}
+
+div.entry-content a:link {
+    color: #1976d2;
+}
+
+div.entry-content a:hover {
+    color: #79A3FD;
 }
