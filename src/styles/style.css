@@ -1,7 +1,7 @@
 html, body {
-    height: 100%;
     margin: 0;
     padding: 0;
+    overflow: scroll; /* Show scrollbars */
 }
 
 #root {
@@ -12,8 +12,7 @@ html, body {
 
 .content {
     flex: 1;
-    padding: 20px;
-    margin-top: 20px;
+    margin-top: 40px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -22,11 +21,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary {
     background-color: #1976d2;
-}
-
-/* This add a right hand margin so that buttons inline have a space on the articles page. */
-a.mr-2 {
-    margin-right: 6px;
 }
 
 .navbar {
@@ -77,11 +71,11 @@ div.content {
 
 #author {
     font-weight: 500;
-    font-size: 18px;
+    font-size: 16px;
 }
 #date {
     font-weight: 300;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 div.entry-content h2 {
@@ -102,6 +96,10 @@ div.entry-content a:hover {
 
 div.card-title.h5 {
     color: #1976d2 !important;
+}
+
+div.social-links {
+    padding-top: 6px;
 }
 
 /*h1, .h1 {*/

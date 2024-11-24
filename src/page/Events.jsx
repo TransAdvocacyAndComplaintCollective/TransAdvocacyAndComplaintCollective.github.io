@@ -34,7 +34,7 @@ const EventsPage = ({ calendarUrl, title = "Upcoming Events", description = "Sta
             </div>
 
             {/* Fallback message */}
-            <p className="mt-3 text-muted">
+            <p className="mb-4 text-muted">
               If the calendar fails to load, you can access it directly <a href={googleCalendarUrl} target="_blank" rel="noopener noreferrer">here</a>.
             </p>
 
