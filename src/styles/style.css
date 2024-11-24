@@ -1,6 +1,7 @@
 html, body {
     margin: 0;
     padding: 0;
+    background-color: #FDF8E1;
     overflow: scroll; /* Show scrollbars */
 }
 
@@ -64,7 +65,7 @@ p.footer {
 
 div.content {
     font-family: 'Roboto', 'Tahoma', sans-serif;
-    font-size: 1.0rem;
+    /*font-size: 1.0rem;*/
 }
 
 /* Article Page Css for Markdown Pages. */
@@ -80,6 +81,10 @@ div.content {
 
 div.entry-content h2 {
     font-size: 1.4rem;
+}
+
+.card-body {
+    background: #f5fcff;
 }
 
 div.entry-content h3 {
