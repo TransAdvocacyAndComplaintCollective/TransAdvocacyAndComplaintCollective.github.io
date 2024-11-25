@@ -5,7 +5,7 @@ import {FaBluesky, FaDiscord, FaFacebook, FaThreads} from "react-icons/fa6";
 const Header = () => {
   return (
     <Navbar expand="md" className="navbar-expand-md">
-      <Container>
+        <Container>
         <Navbar.Brand href="/">
           <img className="logo" src="/media/tacc.png" alt="Trans Advocacy and Complaint Collective Logo"/>
         </Navbar.Brand>
@@ -25,7 +25,7 @@ const Header = () => {
         </button>
 
         <div className="collapse navbar-collapse" id="navbar-menu">
-          <Nav className="me-auto">
+          <Nav className="mb-auto">
 
             <Nav.Link href="/">Home</Nav.Link>
 

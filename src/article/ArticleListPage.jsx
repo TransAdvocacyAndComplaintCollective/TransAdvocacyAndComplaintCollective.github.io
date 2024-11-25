@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Container, A } from "react-bootstrap";
 import BodyPage from "partials/BodyPage";
 import ReactDOM from "react-dom";
 
@@ -13,10 +13,9 @@ const ArticleListPage = ({ articles, currentPage, totalPages }) => {
       </BodyPage>
     );
   }
-
   return (
     <BodyPage title="Article List" description="List of articles">
-      <div className="container mb-4">
+      <Container>
         <div className="article-cards">
           {articles.map((article) => {
             const { id, data } = article;
@@ -33,7 +32,7 @@ const ArticleListPage = ({ articles, currentPage, totalPages }) => {
               </Card>
             );
           })}
-        </div>
+        {/*</div>*/}
         {/* Pagination Buttons */}
         {/*<div className="pagination-buttons mt-4">*/}
         {/*  { (*/}
@@ -54,8 +53,8 @@ const ArticleListPage = ({ articles, currentPage, totalPages }) => {
         {/*      Next*/}
         {/*    </Button>*/}
         {/*  )}*/}
-        {/*</div>*/}
-      </div>
+        </div>
+      </Container>
     </BodyPage>
   );
 };

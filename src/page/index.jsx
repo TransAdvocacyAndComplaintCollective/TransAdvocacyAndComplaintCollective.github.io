@@ -3,10 +3,9 @@ import BodyPage from '../partials/BodyPage';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import { Discord, Envelope, Mastodon, Twitter } from 'react-bootstrap-icons';
 
 const HomePage = () => {
-  const email = "contact@transadvocacyuk.org"; // Replace with your actual email
+  // const email = "contact@transadvocacyuk.org"; // Replace with your actual email
 
   return (
     <BodyPage title={"Home Page"} description={"Get in touch with the Trans Advocacy and Complaint Collective UK"}>
@@ -28,7 +27,7 @@ const HomePage = () => {
         <Card className="mb-4">
           <Card.Body>
             <Card.Title>What We Offer</Card.Title>
-            <Card.Text as="div">
+            <Card.Text>
               <ul>
                 <li><strong>Organized Activism:</strong> We’re planning targeted actions, campaigns, and events to challenge transphobia and promote equality.</li>
                 <li><strong>FOI Requests:</strong> Join our efforts to obtain crucial information through Freedom of Information requests, shining a light on issues affecting the trans community.</li>
@@ -45,7 +44,7 @@ const HomePage = () => {
         <Card className="mb-4">
           <Card.Body>
             <Card.Title>How You Can Get Involved</Card.Title>
-            <Card.Text as="div">
+            <Card.Text>
               <ul>
                 <li><strong>Join Our Discord:</strong> Our Discord server is the hub for all our activities. Whether you want to take part in specific actions or just connect with like-minded people, we’d love to have you.</li>
                 <li><strong>Share Your Ideas:</strong> We’re always looking for fresh ideas and perspectives. Your input can help shape the direction of our collective.</li>
@@ -53,7 +52,7 @@ const HomePage = () => {
               </ul>
             </Card.Text>
             <Button variant="primary" href="https://discord.gg/KMxjhabAxN" className="me-2">
-              <Discord /> Join Our Discord
+               Join Our Discord
             </Button>
           </Card.Body>
         </Card>
