@@ -2,11 +2,13 @@ import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 
-const BodyPage = ({ children, title = "Trans Advocacy and Complaint Collective", description = "", header = null }) => {
+const BodyPage = ({ children, title = "", description = "", header = null }) => {
+  console.log("title", title);
   return (
     <html lang="en">
     <head>
-      <title>{title}</title>
+    <title>{`${title} - Trans Advocacy and Complaint Collective`}</title>
+
       <meta charSet="UTF-8"/>
       <meta name="description" content={description}/>
       <link href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&#038;display=swap'

@@ -102,7 +102,7 @@ const clientWebpackConfig = {
   plugins: [
     new HtmlWebpackPlugin({
       filename: '../index.html',
-      template: 'src/templates/index.html',
+      template: 'src/templates/index.ejs',
       inject: 'body',
     }),
   ],
@@ -563,7 +563,7 @@ function buildStaticPagesCSR() {
           (entryName) =>
             new HtmlWebpackPlugin({
               filename: `../${entryName}.html`,
-              template: 'src/templates/index.html',
+              template: 'src/templates/index.ejs',
               chunks: [entryName],
               inject: 'body',
             })
