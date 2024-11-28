@@ -48,7 +48,7 @@ const AboutPage = () => {
             <Card.Text>
               We believe that collective action is key to making a difference. Whether you’re looking to contribute your time, share your skills, or simply connect with like-minded individuals, there are many ways to get involved with our work.
             </Card.Text>
-            <Button variant="primary" href="https://discord.gg/your-invite-code" target="_blank">
+            <Button variant="primary" href="https://discord.gg/KMxjhabAxN" target="_blank">
               Join Our Discord
             </Button>
           </Card.Body>
