@@ -1,34 +1,39 @@
-# Workflow: Build and Deploy Static Content to GitHub Pages
-name: Build and Deploy to Pages
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
 
 on:
+  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout repository
+      # Step 1: Checkout code
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       # Step 2: Setup Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '18' # Specify the Node.js version you want
 
       # Step 3: Install dependencies
       - name: Install dependencies
@@ -36,30 +41,27 @@ jobs:
 
       # Step 4: Run Gulp build
       - name: Run Gulp Build
-        run: gulp build
+        run: gulp build # Adjust based on your script setup
 
-      # Step 5: Upload Build Artifact
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
+      # Step 5: Upload build artifacts
+      - name: Upload Build Files
+        uses: actions/upload-artifact@v3
         with:
-          name: build-artifact
-          path: output/ # Ensure this matches your build output directory
-          # If you need to include hidden files, uncomment the following line:
-          # include-hidden-files: true
+          name: build-files
+          path: output/ # Adjust the path to your actual build output directory
 
   deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # Step 1: Download Build Artifact
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v4
+      # Step 1: Download build artifacts from the build job
+      - name: Download Build Files
+        uses: actions/download-artifact@v3
         with:
-          name: build-artifact
+          name: build-files
           path: output/
 
       # Step 2: Setup Pages
@@ -68,14 +70,11 @@ jobs:
 
       # Step 3: Upload Pages Artifact
       - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: output/ # Ensure this matches your build output directory
-          # If you need to include hidden files, uncomment the following line:
-          # include-hidden-files: true
+          path: output/ # Ensure this matches the build output directory
 
       # Step 4: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        id: deploy
+        id: deployment
         uses: actions/deploy-pages@v4
-
