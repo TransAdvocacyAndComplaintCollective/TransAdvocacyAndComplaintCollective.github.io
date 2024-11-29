@@ -18,7 +18,7 @@ const EventsPage = ({ calendarUrl, title = "Upcoming Events", description = "Sta
           <Card.Body>
             <Card.Title>View Our Events Calendar</Card.Title>
             <Card.Text>
-              The Trans Advocacy and Complaint Collective hosts a variety of events designed to engage our members and supporters. These events cover topics like transgender rights and more. Check out the calendar below to find upcoming events and join us in making a difference.
+              The Trans Advocacy and Complaint Collective hosts a variety of events designed to engage our members and supporters. These events cover topics like transgender rights and more. Check out the calendar below to find upcoming events and join us in making a difference.  If you would like to put your event in the calendar please email us on the
             </Card.Text>
 
             {/* Google Calendar Embed with improved responsiveness */}
