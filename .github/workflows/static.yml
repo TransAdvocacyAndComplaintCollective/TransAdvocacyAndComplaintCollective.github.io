@@ -17,27 +17,35 @@ concurrency:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step 2: Setup Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
+      # Step 4: Run Gulp build
       - name: Run Gulp Build
         run: gulp build
 
+      # Step 5: Upload Build Artifact
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages
-          path: output/
+          name: build-artifact
+          path: output/ # Ensure this matches your build output directory
+          # If you need to include hidden files, uncomment the following line:
+          # include-hidden-files: true
 
   deploy:
     name: Deploy
