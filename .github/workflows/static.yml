@@ -1,3 +1,4 @@
+# Workflow: Build and Deploy Static Content to GitHub Pages
 name: Build and Deploy to Pages
 
 on:
@@ -32,52 +33,41 @@ jobs:
       - name: Run Gulp Build
         run: gulp build
 
-      - name: Remove Hard Links and Symlinks
-        run: |
-          find output/ -type l -delete
-          find output/ -type l -print
-
-      - name: Display Total Build Output Size
-        run: du -sh output/
-
-      - name: Clean Up Large Files
-        run: |
-          find output/ -size +100M -delete
-
-      - name: Ensure index.html Exists
-        run: |
-          if [ ! -f output/index.html ]; then
-            echo "Error: index.html not found in output/"
-            exit 1
-          fi
-
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: github-pages
           path: output/
-    
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
     needs: build
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
+      # Step 1: Download Build Artifact
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
           name: build-artifact
           path: output/
+
+      # Step 2: Setup Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
+      # Step 3: Upload Pages Artifact
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: output/
+          name: github-pages
+          path: output/ # Ensure this matches your build output directory
           # If you need to include hidden files, uncomment the following line:
           # include-hidden-files: true
+
+      # Step 4: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        id: deployment
+        id: deploy
         uses: actions/deploy-pages@v4
