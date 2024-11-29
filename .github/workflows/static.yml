@@ -16,36 +16,34 @@ concurrency:
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Setup Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Run Gulp build
       - name: Run Gulp Build
         run: gulp build
 
-      # Step 5: Preprocess Build Output
-      - name: Preprocess Build Output
+      - name: Remove Hard Links and Symlinks
         run: |
-          # Remove symbolic links (if any)
           find output/ -type l -delete
-          # Display size for debugging
-          du -sh output/
+          find output/ -type l -print
 
-      # Step 6: Verify Required Files
+      - name: Display Total Build Output Size
+        run: du -sh output/
+
+      - name: Clean Up Large Files
+        run: |
+          find output/ -size +100M -delete
+
       - name: Ensure index.html Exists
         run: |
           if [ ! -f output/index.html ]; then
@@ -53,35 +51,28 @@ jobs:
             exit 1
           fi
 
-      # Step 7: Upload Build Artifact
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages  # Must match deploy step expectation
-          path: output/       # Ensure this matches your build output directory
-          # Uncomment to include hidden files if needed
-          # include-hidden-files: true
+          name: github-pages
+          path: output/
 
   deploy:
-    name: Deploy
     runs-on: ubuntu-latest
     needs: build
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      # Step 1: Download Build Artifact
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: github-pages  # Must match artifact uploaded in build step
+          name: github-pages
           path: output/
 
-      # Step 2: Setup Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # Step 3: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
