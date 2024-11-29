@@ -5,7 +5,3 @@
 [submodule "etc/articles"]
   path = etc/articles
   url = https://github.com/TransAdvocacyAndComplaintCollective/articles.git
-
-[submodule "output"]
-  path = output
-  url = https://github.com/Collaboration-of-International-Pirates/Collaboration-of-International-Pirates.github.io.git
