@@ -22,7 +22,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Specify the Node.js version you want
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run Gulp build
+      - name: Run Gulp Build
+        run: gulp build # Adjust based on your script setup
+
+      # Step 5: Optional - Upload artifacts (e.g., build files)
+      - name: Upload Build Files
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-files
+          path: output/ # Adjust the path to your actual build output directory
   deploy:
     environment:
       name: github-pages
