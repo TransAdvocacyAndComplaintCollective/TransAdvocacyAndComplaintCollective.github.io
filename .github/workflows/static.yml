@@ -46,7 +46,6 @@ jobs:
           path: output/ # Ensure this matches your build output directory
           # If you need to include hidden files, uncomment the following line:
           # include-hidden-files: true
-
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -55,28 +54,16 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      # Step 1: Download Build Artifact
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
           name: build-artifact
           path: output/
 
-      # Step 2: Setup Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # Step 3: Upload Pages Artifact
-      - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          name: github-pages
-          path: output/ # Ensure this matches your build output directory
-          # If you need to include hidden files, uncomment the following line:
-          # include-hidden-files: true
-
-      # Step 4: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
-
+        
