@@ -15,19 +15,19 @@ const Footer = () => {
 
           <Col md={4} className="text-center">
             <div className="social-links d-flex justify-content-center">
-              <a href="https://discord.gg/KMxjhabAxN" aria-label="Discord" className="social">
+              <a href="https://discord.gg/KMxjhabAxN" aria-label="Discord" className="social" title="Discord">
                 <FaDiscord size={30} style={{color: "#1976d", paddingBottom: '4px'}}/>
               </a>
-              <a href="https://bsky.app/profile/tacc.org.uk" className="mx-2" aria-label="Bluesky">
+              <a href="https://bsky.app/profile/tacc.org.uk" className="mx-2" aria-label="Bluesky" title="Bluesky">
                 <FaBluesky size={24} style={{color: "#1976d"}}/>
               </a>
-              <a href="https://www.threads.net/@tacc.org.uk" aria-label="Threads">
+              <a href="https://www.threads.net/@tacc.org.uk" aria-label="Threads" title="Threads">
                 <FaThreads size={24} style={{color: "#1976d"}}/>
               </a>
-              <a href="https://www.instagram.com/tacc.org.uk" className="mx-2" aria-label="Instagram">
+              <a href="https://www.instagram.com/tacc.org.uk" className="mx-2" aria-label="Instagram" title="Instagram">
                 <FaInstagram size={24} style={{color: "#1976d"}}/>
               </a>
-              <a href="https://www.facebook.com/tacc.org.uk" aria-label="Facebook">
+              <a href="https://www.facebook.com/tacc.org.uk" aria-label="Facebook" title="Facebook">
                 <FaFacebook size={24} style={{color: "#1976d"}}/>
               </a>
             </div>
