@@ -43,27 +43,38 @@ jobs:
       - name: Run Gulp Build
         run: gulp build # Adjust based on your script setup
 
-      # Step 5: Optional - Upload artifacts (e.g., build files)
+      # Step 5: Upload build artifacts
       - name: Upload Build Files
         uses: actions/upload-artifact@v3
         with:
           name: build-files
           path: output/ # Adjust the path to your actual build output directory
+
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      # Step 1: Download build artifacts from the build job
+      - name: Download Build Files
+        uses: actions/download-artifact@v3
+        with:
+          name: build-files
+          path: output/
+
+      # Step 2: Setup Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Upload artifact
+
+      # Step 3: Upload Pages Artifact
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: 'output'
+          path: output/ # Ensure this matches the build output directory
+
+      # Step 4: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
