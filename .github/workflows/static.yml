@@ -1,4 +1,3 @@
-# Workflow: Build and Deploy Static Content to GitHub Pages
 name: Build and Deploy to Pages
 
 on:
@@ -42,10 +41,11 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifact
-          path: output/ # Ensure this matches your build output directory
+          name: github-pages  # Fixed to match deploy step expectation
+          path: output/       # Ensure this matches your build output directory
           # If you need to include hidden files, uncomment the following line:
           # include-hidden-files: true
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -54,16 +54,18 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
+      # Step 1: Download Build Artifact
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-artifact
+          name: github-pages  # Fixed to match artifact uploaded in build step
           path: output/
 
+      # Step 2: Setup Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      # Step 3: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
-        
