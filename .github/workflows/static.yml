@@ -37,13 +37,29 @@ jobs:
       - name: Run Gulp Build
         run: gulp build
 
-      # Step 5: Upload Build Artifact
+      # Step 5: Preprocess Build Output
+      - name: Preprocess Build Output
+        run: |
+          # Remove symbolic links (if any)
+          find output/ -type l -delete
+          # Display size for debugging
+          du -sh output/
+
+      # Step 6: Verify Required Files
+      - name: Ensure index.html Exists
+        run: |
+          if [ ! -f output/index.html ]; then
+            echo "Error: index.html not found in output/"
+            exit 1
+          fi
+
+      # Step 7: Upload Build Artifact
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages  # Fixed to match deploy step expectation
+          name: github-pages  # Must match deploy step expectation
           path: output/       # Ensure this matches your build output directory
-          # If you need to include hidden files, uncomment the following line:
+          # Uncomment to include hidden files if needed
           # include-hidden-files: true
 
   deploy:
@@ -58,7 +74,7 @@ jobs:
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: github-pages  # Fixed to match artifact uploaded in build step
+          name: github-pages  # Must match artifact uploaded in build step
           path: output/
 
       # Step 2: Setup Pages
