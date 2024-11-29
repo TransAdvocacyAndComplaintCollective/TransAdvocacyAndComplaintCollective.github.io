@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { FaBluesky, FaDiscord, FaFacebook, FaGithub, FaMastodon, FaThreads, FaTwitter } from 'react-icons/fa6';
+import { FaBluesky, FaDiscord, FaFacebook, FaInstagram, FaThreads } from 'react-icons/fa6';
 
 const Footer = () => {
   return (
@@ -21,10 +21,13 @@ const Footer = () => {
               <a href="https://bsky.app/profile/tacc.org.uk" className="mx-2" aria-label="Bluesky">
                 <FaBluesky size={24} style={{color: "#1976d"}}/>
               </a>
-              <a href="https://www.threads.net/@tacc40566" aria-label="Threads">
+              <a href="https://www.threads.net/@tacc.org.uk" aria-label="Threads">
                 <FaThreads size={24} style={{color: "#1976d"}}/>
               </a>
-              <a href="https://www.facebook.com/profile.php?id=61567774272432" className="mx-2" aria-label="Facebook">
+              <a href="https://www.instagram.com/tacc.org.uk" className="mx-2" aria-label="Instagram">
+                <FaInstagram size={24} style={{color: "#1976d"}}/>
+              </a>
+              <a href="https://www.facebook.com/tacc.org.uk" aria-label="Facebook">
                 <FaFacebook size={24} style={{color: "#1976d"}}/>
               </a>
             </div>
