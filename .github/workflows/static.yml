@@ -70,17 +70,14 @@ jobs:
         with:
           name: build-artifact
           path: output/
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: output/
           # If you need to include hidden files, uncomment the following line:
           # include-hidden-files: true
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
