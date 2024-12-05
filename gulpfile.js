@@ -534,14 +534,16 @@ function buildStaticPagesSSR() {
 // Task to build static pages using client-side rendering (CSR)
 function buildStaticPagesCSR() {
   return new Promise((resolve, reject) => {
-    const filesInClientDir = fs.readdirSync('src/client/');
+    const clientDir = path.resolve(__dirname, 'src/client/');
+    const filesInClientDir = fs.readdirSync(clientDir);
     const entryPoints = {};
 
+    // Collect all .jsx files as entry points
     filesInClientDir.forEach((file) => {
       const ext = path.extname(file);
       if (ext === '.jsx') {
         const fileName = path.basename(file, ext);
-        entryPoints[fileName] = path.resolve(__dirname, 'src/client', file);
+        entryPoints[fileName] = path.resolve(clientDir, file);
       }
     });
 
@@ -551,26 +553,31 @@ function buildStaticPagesCSR() {
       return;
     }
 
+    // Define Webpack configuration specific to CSR
     const webpackConfig = {
       ...clientWebpackConfig,
       entry: entryPoints,
       output: {
-        filename: '[name].bundle.js',
+        path: path.resolve(__dirname, 'output'), // Set to 'output' directory
+        filename: 'js/[name].bundle.js', // JS bundles in 'output/js'
+        // publicPath: '', // Public path for JS bundles
+        
       },
       plugins: [
         ...clientWebpackConfig.plugins,
-        ...Object.keys(entryPoints).map(
-          (entryName) =>
-            new HtmlWebpackPlugin({
-              filename: `../${entryName}.html`,
-              template: 'src/templates/index.ejs',
-              chunks: [entryName],
-              inject: 'body',
-            })
+        // Dynamically create an HtmlWebpackPlugin instance for each entry point
+        ...Object.keys(entryPoints).map((entryName) =>
+          new HtmlWebpackPlugin({
+            filename: `${entryName}.html`, // HTML files directly under 'output/'
+            template: 'src/templates/index.ejs', // Path to your HTML template
+            chunks: [entryName], // Include only the specific JS chunk
+            inject: 'body', // Inject JS at the end of the body
+          })
         ),
       ],
     };
 
+    // Run Webpack with the specified configuration
     webpack(webpackConfig, (err, stats) => {
       if (err) {
         console.error("Webpack CSR compilation error:", err);
@@ -584,11 +591,13 @@ function buildStaticPagesCSR() {
         reject(new Error('Webpack compilation errors'));
         return;
       }
-      console.log("Webpack CSR compilation completed.");
+
+      console.log("Webpack CSR compilation completed successfully.");
       resolve();
     });
   });
 }
+
 
 // Task to copy and minify CSS styles
 function copyStyles() {
@@ -675,7 +684,7 @@ const build = gulp.series(
   compileContentFromMarkdown,
   copyData,
   buildStaticPagesSSR, // Server-side rendering
-  // buildStaticPagesCSR, // Client-side rendering
+  buildStaticPagesCSR, // Client-side rendering
   copyStyles,
   copyStylesJs,
   // autoInline,
