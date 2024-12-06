@@ -95,7 +95,7 @@ const clientWebpackConfig = {
     app: path.resolve(__dirname, 'src/client/index.jsx'),
   },
   output: {
-    path: path.resolve(__dirname, 'output/js'),
+    path: path.resolve(__dirname, 'tacc.org.uk/js'),
     filename: '[name].bundle.js',
     publicPath: '/js/',
   },
@@ -116,7 +116,7 @@ function handleError(err, done) {
 
 // Clean task
 function clean(done) {
-  for (const dir of ['output', 'temp']) {
+  for (const dir of ['tacc.org.uk', 'temp']) {
     if (fs.existsSync(dir)) {
       fs.rmSync(dir, { recursive: true });
       console.log(`Deleted directory: ${dir}`);
@@ -127,7 +127,7 @@ function clean(done) {
 
 // Create necessary directories
 function mkdir(done) {
-  const dirs = ['output', 'temp', 'temp/data', 'output/articles', 'output/press_release'];
+  const dirs = ['tacc.org.uk', 'temp', 'temp/data', 'tacc.org.uk/articles', 'tacc.org.uk/press_release'];
 
   dirs.forEach((dir) => {
     if (!fs.existsSync(dir)) {
@@ -142,7 +142,7 @@ function mkdir(done) {
 function copyMedia(done) {
   return gulp
     .src('src/media/**/*', { allowEmpty: true, encoding: false })
-    .pipe(gulp.dest('output/media'))
+    .pipe(gulp.dest('tacc.org.uk/media'))
     .on('end', function () {
       console.log('Media files copied successfully');
       done();
@@ -303,7 +303,7 @@ function compileContentFromMarkdown(done) {
 async function processPagesForType(type, pageComponent, listComponent = null,ARTICLES_PER_PAGE=10) {
   const dir = `etc/${type}`;
   const tempDir = `temp/${type}`;
-  const outputDir = `output/${type}`;
+  const outputDir = `tacc.org.uk/${type}`;
   const webpackConfig = serverWebpackConfig;
 
   // Ensure the temp and output directories exist
@@ -517,7 +517,7 @@ function buildStaticPagesSSR() {
           const element = React.createElement(component);
           const html = ReactDOMServer.renderToStaticMarkup(element);
 
-          const htmlFileName = path.join('output', `${pageName}.html`);
+          const htmlFileName = path.join('tacc.org.uk', `${pageName}.html`);
           fs.writeFileSync(htmlFileName, html);
 
         }
@@ -558,8 +558,8 @@ function buildStaticPagesCSR() {
       ...clientWebpackConfig,
       entry: entryPoints,
       output: {
-        path: path.resolve(__dirname, 'output'), // Set to 'output' directory
-        filename: 'js/[name].bundle.js', // JS bundles in 'output/js'
+        path: path.resolve(__dirname, 'tacc.org.uk'), // Set to 'tacc.org.uk' directory
+        filename: 'js/[name].bundle.js', // JS bundles in 'tacc.org.uk/js'
         // publicPath: '', // Public path for JS bundles
         
       },
@@ -568,7 +568,7 @@ function buildStaticPagesCSR() {
         // Dynamically create an HtmlWebpackPlugin instance for each entry point
         ...Object.keys(entryPoints).map((entryName) =>
           new HtmlWebpackPlugin({
-            filename: `${entryName}.html`, // HTML files directly under 'output/'
+            filename: `${entryName}.html`, // HTML files directly under 'tacc.org.uk/'
             template: 'src/templates/index.ejs', // Path to your HTML template
             chunks: [entryName], // Include only the specific JS chunk
             inject: 'body', // Inject JS at the end of the body
@@ -603,34 +603,34 @@ function buildStaticPagesCSR() {
 function copyStyles() {
   return gulp
     .src('src/styles/**/*.css')
-    .pipe(purgecss({ content: ['output/**/*.html'] }))
+    .pipe(purgecss({ content: ['tacc.org.uk/**/*.html'] }))
     .pipe(cleanCSS())
-    .pipe(gulp.dest('output/styles'));
+    .pipe(gulp.dest('tacc.org.uk/styles'));
 }
 
 // Task to copy JS files
 function copyStylesJs() {
-  return gulp.src('src/js/**/*.js').pipe(gulp.dest('output/js'));
+  return gulp.src('src/js/**/*.js').pipe(gulp.dest('tacc.org.uk/js'));
 }
 
 // Task to inline CSS/JS and minify
 async function autoInline() {
   return gulp
-    .src('output/**/*.html')
+    .src('tacc.org.uk/**/*.html')
     .pipe(
       inline({
-        base: 'output/',
+        base: 'tacc.org.uk/',
         relative: true,
         disabledTypes: ['img', 'svg', 'json'], // Disable inlining of images, SVGs, and JSON files
       })
     )
     .pipe(minifyInline())
-    .pipe(gulp.dest('output/'));
+    .pipe(gulp.dest('tacc.org.uk/'));
 }
 
 // Task to generate sitemap
 async function buildPlainSiteMap() {
-  fs.mkdirSync('./output/sitemap', { recursive: true });
+  fs.mkdirSync('./tacc.org.uk/sitemap', { recursive: true });
 
   if (sitemapList.length === 0) {
     console.warn('No URLs to include in sitemap. Skipping sitemap generation.');
@@ -642,7 +642,7 @@ async function buildPlainSiteMap() {
       hostname: 'https://wwww.tacc.org.uk/',
     });
 
-    const writeStream = createWriteStream('./output/sitemap/sitemap.xml');
+    const writeStream = createWriteStream('./tacc.org.uk/sitemap/sitemap.xml');
     sitemapStream.pipe(writeStream);
 
     sitemapStream.on('error', (err) => {

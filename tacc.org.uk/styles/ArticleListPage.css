@@ -1,0 +1,1 @@
+.article-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}.article-cards .card{transition:transform .3s ease}.article-cards .card:hover{transform:translateY(-5px)}
