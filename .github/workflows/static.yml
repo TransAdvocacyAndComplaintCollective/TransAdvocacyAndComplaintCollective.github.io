@@ -1,5 +1,5 @@
-# Workflow: Build and Deploy Static Content to GitHub Pages
-name: Build and Deploy to Pages
+# Workflow: Build and Deploy Static Content to GitHub Pages and via SCP
+name: Build and Deploy to Pages and SCP
 
 on:
   push:
@@ -44,11 +44,9 @@ jobs:
         with:
           name: build-artifact
           path: output/ # Ensure this matches your build output directory
-          # If you need to include hidden files, uncomment the following line:
-          # include-hidden-files: true
 
   deploy:
-    name: Deploy
+    name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
     needs: build
     environment:
@@ -72,10 +70,28 @@ jobs:
         with:
           name: github-pages
           path: output/ # Ensure this matches your build output directory
-          # If you need to include hidden files, uncomment the following line:
-          # include-hidden-files: true
 
       # Step 4: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
+
+  deploy_scp:
+    name: Deploy via SCP
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Copy files via SCP
+      - name: Copy files via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          source: "output/*"  # Adjust to match your specific output files
+          target: "/home/dacecfbf/tacc.org.uk"
