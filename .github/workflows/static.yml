@@ -95,4 +95,4 @@ jobs:
           port: 722
           source: "output/*"  # Adjust to match your specific output files
           target: "/home/dacecfbf/tacc.org.uk"
-          tar_exec: "/bin/tar -C"
+          tar_exec: "tar -C"
