@@ -93,5 +93,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
+          password: ${{ secrets.PASSWORD }}
           source: "output/*"  # Adjust to match your specific output files
           target: "/home/dacecfbf/tacc.org.uk"
