@@ -89,9 +89,9 @@ jobs:
       - name: Copy files via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.HOST }}
+          host: 185.194.90.27
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
+          port: 722
           source: "output/index.html"  # Adjust to match your specific output files
           target: "/home/dacecfbf/tacc.org.uk"
