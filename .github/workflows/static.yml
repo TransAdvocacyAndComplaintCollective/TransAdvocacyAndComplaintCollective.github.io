@@ -93,5 +93,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: "output/*"  # Adjust to match your specific output files
+          source: "output/index.html"  # Adjust to match your specific output files
           target: "/home/dacecfbf/tacc.org.uk"
