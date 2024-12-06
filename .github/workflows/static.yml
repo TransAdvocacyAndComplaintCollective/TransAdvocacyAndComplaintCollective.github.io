@@ -94,4 +94,4 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 722
           source: "tacc.org.uk/*"  # Adjust to match your specific output files
-          target: "/home/dacecfbf/tacc.org.uk"
+          target: "/home/dacecfbf"
