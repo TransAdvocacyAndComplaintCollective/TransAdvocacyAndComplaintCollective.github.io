@@ -45,36 +45,36 @@ jobs:
           name: build-artifact
           path: tacc.org.uk/ # Ensure this matches your build output directory
 
-  deploy:
-    name: Deploy to GitHub Pages
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      # Step 1: Download Build Artifact
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifact
-          path: tacc.org.uk/
+  # deploy:
+  #   name: Deploy to GitHub Pages
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deploy.outputs.page_url }}
+  #   steps:
+  #     # Step 1: Download Build Artifact
+  #     - name: Download Build Artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build-artifact
+  #         path: tacc.org.uk/
 
-      # Step 2: Setup Pages
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+  #     # Step 2: Setup Pages
+  #     - name: Setup Pages
+  #       uses: actions/configure-pages@v5
 
-      # Step 3: Upload Pages Artifact
-      - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          name: github-pages
-          path: tacc.org.uk/ # Ensure this matches your build output directory
+  #     # Step 3: Upload Pages Artifact
+  #     - name: Upload Pages Artifact
+  #       uses: actions/upload-pages-artifact@v3
+  #       with:
+  #         name: github-pages
+  #         path: tacc.org.uk/ # Ensure this matches your build output directory
 
-      # Step 4: Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        id: deploy
-        uses: actions/deploy-pages@v4
+  #     # Step 4: Deploy to GitHub Pages
+  #     - name: Deploy to GitHub Pages
+  #       id: deploy
+  #       uses: actions/deploy-pages@v4
 
   deploy_scp:
     name: Deploy via SCP
