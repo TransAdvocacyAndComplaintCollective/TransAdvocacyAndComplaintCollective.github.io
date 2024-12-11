@@ -11,7 +11,7 @@ const Email = () => {
   const [recaptchaToken, setRecaptchaToken] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const recaptchaSiteKey = "6Lfbl5MqAAAAAMRoIv_3h86GFZqQJCbu_c2SzOIH"; // Replace with your actual site key
+  const recaptchaSiteKey = "6LeOJ5kqAAAAAAotsmlD4rj8wkAVWgFUI-c4pp1b"; // Replace with your actual site key
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,7 +35,7 @@ const Email = () => {
     const payload = { ...formData, recaptchaToken };
 
     try {
-      const response = await fetch('http://localhost:3055/submit', {
+      const response = await fetch('/api/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
