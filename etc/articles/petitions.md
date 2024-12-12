@@ -13,7 +13,7 @@ keywords:
   - Government Petitions
   - Community Support
   - Media Accountability
-publishDate: "2024-12-09"
+publishDate: "2024-12-12"
 ---
 The **Trans Advocacy and Complaint Collective (TACC)** has been actively working on issues that relate to the trans community. We’ve published a set of government petitions on the UK parliamentary website, and we’d like your support to make sure these important issues are heard. By signing and sharing these petitions, you’re helping to amplify our voices and push for real change.
 
@@ -22,6 +22,10 @@ The **Trans Advocacy and Complaint Collective (TACC)** has been actively working
 1. ### [Mandate that schools use trans students' chosen names and pronouns.](https://petition.parliament.uk/petitions/700221)
 
    *Some schools fail to acknowledge the preferred names and pronouns of trans pupils, leading to misgendering, distress, and a lack of acceptance in the educational environment.*
+
+2. ### [An independent evaluation of the Cass review on child gender services](https://petition.parliament.uk/petitions/700217)
+
+   *The Cass review declined to speak to gender dysphoria specialists due to an apparent bias. Cass declined to name those involved in the review however slowly those who helped write the review have become known. A significant number of participants are from gender critical organisations.*
 
 ---
 
