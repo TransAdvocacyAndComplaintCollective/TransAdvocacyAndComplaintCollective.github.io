@@ -10,6 +10,7 @@ const Footer = () => {
           <Col md={4} className="text-center text-md-start mb-3 mb-md-0">
             <p className="m-0 footer">
               &copy; {new Date().getFullYear()} Trans Advocacy and Complaint Collective
+              <p>TACC is an Unincorporated Association</p>
             </p>
           </Col>
 
