@@ -300,7 +300,7 @@ function compileContentFromMarkdown(done) {
 }
 
 // Helper function to process pages for a specific type
-async function processPagesForType(type, pageComponent, listComponent = null,ARTICLES_PER_PAGE=10) {
+async function processPagesForType(type, pageComponent, listComponent = null,count=null,group=null) {
   const dir = `etc/${type}`;
   const tempDir = `temp/${type}`;
   const outputDir = `tacc.org.uk/${type}`;
@@ -337,7 +337,7 @@ async function processPagesForType(type, pageComponent, listComponent = null,ART
   articles.sort((a, b) =>   new Date(b.data.publishDate) - new Date(a.data.publishDate));
 
   // Ensure totalPages and pageNumbers are defined even if there are no articles
-  const totalPages = Math.max(Math.ceil(articles.length / ARTICLES_PER_PAGE), 1);
+  const totalPages = Math.max(Math.ceil(articles.length / count), 1);
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   // Process the list of articles (list page generation)
@@ -364,8 +364,8 @@ async function processPagesForType(type, pageComponent, listComponent = null,ART
         try {
           const component = requireFromString(jsxContent, file.path);
           for (let page = 0; page < totalPages; page++) {
-            const start = page * ARTICLES_PER_PAGE;
-            const end = start + ARTICLES_PER_PAGE;
+            const start = page * count;
+            const end = start + count;
             const articlesOnPage = articles.slice(start, end);
 
             const html = ReactDOMServer.renderToStaticMarkup(
@@ -446,8 +446,8 @@ async function buildContentPages(done) {
 
     // Iterate over each type and process pages
     await Promise.all(
-      pageTypes.map(({ type, pageComponent, listComponent ,ARTICLES_PER_PAGE =10}) =>
-        processPagesForType(type, pageComponent, listComponent,ARTICLES_PER_PAGE)
+      pageTypes.map(({ type, pageComponent, listComponent,count,group}) =>
+        processPagesForType(type, pageComponent, listComponent,count,group)
       )
     );
 

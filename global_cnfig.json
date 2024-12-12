@@ -2,13 +2,21 @@
     "ContentPagesTask":[
        {
           "type":"articles",
+          "count":10,
           "pageComponent":"article/ArticlePage.jsx",
           "listComponent":"article/ArticleListPage.jsx"
        },
        {
           "type":"press_release",
+          "count":10,
           "pageComponent":"article/ArticlePage.jsx",
           "listComponent":"article/ArticleListPage.jsx"
+       },
+       {
+          "type":"jessicaNews",
+          "count":10,
+          "pageComponent":"jessicaNews/JessicaNewsPage.jsx",
+          "listComponent":"jessicaNews/JessicaNewsListPage.jsx"
        }
     ],
     "ContentFromMarkdownTask":[
