@@ -67,6 +67,8 @@ const Email = () => {
               integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
               crossOrigin="anonymous"/>
 
+        <link href="/styles/bootstrap.min.css" rel="stylesheet"/>
+
         <Container>
           <h1>Contact Form</h1>
           <Form onSubmit={handleSubmit} className="mb-4">
