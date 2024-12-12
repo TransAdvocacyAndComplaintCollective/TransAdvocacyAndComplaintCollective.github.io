@@ -62,9 +62,9 @@ const Email = () => {
       title="Email"
       description="Learn more about the Trans Advocacy and Complaint Collective UK"
     >
-      <Container className="mt-5">
+      <Container>
         <h1>Contact Form</h1>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} className="mb-4">
           <Form.Group controlId="name">
             <Form.Label htmlFor="name">Name:</Form.Label>
             <Form.Control
@@ -77,7 +77,7 @@ const Email = () => {
             />
           </Form.Group>
 
-          <Form.Group controlId="email" className="mt-3">
+          <Form.Group controlId="email" className="mb-4">
             <Form.Label htmlFor="email">Email:</Form.Label>
             <Form.Control
               type="email"
@@ -89,7 +89,7 @@ const Email = () => {
             />
           </Form.Group>
 
-          <Form.Group controlId="message" className="mt-3">
+          <Form.Group controlId="message" className="mb-4">
             <Form.Label htmlFor="message">Message:</Form.Label>
             <Form.Control
               as="textarea"
@@ -102,7 +102,7 @@ const Email = () => {
             />
           </Form.Group>
 
-          <div className="mt-3">
+          <div className="mb-4">
             <ReCAPTCHA
               sitekey={recaptchaSiteKey}
               onChange={handleRecaptcha}
@@ -112,7 +112,7 @@ const Email = () => {
           <Button
             variant="primary"
             type="submit"
-            className="mt-3"
+            className="mb-4"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Submitting...' : 'Submit'}
