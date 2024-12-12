@@ -58,73 +58,78 @@ const Email = () => {
   };
 
   return (
-    <BodyPage
-      title="Email"
-      description="Learn more about the Trans Advocacy and Complaint Collective UK"
-    >
-      <Container>
-        <h1>Contact Form</h1>
-        <Form onSubmit={handleSubmit} className="mb-4">
-          <Form.Group controlId="name">
-            <Form.Label htmlFor="name">Name:</Form.Label>
-            <Form.Control
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="Enter your name"
-            />
-          </Form.Group>
 
-          <Form.Group controlId="email" className="mb-4">
-            <Form.Label htmlFor="email">Email:</Form.Label>
-            <Form.Control
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="Enter your email"
-            />
-          </Form.Group>
+      <BodyPage
+          title="Email"
+          description="Learn more about the Trans Advocacy and Complaint Collective UK"
+      >
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+              integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+              crossOrigin="anonymous"/>
 
-          <Form.Group controlId="message" className="mb-4">
-            <Form.Label htmlFor="message">Message:</Form.Label>
-            <Form.Control
-              as="textarea"
-              name="message"
-              rows={5}
-              value={formData.message}
-              onChange={handleChange}
-              required
-              placeholder="Enter your message"
-            />
-          </Form.Group>
+        <Container>
+          <h1>Contact Form</h1>
+          <Form onSubmit={handleSubmit} className="mb-4">
+            <Form.Group controlId="name">
+              <Form.Label htmlFor="name">Name:</Form.Label>
+              <Form.Control
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  placeholder="Enter your name"
+              />
+            </Form.Group>
 
-          <div className="mb-4">
-            <ReCAPTCHA
-              sitekey={recaptchaSiteKey}
-              onChange={handleRecaptcha}
-            />
-          </div>
+            <Form.Group controlId="email" className="mb-4">
+              <Form.Label htmlFor="email">Email:</Form.Label>
+              <Form.Control
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  placeholder="Enter your email"
+              />
+            </Form.Group>
 
-          <Button
-            variant="primary"
-            type="submit"
-            className="mb-4"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit'}
-          </Button>
-        </Form>
-      </Container>
-    </BodyPage>
+            <Form.Group controlId="message" className="mb-4">
+              <Form.Label htmlFor="message">Message:</Form.Label>
+              <Form.Control
+                  as="textarea"
+                  name="message"
+                  rows={5}
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  placeholder="Enter your message"
+              />
+            </Form.Group>
+
+            <div className="mb-4">
+              <ReCAPTCHA
+                  sitekey={recaptchaSiteKey}
+                  onChange={handleRecaptcha}
+              />
+            </div>
+
+            <Button
+                variant="primary"
+                type="submit"
+                className="mb-4"
+                disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </Button>
+          </Form>
+        </Container>
+      </BodyPage>
   );
 };
 
 const container = document;
-const root = ReactDOM.createRoot(container); 
-root.render(<Email />);
+const root = ReactDOM.createRoot(container);
+root.render(<Email/>);
 export default Email;
 
