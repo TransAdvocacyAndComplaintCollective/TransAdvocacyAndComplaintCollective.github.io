@@ -29,19 +29,18 @@ const Header = () => {
 
             <Nav.Link href="/">Home</Nav.Link>
 
-            <Nav.Link href="/articles/page/0.html">Articles</Nav.Link>
-            <Nav.Link href="/jessicaNews/page/0.html">Articles other</Nav.Link>
+            <Nav.Link href="/about.html">About</Nav.Link>
 
-            {/*<Nav.Link href="/press_release/page/0.html">Press Release</Nav.Link>*/}
+            <Nav.Link href="/articles/page/0.html">Articles</Nav.Link>
 
             <Nav.Link href="/Events.html">Events</Nav.Link>
 
-            <Nav.Link href="/about.html">About</Nav.Link>
+            <Nav.Link href="/jessicaNews/page/0.html">News by Jess</Nav.Link>
 
+            {/*<Nav.Link href="/press_release/page/0.html">Press Release</Nav.Link>*/}
             <Nav.Link href="/get-involved.html">Get Involved</Nav.Link>
 
-            <Nav.Link href="/email.html">Contact Us</Nav.Link>
-            <Nav.Link href="/email.html">Contact Us</Nav.Link>
+            <Nav.Link href="/email.html">Email Us</Nav.Link>
 
           </Nav>
         </div>
