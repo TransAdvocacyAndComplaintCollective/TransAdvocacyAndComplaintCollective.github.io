@@ -123,7 +123,7 @@ const Email = () => {
   );
 };
 
-const container = document.getElementById('root');
+const container = document;
 const root = ReactDOM.createRoot(container); 
 root.render(<Email />);
 export default Email;
