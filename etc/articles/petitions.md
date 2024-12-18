@@ -27,6 +27,10 @@ The **Trans Advocacy and Complaint Collective (TACC)** has been actively working
 
    *The Cass review declined to speak to gender dysphoria specialists due to an apparent bias. Cass declined to name those involved in the review however slowly those who helped write the review have become known. A significant number of participants are from gender critical organisations.*
 
+3. ### [Ensure fair and inclusive participation for trans athletes in sports](https://petition.parliament.uk/petitions/700219)
+   
+   *Trans athletes face discrimination and exclusion from sports at various levels. A violation of human rights. Policies often do not reflect the complexities of gender identity and the realities of hormone treatments, leading to unfair bans and restrictions.*
+
 ---
 
 Remember to share with friends, family, and allies. **Together, we can make a difference!**
