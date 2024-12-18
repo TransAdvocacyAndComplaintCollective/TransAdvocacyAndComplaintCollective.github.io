@@ -14,9 +14,6 @@ const BodyPage = ({ children, title = "", description = "", header = null }) => 
       <link href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;900&#038;display=swap'
             rel='stylesheet'/>
       <link href="/styles/bootstrap.min.css" rel="stylesheet"/>
-      {/*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"*/}
-      {/*      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"*/}
-      {/*      crossOrigin="anonymous"/>*/}
       <link href="/styles/style.css" rel="stylesheet"/>
       <script src="/js/bootstrap/bootstrap.bundle.min.js"></script>
       <link rel="icon" href="/media/tacc_icon.png" sizes="32x32"/>

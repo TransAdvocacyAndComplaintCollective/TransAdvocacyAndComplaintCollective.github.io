@@ -76,22 +76,22 @@ jobs:
   #       id: deploy
   #       uses: actions/deploy-pages@v4
 
-  deploy_scp:
-    name: Deploy via SCP
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      # Step 1: Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # deploy_scp:
+  #   name: Deploy via SCP
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   steps:
+  #     # Step 1: Checkout code
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      # Step 2: Copy files via SCP
-      - name: Copy files via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: 185.194.90.27
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: 722
-          source: "tacc.org.uk/*"  # Adjust to match your specific output files
-          target: "/home/dacecfbf"
+  #     # Step 2: Copy files via SCP
+  #     - name: Copy files via SCP
+  #       uses: appleboy/scp-action@v0.1.7
+  #       with:
+  #         host: 185.194.90.27
+  #         username: ${{ secrets.USERNAME }}
+  #         password: ${{ secrets.PASSWORD }}
+  #         port: 722
+  #         source: "tacc.org.uk/*"  # Adjust to match your specific output files
+  #         target: "/home/dacecfbf"
